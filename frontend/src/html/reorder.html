@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./src/css/index.css">
+  <title>Reorder</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #dbd7d7;
+    }
+
+    header {
+      background-color: #007bff;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .company-info img {
+      max-width: 300px;
+      height: auto;
+      cursor: pointer;
+    }
+
+    nav {
+      margin-top: 20px;
+      text-align: right;
+    }
+
+    .nav-item {
+      display: inline-block;
+      margin-left: 20px;
+      text-decoration: none;
+    }
+
+    .nav-item img {
+      width: 24px;
+      height: 24px;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    h1 {
+      margin-top: 20px;
+      text-align: center;
+      color: #007bff;
+    }
+
+    h2 {
+      margin-top: 40px;
+      text-align: center;
+      color: #007bff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 10px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    .go-back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .go-back-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .product-details {
+      text-align: center;
+      margin-top: 50px;
+      width: 100%;
+    }
+
+    .product-image {
+      width: 200px;
+      height: auto;
+      margin: 0 auto;
+      border-radius: 8px;
+    }
+
+    .reorder-button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 20px;
+    }
+
+    .reorder-button:hover {
+      background-color: #0056b3;
+    }
+
+    .pending-order {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="company-info" onclick="goToDashboard()">
+        <img src="../assets/SVGs/title-removebg-preview.png" alt="Company Logo">
+    </div>
+    <nav>
+        <a href="#" class="nav-item" onclick="openHelpPage()">
+            <img src="../assets/SVGs/round-help-button-svgrepo-com.svg" alt="Help Icon">
+            Help
+        </a>
+        <a href="#" class="nav-item" onclick="openContactPage()">
+            <img src="../assets/SVGs/speech-bubbles-svgrepo-com.svg" alt="Contact Icon">
+            Contact Us
+        </a>
+        <a href="#" class="nav-item" onclick="openOrderPage()">
+            <img src="../assets/SVGs/text-documents-svgrepo-com.svg" alt="Orders Icon">
+            My Orders
+        </a>
+        <a href="#" class="nav-item" onclick="openProfilePage()">
+          <img src="../assets/SVGs/profile-button.svg" alt="Profile Icon">
+          Profile
+      </a>
+    </nav>
+</header>
+
+<div class="container">
+  <button class="go-back-btn" onclick="goBack()">
+    <img src="/SVGs/white-go-back-button.png" width="15px" height="12px" alt="GoBack Icon">
+    Go Back</button>
+  <h1>Reorder</h1>
+
+  <!-- Pending order details (displayed by default) -->
+  <div class="product-details pending-order">
+    <img class="product-image" src="/SVGs/contournext.jpg" alt="Contour Next Blood Glucose Test Strips - Pending">
+    <h2>Contour Next Blood Glucose Test Strips</h2>
+    <p>Status: Pending</p>
+  </div>
+
+  <!-- Product details (hidden by default) -->
+  <div class="product-details">
+    <img class="product-image" src="/SVGs/contournext.jpg" alt="Contour Next Blood Glucose Test Strips">
+    <h2>Contour Next Blood Glucose Test Strips</h2>
+    <p>Last Ordered: 2023-01-15</p>
+    <button class="reorder-button" onclick="reorder()">Reorder</button>
+  </div>
+</div>
+
+<script>
+  //Function to open the order page
+  function openOrderPage(){
+      window.location.href = "orders.html";
+    }
+
+    // Function to go back to the patient dashboard
+    function goToDashboard() {
+        window.location.href = "/patientdashboard.html";
+    }
+
+    // Function to open the contact page
+    function openContactPage() {
+        window.location.href = "/contact.html";
+    }
+
+    // Function to open the help page
+    function openHelpPage() {
+        window.location.href = "/help.html";
+    }
+
+    // Function to open the profile page
+    function openProfilePage() {
+        window.location.href = "/profile.html";
+    }
+
+    function goBack() {
+      window.history.back();
+    }
+  
+    function reorder() {
+      // Show confirmation dialog
+      var confirmation = confirm("Are you sure you want to reorder this item?");
+      if (confirmation) {
+        // Hide the current product details
+        document.querySelector('.product-details').style.display = 'none';
+        // Display the pending order details
+        document.querySelector('.pending-order').style.display = 'block';
+        alert('Your order has been placed!');
+      } else {
+        // Do nothing if the user cancels the confirmation
+      }
+    }
+  </script>
+  
+</body>
+</html>

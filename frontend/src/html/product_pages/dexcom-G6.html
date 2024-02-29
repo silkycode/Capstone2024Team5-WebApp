@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./src/css/index.css">
+  <title>dexcome g6</title>
+  <style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #dbd7d7;
+    }
+
+    header {
+        background-color: #007bff;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .company-info img {
+        max-width: 300px;
+        height: auto;
+    }
+
+    nav {
+        margin-top: 20px;
+    }
+
+    .nav-item {
+        display: inline-block;
+        margin-right: 20px;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .nav-item img {
+        width: 24px;
+        height: 24px;
+        vertical-align: middle;
+        margin-right: 5px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+    h1 {
+        margin-top: 50px;
+        text-align: left;
+    }
+
+    .go-back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 12px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .go-back-btn:hover {
+        background-color: #0056b3;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+      background-color: #f9f9f9;
+    }
+    
+  </style>
+</head>
+<body>
+    <header>
+        <div class="company-info" onclick="goToDashboard()">
+            <img src="/SVGs/title-removebg-preview.png" alt="Company Logo">
+        </div>
+        <nav>
+            <a href="#" class="nav-item" onclick="openHelpPage()">
+                <img src="/SVGs/round-help-button-svgrepo-com.svg" alt="Help Icon">
+                Help
+            </a>
+            <a href="#" class="nav-item" onclick="openContactPage()">
+                <img src="/SVGs/speech-bubbles-svgrepo-com.svg" alt="Contact Icon">
+                Contact Us
+            </a>
+            <a href="#" class="nav-item" onclick="openOrderPage()">
+                <img src="/SVGs/text-documents-svgrepo-com.svg" alt="Orders Icon">
+                My Orders
+            </a>
+            <a href="#" class="nav-item" onclick="openProfilePage()">
+              <img src="/SVGs/profile-button.svg" alt="Profile Icon">
+              Profile
+          </a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Button to go back -->
+        <button class="go-back-btn" onclick="goBack()">
+            <img src="/SVGs/white-go-back-button.png" width="15px" height="12px" alt="GoBack Icon">
+            Go Back
+        </button>
+        
+        <!-- Title -->
+        <h1>Dexcom G6 Mobile CGM System</h1>
+        <img src="/images/dexcom-g6.png">
+
+        <p>The Dexcom G6® Continuous Glucose Monitoring (CGM) System provides real-time glucose readings for patients with type 1 or type 2 diabetes every five minutes. With Dexcom G6Mobile, dynamic glucose data can be accessed and shared safely and conveniently anywhere, anytime to your smart device.† The Dexcom G5 Mobile – the first CGM system approved for adults and pediatric patients two years of age and older.
+
+            *Dexcom CGM-based treatment requires fingersticks for calibration; may result in hypoglycemia if calibration not performed or symptoms/expectations do not match CGM reading</p>
+
+        <img src="/products/Dexcom G6 Mobile CGM System/outline_showing_G61x.jpg">
+        <h2>EASY TO USE</h2>
+        <p>The Dexcom G6 is a small, discreet wearable that you apply yourself and lasts up to 10 days.</p>
+        <img src="/products/Dexcom G6 Mobile CGM System/outline_showing_fingersticks_layered1x.jpg">
+        <h2>GOODBYE, FINGERSTICKS</h2>
+        <p>Glance at your smartphone. See your glucose. Make diabetes treatment decisions. All without fingersticks.*
+
+            * Fingersticks required for diabetes treatment decisions if symptoms or expectations do not match readings.</p>
+        <img src="/products/Dexcom G6 Mobile CGM System/outline_looking_at_phone_over_shoulder_layered1x.jpg">
+        <h2>LOWERS A1C</h2>
+        <p>Using a Dexcom CGM is proven to lower A1C and help you spend more time in range.</p>
+    </div>
+
+    <!-- Your JavaScript code if needed -->
+
+    <script>
+        // Function to go back to the patient dashboard
+    function goToDashboard() {
+        window.location.href = "patientdashboard.html";
+    }
+    //Function to open the order page
+    function openOrderPage(){
+        window.location.href = "orders.html";
+    }
+
+    // Function to open the contact page
+    function openContactPage() {
+        window.location.href = "contact.html";
+    }
+
+    // Function to open the help page
+    function openHelpPage() {
+        window.location.href = "help.html";
+    }
+
+    // Function to open the profile page
+    function openProfilePage() {
+        window.location.href ="profile.html";
+    }
+    // Function to go back to the previous page
+    function goBack() {
+        window.history.back();
+    }
+    </script>
+</body>
+</html>

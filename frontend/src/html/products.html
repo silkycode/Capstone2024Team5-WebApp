@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./src/css/index.css">
+  <title>Products</title>
+  <style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #dbd7d7;
+    }
+
+    header {
+        background-color: #007bff;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .company-info img {
+        max-width: 300px;
+        height: auto;
+    }
+
+    nav {
+        margin-top: 20px;
+    }
+
+    .nav-item {
+        display: inline-block;
+        margin-right: 20px;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .nav-item img {
+        width: 24px;
+        height: 24px;
+        vertical-align: middle;
+        margin-right: 5px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+    h1 {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .product-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .product-card {
+      width: calc(33.33% - 20px);
+      margin-bottom: 20px;
+      box-sizing: border-box;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+      .product-card {
+        width: calc(50% - 20px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .product-card {
+        width: calc(100% - 20px);
+      }
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-card img {
+      max-width: 100%;
+      height: auto;
+      max-height: 200px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+
+    .product-card h2 {
+      text-align: center;
+      margin: 15px 0;
+    }
+
+    .go-back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 12px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .go-back-btn:hover {
+        background-color: #0056b3;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+      background-color: #f9f9f9;
+    }
+</style>
+</head>
+<body>
+    <header>
+        <div class="company-info" onclick="goToDashboard()">
+            <img src="../assets/SVGs/title-removebg-preview.png" alt="Company Logo">
+        </div>
+        <nav>
+            <a href="#" class="nav-item" onclick="openHelpPage()">
+                <img src="../assets/SVGs/round-help-button-svgrepo-com.svg" alt="Help Icon">
+                Help
+            </a>
+            <a href="#" class="nav-item" onclick="openContactPage()">
+                <img src="../assets/SVGs/speech-bubbles-svgrepo-com.svg" alt="Contact Icon">
+                Contact Us
+            </a>
+            <a href="#" class="nav-item" onclick="openOrderPage()">
+                <img src="../assets/SVGs/text-documents-svgrepo-com.svg" alt="Orders Icon">
+                My Orders
+            </a>
+            <a href="#" class="nav-item" onclick="openProfilePage()">
+              <img src="../assets/SVGs/profile-button.svg" alt="Profile Icon">
+              Profile
+          </a>
+        </nav>
+    </header>
+
+<div class="container">
+    <!-- Button to go back -->
+    <button class="go-back-btn" onclick="goToDashboard()">
+      <img src="/SVGs/white-go-back-button.png" width="15px" height="12px" alt="GoBack Icon">
+      Go Back
+    </button> 
+    <!-- Title -->
+    <h1>Products</h1>
+
+    <!-- Search Functionality -->
+    <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Search for products..">
+
+    <!-- Product List -->
+    <!-- Inside the product card -->
+    <div id="productList" class="product-list">
+        <!-- Product cards -->
+        <div class="product-card">
+            <a href="dexcom-G6.html" onclick="openDexcomG6()">
+                <img src="/images/dexcom-g6.png" alt="Dexcom G6 Mobile CGM System">
+                <h2>Dexcom G6 Mobile CGM System</h2>
+            </a>
+        </div>
+        
+        <div class="product-card">
+            <a href="dexcom-G7.html" onclick="openDexcomG7()">
+                <img src="/images/dexcom-g7.jpg" alt="Dexcom G7 Mobile CGM System">
+                <h2>Dexcom G7 Mobile CGM System</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="FreeStyle-Libre.html" onclick="openfreestylelibre()">
+                <img src="/images/freestyle.png" alt="FreeStyle Libre">
+                <h2>FreeStyle Libre</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="freestyle3.html" onclick="openfreestyle3()">
+                <img src="/images/freestyle3.jpg" alt="FreeStyle Libre 3 System">
+                <h2>FreeStyle Libre 3 System</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="freestyle2.html" onclick="openfreestyle2()">
+                <img src="/images/freestyle2.png" alt="FreeStyle Libre2">
+                <h2>FreeStyle Libre2</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="omnipod5.html" onclick="openOmnipod5()">
+                <img src="/images/omnipod5.png" alt="Omnipod5">
+                <h2>Omnipod 5 Tubless, automated insulin delivery</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="Tandem-T-slim.html" onclick="openTandemTSlim()">
+                <img src="/images/tandem-basal.jpg" alt="tandem-basal">
+                <h2>Tandem T-slim Basal IQ Insulin Pump</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="Tandem-control.html" onclick="openTandemControl()">
+                <img src="/images/tandem-control.png" alt="tandem-control">
+                <h2>Tandem T-Slim Control IQ Insulin Pump</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="Omnipod-System.html" onclick="openOmnipodSystem()">
+                <img src="/images/omnipod.png" alt="omnipod">
+                <h2>The Omnipod System</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="Accu-Chek-Aviva.html" onclick="openAccuChekAviva()">
+                <img src="/images/accu-check-aviva-plus.jpg" alt="accu-check-aviva-plus">
+                <h2>Accu-Chek Aviva Plus Blood Glucode Test Strips</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="Accu-Chek-SmartView.html" onclick="openAccuChekSmartview()">
+                <img src="/images/accu-chek-smartview.jpg" alt="accu-chek-smartview">
+                <h2>Accu-Chek SmartView Test Strips for Nano</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="Accu-Chek-Blood.html" onclick="openAccuChekBlood()">
+                <img src="/images/accu-check-blood.jpg" alt="accu-check-blood">
+                <h2>Accu-Chek SmartView Blood Glucose Test Strips</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="Ascensia-Contour.html" onclick="openAscensiaContour()">
+                <img src="/images/ascensia-contour.jpg" alt="ascensia-contour">
+                <h2>Ascensia Contour Blood Glucose Test Strips</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="CONTOUR-NEXT.html" onclick="openContourNext()">
+                <img src="/images/contour-next-test.jpg" alt="contour-next-test">
+                <h2>Contour Next Test Strips</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="Contour-Blood.html" onclick="openContourBlood()">
+                <img src="/images/contour-blood.jpg" alt="contour-blood">
+                <h2>Contour Blood Glucose Test Strips</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="EasyMax.html" onclick="openEasyMax()">
+                <img src="/images/GDH-Strip.png" alt="GDH-Strip">
+                <h2>EasyMax GDH Test Strips</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="FreeStyle-Blood.html" onclick="openFreeStyleBlood()">
+                <img src="/images/freestyle-blood.jpg" alt="freestyle-blood">
+                <h2>FreeStyle Blood Glucose Test Strips</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="FREESTYLE-PRECISION.html" onclick="openFreestylePrecision()">
+                <img src="/images/Freestyle-Neo-Test-Strips.jpg" alt="Freestyle-Neo-Test-Strips">
+                <h2>FreeStyle Precision Neo Blood Glucose Test Strips</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="OneTouch-Verio.html" onclick="openOneTouchVerio()">
+                <img src="/images/onetouche-verio.jpg" alt="onetouche-verio">
+                <h2>OneTouch Verio Test Strips</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="OneTouch-Ultra.html" onclick="openOneTouchUltra()">
+                <img src="/images/onetouch-ultra.jpg" alt="onetouch-ultra">
+                <h2>OneTouch Ultra 2 Blood Glucose Test Strips</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="OneTouch-Ultra-Blue-Blood.html" onclick="openOneTouchultraBlueBlood()">
+                <img src="/images/onetouch-ultra-blood.jpg" alt="onetouch-ultra-blood">
+                <h2>OneTouch Ultra Blue Blood Glucose Test Strip</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="Prodigy.html" onclick="openProdigy()">
+                <img src="/images/Prodigy-Test-Strips.jpg" alt="Prodigy-Test-Strips">
+                <h2>Prodigy No Coding Blood Glucose Test Strips</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="Accu-Chek.html" onclick="openAccuChek()">
+                <img src="/images/accu-chek-guideme.jpg" alt="accu-chek-guideme">
+                <h2>Accu-Chek Guide Me Meter</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="Contour-Blood-Meter.html" onclick="openContourBloodMeter()">
+                <img src="/images/contour-blood-meter.jpg" alt="contour-blood-meter">
+                <h2>Contour Blood Glucose Meter</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="EasyMax-NG.html" onclick="openEasyMaxNG()">
+                <img src="/images/easymax-blood-meter.png" alt="easymax-blood-meter">
+                <h2>EasyMax NG Blood Meter</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="OneTouch-Verio-Flex.html" onclick="openOneTouchVerioFlex()">
+                <img src="/images/onetouch-meter.jpg" alt="onetouch-meter">
+                <h2>OneTouch Verio Flex Blood Glucose Meter</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="OneTouch-Verio-Flex-meter.html" onclick="openOneTouchVerioFlexMeter()">
+                <img src="/images/one_touch_verio_flex.jpg" alt="one_touch_verio_flex">
+                <h2>OneTouch Verio Flex Meter</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="OneTouch-Verio-IQ.html" onclick="openOneTouchVerioIQ()">
+                <img src="/images/onetouch-verio-iq-meter.jpg" alt="onetouch-verio-iq-meter">
+                <h2>OneTouch Verio IQ Meter</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="OneTouch-Verio-meter.html" onclick="openOneTouchVerioMeter()">
+                <img src="/images/One-Touch-Verio.jpg" alt="One-Touch-Verio">
+                <h2>OneTouch Verio Meter</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="OneTouch-UltraMini.html" onclick="openOneTouchUltraMini()">
+                <img src="/images/onetouch-mini-meter.jpg" alt="onetouch-mini-meter">
+                <h2>OneTouch UltraMini Meter</h2>
+            </a>
+        </div>
+
+        <div class="product-card">
+            <a href="Ketostix.html" onclick="openKetostix()">
+                <img src="/images/ketostix.jpg" alt="ketostix">
+                <h2>Ketostix Urine Reagent Strip</h2>
+            </a>
+        </div>
+    </div>
+
+  </div>
+
+  <script>
+    //function to open ketostix details page
+    function openKetostix(){
+        window.location.href="Ketostix.html";
+    }
+    
+    //function to open onetouch ultramini details page
+    function openOneTouchUltraMini(){
+        window.location.href="OneTouch-UltraMini.html";
+    }
+
+    //function to open onetouch verio meter details page
+    function openOneTouchVerioMeter(){
+        window.location.href="OneTouch-Verio-meter.html";
+    }
+
+    //function to open onetouch verio iq details page
+    function openOneTouchVerioIQ(){
+        window.location.href="OneTouch-Verio-IQ.html";
+    }
+
+    //function to open onetouch verio flex meter details page
+    function openOneTouchVerioFlexMeter(){
+        window.location.href="OneTouch-Verio-Flex-meter.html";
+    }
+
+    //function to open OneTouch Verio Flex details page
+    function openOneTouchVerioFlex(){
+        window.location.href="OneTouch-Verio-Flex.html";
+    }
+
+    //function to open EasyMaxNG details page
+    function openEasyMaxNG(){
+        window.location.href="Easymax-NG.html";
+    }
+
+    //function to open Contour Blood Meter details page
+    function openContourBloodMeter(){
+        window.location.href="Contour-Blood-Meter.html";
+    }
+
+    //function to open Accu-Chek details page
+    function openAccuChek(){
+        window.location.href="Accu-Chek.html";
+    }
+
+    //function to open prodigy details page
+    function openProdigy(){
+        window.location.href="Prodigy.html";
+    }
+
+    //function to open onetouch ultra blue blood details page
+    function openOneTouchultraBlueBlood(){
+        window.location.href="OneTouch-Ultra-Blue-Blood.html";
+    }
+
+    //function to open onetouch ultra details page
+    function openOneTouchUltra(){
+        window.location.href="OneTouch-Ultra.html";
+    }
+
+    //function to open OneTouch Verio details page
+    function openOneTouchVerio(){
+        window.location.href="OneTouch-Verio.html";
+    }
+
+    //function to open FreeStyle Precision details page
+    function openFreestylePrecision(){
+        window.location.href="FREESTYLE-PRECISION.html";
+    }
+
+    //function to open FreeStyleBlood details page
+    function openFreeStyleBlood(){
+        window.location.href="FreeStyle-Blood.html";
+    }
+
+    //function to open EasyMax details page
+    function openEasyMax(){
+        window.location.href="EasyMax.html";
+    }
+
+    //function to open contour blood details page
+    function openContourBlood(){
+        window.location.href="Contour-Blood.html";
+    }
+
+    //function to open contour next details page
+    function openContourNext(){
+        window.location.href="CONTOUR-NEXT.html";
+    }
+
+    //function to open ascensia contour details page
+    function openAscensiaContour(){
+        window.location.href="Ascensia-Contour.html";
+    }
+    
+    //function to open accu chek blood details page
+    function openAccuChekBlood(){
+        window.location.href="Accu-Chek-Blood.html";
+    }
+
+    //function to open accu chek smartview details page
+    function openAccuChekSmartview(){
+        window.location.href="Accu-Chek-Smartview.html";
+    }
+
+    //function to  open accu chek aviva details page
+    function openAccuChekAviva(){
+        window.location.href="Accu-Chek-Aviva.html";
+    }
+
+    //function to open omnipod system details page
+    function openOmnipodSystem(){
+        window.location.href="Omnipod-System.html";
+    }
+
+    //function to open tandem control details page
+    function openTandemControl(){
+        window.location.href="Tandem-control.html";
+    }
+
+    //function to open tandem t slim details page
+    function openTandemTSlim(){
+        window.location.href = "Tandem-T-slim.html";
+    }
+
+    //function to open omnipod5 details page
+    function openOmnipod5(){
+        window.location.href="omnipod5.html";
+    }
+
+    //function to open freestyle2 details page
+    function openfreestyle2(){
+        window.location.href="freestyle2.html";
+    }
+
+    //function to open freestyle3 details page
+    function openfreestyle3(){
+        windown.location.href="freestyle3.html";
+    }
+
+    //function to open freestyle libre details page
+    function openfreestylelibre(){
+        window.location.href="Freestyle-Libre.html";
+    }
+
+    // Function to open dexcom-g6 product details page
+    function openDexcomG6() {
+        window.location.href = "dexcom-G6.html";
+    }
+
+    //function to open dexcom-g7 product details page
+    function openDexcomG7(){
+        window.location.href ="dexcom-G7.html"
+    }
+    // Function to search products
+    function searchProducts() {
+        const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+        const productCards = document.querySelectorAll(".product-card");
+
+        productCards.forEach(card => {
+            const productName = card.querySelector("h2").innerText.toLowerCase();
+            if (productName.includes(searchTerm)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+
+    // Function to open the order page
+    function openOrderPage() {
+        window.location.href = "orders.html";
+    }
+
+    // Function to go back to the patient dashboard
+    function goToDashboard() {
+        window.location.href = "patientdashboard.html";
+    }
+
+    // Function to open the contact page
+    function openContactPage() {
+        window.location.href = "contact.html";
+    }
+
+    // Function to open the help page
+    function openHelpPage() {
+        window.location.href = "help.html";
+    }
+
+    // Function to open the profile page
+    function openProfilePage() {
+        window.location.href = "profile.html";
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./src/css/index.css">
+  <title>Appointments</title>
+  <style>
+    /* General Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #dbd7d7;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .company-info img {
+            max-width: 300px;
+            height: auto;
+            cursor: pointer;
+        }
+
+    /* Header Styles */
+    header {
+        background-color: #007bff;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .company-info img {
+        max-width: 300px;
+        height: auto;
+    }
+
+    nav {
+        margin-top: 20px;
+        text-align: right;
+    }
+
+    .nav-item {
+        display: inline-block;
+        margin-left: 20px;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .nav-item img {
+        width: 24px;
+        height: 24px;
+        vertical-align: middle;
+        margin-right: 5px;
+    }
+
+    /* Form Styles */
+    form {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    button[type="button"] {
+      width: calc(50% - 15px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    button[type="button"] {
+      width: 100%;
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button[type="button"]:hover {
+      background-color: #0056b3;
+    }
+
+    h1 {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+
+    /* Appointments List Styles */
+    #appointmentList {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+    }
+
+    #appointmentList div {
+      margin-bottom: 5px;
+      padding: 8px;
+      border-radius: 4px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .go-back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 12px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .go-back-btn:hover {
+        background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="company-info" onclick="goToDashboard()">
+        <img src="../assets/SVGs/title-removebg-preview.png" alt="Company Logo">
+    </div>
+    <nav>
+        <a href="#" class="nav-item" onclick="openHelpPage()">
+            <img src="../assets/SVGs/round-help-button-svgrepo-com.svg" alt="Help Icon">
+            Help
+        </a>
+        <a href="#" class="nav-item" onclick="openContactPage()">
+            <img src="../assets/SVGs/speech-bubbles-svgrepo-com.svg" alt="Contact Icon">
+            Contact Us
+        </a>
+        <a href="#" class="nav-item" onclick="openOrderPage()">
+            <img src="../assets/SVGs/text-documents-svgrepo-com.svg" alt="Orders Icon">
+            My Orders
+        </a>
+        <a href="#" class="nav-item" onclick="openProfilePage()">
+          <img src="../assets/SVGs/profile-button.svg" alt="Profile Icon">
+          Profile
+      </a>
+    </nav>
+</header>
+
+    <div class="container">
+        <button class="go-back-btn" onclick="goToDashboard()">
+          <img src="/SVGs/white-go-back-button.png" width="15px" height="12px" alt="GoBack Icon">
+          Go Back</button> 
+        <h1>Appointments</h1>
+
+        <!-- New Appointment Form -->
+        <form id="newAppointmentForm">
+          <input type="text" id="appointmentTitle" name="appointmentTitle" placeholder="Title" required>
+          <input type="date" id="appointmentDate" name="appointmentDate" required>
+          <input type="time" id="appointmentTime" name="appointmentTime" required>
+          <button type="button" onclick="makeAppointment()">Make Appointment</button>
+        </form>
+
+        <!-- Appointments List -->
+        <div id="appointmentList">
+          <!-- List of appointments will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+      // Function to go back to the patient dashboard
+    function goToDashboard() {
+        window.location.href = "patientdashboard.html";
+    }
+      //Function to open the order page
+    function openOrderPage(){
+      window.location.href = "orders.html";
+    }
+    // Function to open the contact page
+    function openContactPage() {
+        window.location.href = "contact.html";
+    }
+
+    // Function to open the help page
+    function openHelpPage() {
+        window.location.href = "help.html";
+    }
+
+    // Function to open the profile page
+    function openProfilePage() {
+        window.location.href = "profile.html";
+    }
+      // Dummy data for appointments (replace with your actual data)
+      let appointments = [
+        { title: "Appointment 1", start: "2024-02-14 09:00" },
+        { title: "Appointment 2", start: "2024-02-15 10:30" },
+        { title: "Appointment 3", start: "2024-02-16 14:00" },
+        // Add more appointments as needed
+      ];
+
+      // Function to display appointments
+      function displayAppointments() {
+        const appointmentList = document.getElementById("appointmentList");
+        appointmentList.innerHTML = ""; // Clear existing content
+
+        appointments.forEach(appointment => {
+          const appointmentItem = document.createElement("div");
+          appointmentItem.textContent = appointment.title + " - " + appointment.start;
+          appointmentList.appendChild(appointmentItem);
+        });
+      }
+
+      // Function to make a new appointment
+      function makeAppointment() {
+        const title = document.getElementById("appointmentTitle").value;
+        const date = document.getElementById("appointmentDate").value;
+        const time = document.getElementById("appointmentTime").value;
+        const dateTime = date + " " + time;
+        appointments.push({ title: title, start: dateTime });
+        displayAppointments();
+        // Clear form fields after making appointment
+        document.getElementById("appointmentTitle").value = "";
+        document.getElementById("appointmentDate").value = "";
+        document.getElementById("appointmentTime").value = "";
+      }
+
+      // Function to go back to dashboard
+      function goToDashboard() {
+        // Assuming the patient dashboard URL is '/dashboard.html'
+        window.location.href = '/patientdashboard.html';
+      }
+
+      // Call displayAppointments function initially to display existing appointments
+      displayAppointments();
+    </script>
+</body>
+</html>

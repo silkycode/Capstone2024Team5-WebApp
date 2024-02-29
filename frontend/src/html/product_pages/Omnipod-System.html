@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./src/css/index.css">
+  <title>The Omnipod System</title>
+  <style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #dbd7d7;
+    }
+
+    header {
+        background-color: #007bff;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .company-info img {
+        max-width: 300px;
+        height: auto;
+    }
+
+    nav {
+        margin-top: 20px;
+    }
+
+    .nav-item {
+        display: inline-block;
+        margin-right: 20px;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .nav-item img {
+        width: 24px;
+        height: 24px;
+        vertical-align: middle;
+        margin-right: 5px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+    h1 {
+        margin-top: 50px;
+        text-align: left;
+    }
+
+    .go-back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 12px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .go-back-btn:hover {
+        background-color: #0056b3;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+      background-color: #f9f9f9;
+    }
+    
+  </style>
+</head>
+<body>
+    <header>
+        <div class="company-info" onclick="goToDashboard()">
+            <img src="/SVGs/title-removebg-preview.png" alt="Company Logo">
+        </div>
+        <nav>
+            <a href="#" class="nav-item" onclick="openHelpPage()">
+                <img src="/SVGs/round-help-button-svgrepo-com.svg" alt="Help Icon">
+                Help
+            </a>
+            <a href="#" class="nav-item" onclick="openContactPage()">
+                <img src="/SVGs/speech-bubbles-svgrepo-com.svg" alt="Contact Icon">
+                Contact Us
+            </a>
+            <a href="#" class="nav-item" onclick="openOrderPage()">
+                <img src="/SVGs/text-documents-svgrepo-com.svg" alt="Orders Icon">
+                My Orders
+            </a>
+            <a href="#" class="nav-item" onclick="openProfilePage()">
+              <img src="/SVGs/profile-button.svg" alt="Profile Icon">
+              Profile
+          </a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Button to go back -->
+        <button class="go-back-btn" onclick="goBack()">
+            <img src="/SVGs/white-go-back-button.png" width="15px" height="12px" alt="GoBack Icon">
+            Go Back
+        </button>
+        
+        <!-- Title -->
+        <h1>The Omnipod System</h1>
+        <img src="/images/omnipod.png" style="max-width: 100%; height: auto">
+        <h2>AN INNOVATIVE APPROACH TO CONTINUOUS INSULIN DELIVERY</h2>
+        <p>The Omnipod System provides all the benefits of insulin pump therapy while providing more flexibility and freedom than other traditional tubed pumps.</p>
+        <h2>CUSTOMIZABLE INSULIN DELIVERY SETTINGS TO GIVE YOU WHAT YOU NEED, WHEN YOU NEED IT.</h2>
+        <p>Insulin pumps work by continuously delivering insulin at set and variable rates, mimicking the insulin release of a healthy pancreas. The Omnipod® System delivers insulin in two ways:</p>
+        <p>Basal rate: A small, constant supply of insulin is delivered automatically at a personalized, preset rate around the clock.</p>
+        <p>Bolus: Additional doses of insulin can be delivered when you need them, either around mealtime or to correct high blood glucose.</p>
+        <h2>MAKE DIABETES A SMALLER PART OF YOUR LIFE.</h2>
+        <p>When you wake up every morning to another day of diabetes, it’s good to know that you have the Omnipod® System to help you get through it. With a little less difficulty and stress. And some level of freedom from all the challenges that diabetes throws at you.
+
+            The Omnipod® System consists of a tubeless, waterproof1 insulin pump—we call it a Pod— that supplies insulin to your body continuously. You control the amount and flow rate of insulin through a wireless device, your Personal Diabetes Manager (PDM). Because your PDM communicates wirelessly to a Pod that contains up to 72 hours of insulin, there are no wires or tubes to contend with.
+            
+            </p>
+        <img src ="/products/Omnipod System/IM311_ErosFillPod_smCC-640x427.jpg" style="max-width: 100%; height: auto">
+        <h2>STEP 1. FILL THE POD.</h2>
+        <p>The Pod automatically primes itself and performs a series of safety checks to prepare for insulin delivery.</p>
+        <img src ="/products/Omnipod System/IM127b_ErosApply2_smV1-640x428.jpg" style="max-width: 100%; height: auto">
+        <h2>STEP 2. APPLY THE POD.</h2>
+        <p>Place your Pod almost anywhere you would give yourself an injection.</p>
+        <img src= "/products/Omnipod System/IM278_ErosPressStart_U_smCC-NEW_0-640x428.jpg" style="max-width: 100%; height: auto">
+        <h2>STEP 3. PRESS START.</h2>
+        <p>The cannula inserts automatically and insulin delivery begins at the touch of a button.</p>
+
+    <!-- Your JavaScript code if needed -->
+
+    <script>
+        // Function to go back to the patient dashboard
+    function goToDashboard() {
+        window.location.href = "patientdashboard.html";
+    }
+    //Function to open the order page
+    function openOrderPage(){
+        window.location.href = "orders.html";
+    }
+
+    // Function to open the contact page
+    function openContactPage() {
+        window.location.href = "contact.html";
+    }
+
+    // Function to open the help page
+    function openHelpPage() {
+        window.location.href = "help.html";
+    }
+
+    // Function to open the profile page
+    function openProfilePage() {
+        window.location.href ="profile.html";
+    }
+    // Function to go back to the previous page
+    function goBack() {
+        window.history.back();
+    }
+    </script>
+</body>
+</html>

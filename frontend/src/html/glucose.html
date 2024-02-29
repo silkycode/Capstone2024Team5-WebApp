@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./src/css/index.css">
+  <script src="./glucose.js"></script>
+  <title>Glucose Log Tracker</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #dbd7d7;
+    }
+
+    header {
+      background-color: #007bff;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      color: #fff;
+    }
+
+    .company-info img {
+            max-width: 300px;
+            height: auto;
+            cursor: pointer;
+        }
+
+    nav {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .nav-item {
+      display: inline-block;
+      margin-right: 20px;
+      color: #333;
+      text-decoration: none;
+    }
+
+    .nav-item img {
+      width: 24px;
+      height: 24px;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin-top: 20px;
+      color: #007bff;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    form label, form input[type="number"], form input[type="date"], form input[type="time"] {
+      flex-basis: calc(50% - 10px);
+    }
+
+    form button {
+      flex-basis: 100%;
+      margin-top: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    form button:hover {
+      background-color: #007bff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    .go-back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 12px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .go-back-btn:hover {
+      background-color: #303F9F;
+    }
+
+    .edit-button, .record-button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .edit-button:hover, .record-button:hover {
+      background-color: #007bff;
+    }
+
+    .edit-button {
+      background-color: #FFC107;
+    }
+
+    .confirm-button {
+      background-color: #ffffff;
+    }
+
+    @media (max-width: 768px) {
+      form label, form input[type="number"], form input[type="date"], form input[type="time"] {
+        flex-basis: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="company-info" onclick="goToDashboard()">
+        <img src="../assets/SVGs/title-removebg-preview.png" alt="Company Logo">
+    </div>
+    <nav>
+        <a href="#" class="nav-item" onclick="openHelpPage()">
+            <img src="../assets/SVGs/round-help-button-svgrepo-com.svg" alt="Help Icon">
+            Help
+        </a>
+        <a href="#" class="nav-item" onclick="openContactPage()">
+            <img src="../assets/SVGs/speech-bubbles-svgrepo-com.svg" alt="Contact Icon">
+            Contact Us
+        </a>
+        <a href="#" class="nav-item" onclick="openOrderPage()">
+            <img src="../assets/SVGs/text-documents-svgrepo-com.svg" alt="Orders Icon">
+            My Orders
+        </a>
+        <a href="#" class="nav-item" onclick="openProfilePage()">
+          <img src="../assets/SVGs/profile-button.svg" alt="Profile Icon">
+          Profile
+      </a>
+    </nav>
+</header>
+
+  <div class="container">
+    <button class="go-back-btn" onclick="goBack()">
+      <img src="/SVGs/white-go-back-button.png" width="15px" height="12px" alt="GoBack Icon">
+      Go Back</button> 
+    <h1>Glucose Log Tracker</h1>
+
+    <form id="glucoseForm">
+      <label for="date">Date:</label>
+      <input type="date" id="date" name="date" required>
+
+      <label for="time">Time:</label>
+      <input type="time" id="time" name="time" required>
+
+      <label for="glucoseLevel">Glucose Level (mg/dL):</label>
+      <input type="number" id="glucoseLevel" name="glucoseLevel" required>
+
+      <button type="button" class="record-button" onclick="recordLog()">Record Log</button>
+    </form>
+
+    <h2>Glucose Logs</h2>
+    <table id="glucoseTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Glucose Level (mg/dL)</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Glucose logs will be displayed here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    //Function to open the order page
+    function openOrderPage(){
+      window.location.href = "orders.html";
+    }
+
+    // Function to go back to the patient dashboard
+    function goToDashboard() {
+        window.location.href = "patientdashboard.html";
+    }
+
+    // Function to open the contact page
+    function openContactPage() {
+        window.location.href = "contact.html";
+    }
+
+    // Function to open the help page
+    function openHelpPage() {
+        window.location.href = "help.html";
+    }
+
+    // Function to open the profile page
+    function openProfilePage() {
+        window.location.href = "profile.html";
+    }
+
+    function recordLog() {
+      var date = document.getElementById("date").value;
+      var time = document.getElementById("time").value;
+      var glucoseLevel = document.getElementById("glucoseLevel").value;
+
+      var newRow = document.createElement("tr");
+      newRow.innerHTML = `
+        <td>${date}</td>
+        <td>${time}</td>
+        <td>${glucoseLevel}</td>
+        <td><button class="edit-button" onclick="editLog(this)">Edit</button></td>
+      `;
+
+      document.getElementById("glucoseTable").getElementsByTagName('tbody')[0].appendChild(newRow);
+      document.getElementById("glucoseForm").reset();
+    }
+
+    function goBack() {
+      window.history.back();
+    }
+
+    function editLog(button) {
+      var row = button.parentNode.parentNode;
+      var cells = row.getElementsByTagName("td");
+
+      var currentDate = cells[0].textContent;
+      var currentTime = cells[1].textContent;
+      var currentGlucoseLevel = cells[2].textContent;
+
+      cells[0].innerHTML = '<input type="date" value="' + currentDate + '">';
+      cells[1].innerHTML = '<input type="time" value="' + currentTime + '">';
+      cells[2].innerHTML = '<input type="number" value="' + currentGlucoseLevel + '">';
+
+      button.textContent = "Confirm";
+      button.setAttribute("onclick", "confirmEdit(this)");
+      button.classList.remove("edit-button");
+      button.classList.add("confirm-button");
+    }
+
+    function confirmEdit(button) {
+      var row = button.parentNode.parentNode;
+      var cells = row.getElementsByTagName("td");
+
+      var newDate = cells[0].querySelector("input").value;
+      var newTime = cells[1].querySelector("input").value;
+      var newGlucoseLevel = cells[2].querySelector("input").value;
+
+      cells[0].textContent = newDate;
+      cells[1].textContent = newTime;
+      cells[2].textContent = newGlucoseLevel;
+
+      button.textContent = "Edit";
+      button.setAttribute("onclick", "editLog(this)");
+      button.classList.remove("confirm-button");
+      button.classList.add("edit-button");
+    }
+  </script>
+</body>
+</html>

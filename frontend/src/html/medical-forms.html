@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical Forms</title>
+  <style>
+    /* General Styles */
+    body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #dbd7d7;
+            color: #333;
+        }
+
+        header {
+            background-color: #007bff;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .company-info img {
+            max-width: 300px;
+            height: auto;
+            cursor: pointer;
+        }
+
+        nav {
+            text-align: right;
+        }
+
+        .nav-item {
+            display: inline-block;
+            margin-left: 20px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .nav-item img {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+    h1 {
+        margin-top: 20px;
+        text-align: center; 
+        color: #007bff
+    }
+
+    .product-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .product-card {
+      width: calc(50% - 50px);
+      margin-bottom: 20px;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-card h2 {
+      text-align: center;
+    }
+
+    .product-card p {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .download-link {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .download-link:hover {
+      text-decoration: underline;
+    }
+
+    .go-back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 12px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .go-back-btn:hover {
+        background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="company-info" onclick="goToDashboard()">
+        <img src="../assets/SVGs/title-removebg-preview.png" alt="Company Logo">
+    </div>
+    <nav>
+        <a href="#" class="nav-item" onclick="openHelpPage()">
+            <img src="../assets/SVGs/round-help-button-svgrepo-com.svg" alt="Help Icon">
+            Help
+        </a>
+        <a href="#" class="nav-item" onclick="openContactPage()">
+            <img src="../assets/SVGs/speech-bubbles-svgrepo-com.svg" alt="Contact Icon">
+            Contact Us
+        </a>
+        <a href="#" class="nav-item" onclick="openOrderPage()">
+            <img src="../assets/SVGs/text-documents-svgrepo-com.svg" alt="Orders Icon">
+            My Orders
+        </a>
+        <a href="#" class="nav-item" onclick="openProfilePage()">
+          <img src="../assets/SVGs/profile-button.svg" alt="Profile Icon">
+          Profile
+      </a>
+    </nav>
+</header>
+
+<div class="container">
+    <!-- Button to go back -->
+    <button class="go-back-btn" onclick="goToDashboard()">
+      <img src="/SVGs/white-go-back-button.png" width="15px" height="12px" alt="GoBack Icon">
+      Go Back
+    </button> 
+    <!-- Title -->
+    <h1>Medical Forms</h1>
+
+    <!-- Medical Forms List -->
+    <div class="product-list">
+      <!-- Medicaid/Commerical CMN -->
+      <div class="product-card">
+        <h2>Medicaid/Commercial CMN</h2>
+        <p>Form needed for Diabetic products and supplies</p>
+        <a href="/PDF/AIM-Medicaid_Commericial-CMN-11_23.pdf" class="download-link" download>Download PDF</a>
+      </div>
+
+      <!-- Medicare CMN -->
+      <div class="product-card">
+        <h2>Medicare CMN</h2>
+        <p>Form needed for Diabetic products and supplies</p>
+        <a href="/PDF/AIM-Medicare-CMN-5_9_23.pdf" class="download-link" download>Download PDF</a>
+      </div>
+    </div>
+</div>
+
+<script>
+  //Function to open the order page
+  function openOrderPage(){
+      window.location.href = "orders.html";
+    }
+
+  // Function to open the contact page
+  function openContactPage() {
+        window.location.href = "contact.html";
+    }
+
+    // Function to open the help page
+    function openHelpPage() {
+        window.location.href = "help.html";
+    }
+
+    // Function to open the profile page
+    function openProfilePage() {
+        window.location.href = "profile.html";
+    }
+    
+  // Dummy function to simulate navigation
+  function goToDashboard() {
+    // Assuming the patient dashboard URL is '/dashboard.html'
+    window.location.href = '/patientdashboard.html';
+  }
+</script>
+</body>
+</html>

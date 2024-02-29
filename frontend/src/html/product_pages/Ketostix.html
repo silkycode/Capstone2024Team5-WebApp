@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./src/css/index.css">
+  <title>Ketostix Urine Reagent Strip</title>
+  <style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #dbd7d7;
+    }
+
+    header {
+        background-color: #007bff;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .company-info img {
+        max-width: 300px;
+        height: auto;
+    }
+
+    nav {
+        margin-top: 20px;
+    }
+
+    .nav-item {
+        display: inline-block;
+        margin-right: 20px;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .nav-item img {
+        width: 24px;
+        height: 24px;
+        vertical-align: middle;
+        margin-right: 5px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+    h1 {
+        margin-top: 50px;
+        text-align: left;
+    }
+
+    .go-back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 12px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .go-back-btn:hover {
+        background-color: #0056b3;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+      background-color: #f9f9f9;
+    }
+    
+  </style>
+</head>
+<body>
+    <header>
+        <div class="company-info" onclick="goToDashboard()">
+            <img src="/SVGs/title-removebg-preview.png" alt="Company Logo">
+        </div>
+        <nav>
+            <a href="#" class="nav-item" onclick="openHelpPage()">
+                <img src="/SVGs/round-help-button-svgrepo-com.svg" alt="Help Icon">
+                Help
+            </a>
+            <a href="#" class="nav-item" onclick="openContactPage()">
+                <img src="/SVGs/speech-bubbles-svgrepo-com.svg" alt="Contact Icon">
+                Contact Us
+            </a>
+            <a href="#" class="nav-item" onclick="openOrderPage()">
+                <img src="/SVGs/text-documents-svgrepo-com.svg" alt="Orders Icon">
+                My Orders
+            </a>
+            <a href="#" class="nav-item" onclick="openProfilePage()">
+              <img src="/SVGs/profile-button.svg" alt="Profile Icon">
+              Profile
+          </a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Button to go back -->
+        <button class="go-back-btn" onclick="goBack()">
+            <img src="/SVGs/white-go-back-button.png" width="15px" height="12px" alt="GoBack Icon">
+            Go Back
+        </button>
+        
+        <!-- Title -->
+        <h1>Ketostix® Urine Reagent Strip</h1>
+        <img src="/images/ketostix.jpg" style="max-width: 100%; height: auto">
+        <p>Tests Urine for Ketones</p>
+        <ul>
+            <li>Used by Diabetics</li>
+            <li>Used to Track Increased Metabolism</li>
+            <li>Can Help Maintain Healthy Diet Regimen</li>
+          </ul>
+
+    <!-- Your JavaScript code if needed -->
+
+    <script>
+        // Function to go back to the patient dashboard
+    function goToDashboard() {
+        window.location.href = "patientdashboard.html";
+    }
+    //Function to open the order page
+    function openOrderPage(){
+        window.location.href = "orders.html";
+    }
+
+    // Function to open the contact page
+    function openContactPage() {
+        window.location.href = "contact.html";
+    }
+
+    // Function to open the help page
+    function openHelpPage() {
+        window.location.href = "help.html";
+    }
+
+    // Function to open the profile page
+    function openProfilePage() {
+        window.location.href ="profile.html";
+    }
+    // Function to go back to the previous page
+    function goBack() {
+        window.history.back();
+    }
+    </script>
+</body>
+</html>
