@@ -19,6 +19,8 @@ For database things:
 
     `sqlite3 users.db ".read make_userDB.sql"` inside ./database to generate an empty users database that you can fill for dev testing
 
+Have two separate terminals running the Flask server and the vite dev server -- they both need to be running in order to interact (VS code can open multiple terminals)
+
 Current tasks:
 
     Continue migrating HTML and JS to React components
