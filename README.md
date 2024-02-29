@@ -6,6 +6,7 @@ For Flask:
         On Windows: `venv\Scripts\activate`
         On Unix or MacOS: `source venv/bin/activate`
     Install dependencies: `pip install -r requirements.txt`
+    Run server: python app.py
     Deactive virtual environment with:
         `deactivate`
 
