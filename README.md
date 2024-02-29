@@ -7,7 +7,7 @@ For Flask:
         'deactivate'
 
 For node:
-	
+
 	"npm install" after cloning this project to install dependencies (run this while inside the frontend folder)
 	"npm run dev" inside ./frontend to start vite development server
 
