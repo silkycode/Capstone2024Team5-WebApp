@@ -29,4 +29,4 @@ function AimPlusMedicalSupplies() {
   )
 }
 
-export default AimPlusMedicalSupplies
+export default AimPlusMedicalSupplies;
