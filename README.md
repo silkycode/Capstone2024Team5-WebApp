@@ -3,10 +3,10 @@ For Flask:
     create a virtual environment (assuming you have Python installed):
         `python -m venv venv`
     Activate the virtual environment:
-        On Windows: `venv\Scripts\activate`
+        On Windows: `.\venv\Scripts\activate`
         On Unix or MacOS: `source venv/bin/activate`
     Install dependencies: `pip install -r requirements.txt`
-    Run server: python app.py
+    Run server: `python app.py`
     Deactive virtual environment with:
         `deactivate`
 
