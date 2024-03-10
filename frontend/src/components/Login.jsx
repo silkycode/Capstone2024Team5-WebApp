@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Avatar,
@@ -13,11 +13,44 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 export default function Login({ setIsLoggedIn }) {
     const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        email: '',
+        password: '',
+    });
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }));
+    };
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        // placeholder for UI debugging, remember to return to API validation
-        setIsLoggedIn(true);
+        try {
+            const response = await fetch('http://127.0.0.1:5000/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.status === 'success') {
+                    console.log(data)
+                    setIsLoggedIn(true);
+                } else {
+                    console.error('Login issue');
+                }
+            } else {
+                console.error('HTTP error - ', response.status);
+            }
+        } catch (error) {
+            console.error('Some error during login:', error);
+        }
     };
   
     return (
@@ -47,6 +80,7 @@ export default function Login({ setIsLoggedIn }) {
                         name="email"
                         autoComplete="email"
                         autoFocus
+                        onChange={handleInputChange}
                     />
                     <TextField
                         margin="normal"
@@ -57,6 +91,7 @@ export default function Login({ setIsLoggedIn }) {
                         type="password"
                         id="password"
                         autoComplete="current-password"
+                        onChange={handleInputChange}
                     />
                     <Button
                         type="submit"

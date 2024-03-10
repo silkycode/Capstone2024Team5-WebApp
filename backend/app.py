@@ -3,8 +3,9 @@ from flask_cors import CORS
 import os
 import base64
 import sqlite3
+from routes.auth_routes import auth_routes
 from config import Config
-from routes import auth, debug
+from routes import debug
 from models.users import db
 
 app = Flask(__name__)
@@ -16,11 +17,7 @@ db.init_app(app)
 # General debugging API, response verifies API host is running
 app.add_url_rule('/api/debug', view_func=debug.debug, methods=['GET'])
 
-# Handle user login call
-app.add_url_rule('/api/login', view_func=auth.login, methods=['POST'])
-
-# Handle user forgot password request
-app.add_url_rule('/api/forgot_password', view_func=auth.forgot_password, methods=['POST'])
+app.register_blueprint(auth_routes, url_prefix='/auth')
 
 def get_db_connection():
     database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'products.db')
