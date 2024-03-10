@@ -13,6 +13,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 export default function Login({ setIsLoggedIn }) {
     const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -44,9 +45,10 @@ export default function Login({ setIsLoggedIn }) {
                     setIsLoggedIn(true);
                 } else {
                     console.error('Login issue');
+                    console.log(data)
                 }
             } else {
-                console.error('HTTP error - ', response.status);
+                console.error('HTTP error:', response.status);
             }
         } catch (error) {
             console.error('Some error during login:', error);
@@ -70,7 +72,7 @@ export default function Login({ setIsLoggedIn }) {
                 <Typography component="h1" variant="h5">
                 Welcome!
                 </Typography>
-                <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }}>
+                <Box component="form" noValidate onSubmit={handleLogin} sx={{ mt: 1 }}>
                     <TextField
                         margin="normal"
                         required

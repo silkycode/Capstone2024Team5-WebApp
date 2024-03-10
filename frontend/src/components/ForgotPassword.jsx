@@ -14,21 +14,47 @@ import EmailIcon from '@mui/icons-material/Email';
 
 export default function ForgotPassword() {
     const navigate = useNavigate();
+
     const [showSnackbar, setShowSnackbar] = useState(false);
     const [validEmail, setValidEmail] = useState(false);
+    const [formData, setFormData] = useState({
+        email: '',
+    });
 
-    const handleForgotPwd = async (e) => {
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const email = e.target.email.value;
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        try {
+            const response = await fetch('http://127.0.0.1:5000/auth/forgot-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
 
-        if (!emailRegex.test(email)) {
-          setShowSnackbar(true);
-          setValidEmail(false);
-          return;
+            if (response.ok) {
+                const data = await response.json();
+                if (data.status === 'success') {
+                    setValidEmail(true);
+                    setShowSnackbar(true);
+                } else {
+                    setValidEmail(false);
+                    setShowSnackbar(true);
+                }
+            } else {
+              console.error('HTTP error:', response.status)
+            }
+        } catch (error) {
+            console.error('Error during submission:', error);
         }
-        setValidEmail(true);
-        setShowSnackbar(true);
     };
   
     return (
@@ -48,7 +74,7 @@ export default function ForgotPassword() {
             <Typography component="h1" variant="h5">
               Forgot password? We can help!
             </Typography>
-            <Box component="form" noValidate onSubmit={handleForgotPwd} sx={{ mt: 1 }}>
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
                 margin="normal"
                 required
@@ -58,6 +84,7 @@ export default function ForgotPassword() {
                 name="email"
                 autoComplete="email"
                 autoFocus
+                onChange={handleInputChange}
               />
               <Button
                 type="submit"
@@ -81,7 +108,7 @@ export default function ForgotPassword() {
                 autoHideDuration={6000}
                 onClose={() => setShowSnackbar(false)}
                 message={
-                  <span style={{ fontSize: '22px' }}>
+                  <span style={{ fontSize: '22px', fontWeight: 'bold' }}>
                     {validEmail ? "Thank you! Check your email for recovery options." : "Please enter a valid email address."}
                   </span>
               }
