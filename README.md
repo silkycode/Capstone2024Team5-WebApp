@@ -23,9 +23,6 @@ Have two separate terminals running the Flask server and the vite dev server -- 
 
 Current tasks:
 
-    Continue migrating HTML and JS to React components
-        Registration form
-        Remember to add routing for new page states (like new pages)
-    Extend tables within users.db to have more page things like glucose logs, product information
-    Write more API responses in Flask for other database interactions
-        Flesh out security of username/password validation
+    - Registration API endpoint
+    - User profile db
+    - Product page implementation and dynamic information loading
