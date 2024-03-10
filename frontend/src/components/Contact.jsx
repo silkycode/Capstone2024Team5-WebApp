@@ -110,7 +110,7 @@ export default function Contact() {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2, fontWeight: 'Strong'}}
+            sx={{ mt: 3, mb: 1, fontWeight: 'Strong'}}
           >
             Send Message
           </Button>
@@ -122,7 +122,7 @@ export default function Contact() {
           sx={{ mt: 1, mb: 8, fontWeight: 'Strong' }}
           onClick={() => navigate("/")}
         >
-          Back to Home
+          Back
         </Button>
       </Box>
     </Container>
