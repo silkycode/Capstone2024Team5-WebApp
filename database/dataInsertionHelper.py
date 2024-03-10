@@ -53,7 +53,7 @@ products_to_insert = [
 ]
 
 # SQL command with parameters
-sql = '''INSERT INTO products (product_type, model_name, description, image) VALUES (?, ?, ?, ?)'''
+sql = '''INSERT INTO product (product_type, model_name, description, image) VALUES (?, ?, ?, ?)'''
 
 # Execute the command for each product
 for product in products_to_insert:
