@@ -1,4 +1,4 @@
-body {
+/* body {
     margin: 0;
     padding: 0;
     display: flex;
@@ -35,18 +35,18 @@ body {
     cursor: pointer;
     transition: background-color 0.3s;
     margin-bottom: 10px; /* Added margin to create space between buttons */
-}
+/* } */
 
-.button:hover {
+/* .button:hover {
     background-color: #0056b3;
 }
 
-.button.signup { /* Added a new class for the sign-up button */
-    background-color: transparent; /* Set background color to transparent */
-    color: #007bff; /* Set text color to dark blue */
-    border: 1px solid #007bff; /* Add dark blue border */
+.button.signup {
+    background-color: transparent; 
+    color: #007bff; 
+    border: 1px solid #007bff; 
 }
-.button.signup:hover { /* Style for hover state of sign-up button */
+.button.signup:hover { 
     background-color: #007bff;
     color: #fff;
 }
@@ -56,4 +56,4 @@ body {
     text-decoration: none;
     margin-top: 10px;
     display: inline-block;
-  }
+  } */ 
