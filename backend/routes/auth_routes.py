@@ -1,7 +1,7 @@
 import re
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
-from werkzeug.security import check_password_hash, generate_password_hash
+import hashlib
 from models.users import User
 
 auth_routes = Blueprint('auth_routes', __name__)
@@ -21,9 +21,10 @@ CORS(auth_routes)
 @auth_routes.route('/login', methods=['POST'])
 def login():
     request_data = request.get_json()
-    hashed_password = generate_password_hash(request_data['password'], method='scrypt')
+    hashed_password = hashlib.sha3_256(request_data['password'].encode()).hexdigest()
 
     #TODO: Check submitted username and password hash against users database
+    
     response_data = {
         'message': 'ok',
         'status': 'success',
