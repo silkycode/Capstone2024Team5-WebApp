@@ -23,6 +23,6 @@ Have two separate terminals running the Flask server and the vite dev server -- 
 
 Current tasks:
 
+    - Dashboard implementation
     - Registration API endpoint
-    - User profile db
     - Product page implementation and dynamic information loading
