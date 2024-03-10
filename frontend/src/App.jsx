@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Header from './components/Header'
-import Login from './components/Login'
-import HelpInfo from './components/HelpInfo'
-import MedicalForms from './components/MedicalForms'
-import Contact from './components/Contact'
+
+// Components
+import Header from './components/Header';
+import Login from './components/Login';
+import HelpInfo from './components/HelpInfo';
+import MedicalForms from './components/MedicalForms';
+import Contact from './components/Contact';
 import Dashboard from './components/Dashboard';
 import Registration from './components/Registration';
 import ForgotPassword from './components/ForgotPassword';

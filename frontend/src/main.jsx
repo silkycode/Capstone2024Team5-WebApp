@@ -3,7 +3,17 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import { ThemeProvider, createTheme} from '@mui/material/styles'
 
-const theme = createTheme();
+const theme = createTheme({
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none', // Disable uppercase transformation for buttons
+        },
+      },
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
