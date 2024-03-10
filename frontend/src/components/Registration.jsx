@@ -18,8 +18,9 @@ export default function Registration() {
     const [showSnackbar, setShowSnackbar] = useState(false);
 
     const handleRegistration = (event) => {
-    event.preventDefault();
-    setShowSnackbar(true);
+        event.preventDefault();
+        // placeholder for UI debugging, remember to return to API validation
+        setShowSnackbar(true);
     };
 
     return (

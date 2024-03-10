@@ -5,17 +5,15 @@ import {
   Button,
   CssBaseline,
   TextField,
-  FormControlLabel,
-  Checkbox,
   Container,
   Box,
-  Grid,
   Typography,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 export default function Login({ setIsLoggedIn }) {
     const navigate = useNavigate();
+
     const handleLogin = async (e) => {
         e.preventDefault();
         // placeholder for UI debugging, remember to return to API validation

@@ -12,7 +12,7 @@ const buttonStyles = {
 
 export default function Header({ isLoggedIn }) {
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#fff' }}>
+    <AppBar position="sticky" sx={{ top: 0, backgroundColor: '#fff' }}>
       <Toolbar sx={{ height: '100px', color: '#333', justifyContent: 'space-between' }}>
         <div>
           <IconButton edge="start" sx={{ mr: 2 }}>
