@@ -15,6 +15,7 @@ import EmailIcon from '@mui/icons-material/Email';
 export default function ForgotPassword() {
     const navigate = useNavigate();
     const [showSnackbar, setShowSnackbar] = useState(false);
+    const [validEmail, setValidEmail] = useState(false);
 
     const handleForgotPwd = async (e) => {
         e.preventDefault();
@@ -23,8 +24,11 @@ export default function ForgotPassword() {
 
         if (!emailRegex.test(email)) {
           setShowSnackbar(true);
+          setValidEmail(false);
           return;
         }
+        setValidEmail(true);
+        setShowSnackbar(true);
     };
   
     return (
@@ -44,7 +48,7 @@ export default function ForgotPassword() {
             <Typography component="h1" variant="h5">
               Forgot password? We can help!
             </Typography>
-            <Box component="form" onSubmit={handleForgotPwd} sx={{ mt: 1 }}>
+            <Box component="form" noValidate onSubmit={handleForgotPwd} sx={{ mt: 1 }}>
               <TextField
                 margin="normal"
                 required
@@ -78,7 +82,7 @@ export default function ForgotPassword() {
                 onClose={() => setShowSnackbar(false)}
                 message={
                   <span style={{ fontSize: '22px' }}>
-                      Please enter a valid email address.
+                    {validEmail ? "Thank you! Check your email for recovery options." : "Please enter a valid email address."}
                   </span>
               }
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
