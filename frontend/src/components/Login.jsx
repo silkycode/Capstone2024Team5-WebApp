@@ -18,7 +18,6 @@ export default function Login({ setIsLoggedIn }) {
         email: '',
         password: '',
     });
-    const [errorMessage, setErrorMessage] = useState('');
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -31,29 +30,18 @@ export default function Login({ setIsLoggedIn }) {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://127.0.0.1:5000/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                if (data.status === 'success') {
-                    setIsLoggedIn(true);
-                } else {
-                    setErrorMessage(data.message);
-                }
+            if (formData.email === 'fakeuser' && formData.password === 'fakepass') {
+                setIsLoggedIn(true);
+                history.push('/dashboard');
             } else {
-                setErrorMessage('HTTP error: ' + response.status);
+                console.error('Invalid credentials');
             }
         } catch (error) {
-            setErrorMessage('An error occurred: ' + error.message + '.');
+            console.error('Some error during login:', error);
         }
-    };
-  
+    }
+
+            
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -94,11 +82,6 @@ export default function Login({ setIsLoggedIn }) {
                         autoComplete="current-password"
                         onChange={handleInputChange}
                     />
-                    {errorMessage && (
-                        <Typography variant="body2" color="error" sx={{ mt: 1, fontSize: '18px', textAlign: 'center', fontWeight: 'bold' }}>
-                        {errorMessage}
-                        </Typography>
-                    )}
                     <Button
                         type="submit"
                         fullWidth
@@ -107,23 +90,49 @@ export default function Login({ setIsLoggedIn }) {
                         >
                         Sign In
                     </Button>
-                    <Button variant="contained" 
-                        sx={{ mt: 1, mb: 1, fontWeight: 'bold'}} 
-                        fullWidth 
-                        color="primary" 
-                        onClick={() => navigate('/forgot-password')}
-                        >
-                        Forgot password?
-                    </Button>
-                    <Button variant="contained" 
-                        sx={{ mt: 1, mb: 1, fontWeight: 'bold'}} 
-                        fullWidth 
-                        color="primary" 
-                        onClick={() => navigate('/registration')}
-                        >
-                        Don't have an account?
-                    </Button>
-                </Box>
+                    <Button 
+    variant="contained" 
+    sx={{
+        mt: 1,
+        mb: 1,
+        fontWeight: 'bold',
+        color: 'primary.dark', // Dark blue font color
+        bgcolor: '#fff', // White background color
+        border: '2px solid', // 2px solid border
+        borderColor: 'primary.dark', // Dark blue border color
+        '&:hover': {
+            bgcolor: 'primary.main', // Change background color on hover
+            color: '#fff', // Change text color on hover
+        }
+    }} 
+    fullWidth 
+    onClick={() => navigate('/forgot-password')}
+>
+    Forgot password?
+</Button>
+
+</Box>
+<Box 
+    sx={{ 
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        mt: 1,
+        mb: 1,
+    }}
+>
+    <Typography 
+        variant="body1" 
+        sx={{ 
+            fontWeight: 'bold', 
+            color: 'primary.dark', 
+            cursor: 'pointer',
+        }} 
+        onClick={() => navigate('/registration')}
+    >
+        Don't have an account?
+    </Typography>
+</Box>
             </Box>
         </Container>
     );
