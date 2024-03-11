@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS credentials (
 );
 
 -- 'users' table for server and client-side dynamic data display
--- one-to-one relationship between user and credentials, 1 set of credentials for 1 user
+-- one-to-one relationship between user and credentials, 1 user per set of credentials
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
     first_name TEXT,

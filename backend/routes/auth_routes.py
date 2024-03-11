@@ -179,14 +179,18 @@ def register():
         db.session.add(new_creds)
         db.session.commit()
 
-        """         user_id = new_creds.id
+        #TODO: Fix user table update after credentials registration
+
+        """         
+        user_id = new_creds.id
         new_user = User(
             id=user_id,
             first_name=first_name,
             last_name=last_name,
         )
         db.session.add(new_user)
-        db.session.commit() """
+        db.session.commit() 
+        """
         
         response_data = {
             'message': 'Registration successful! Check your email for verification.',
