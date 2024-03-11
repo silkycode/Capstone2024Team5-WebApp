@@ -37,6 +37,27 @@ CREATE TABLE IF NOT EXISTS glucose_logs (
     FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
+-- 'appointments' table for upcoming appointments to track
+CREATE TABLE IF NOT EXISTS appointments (
+    appointment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    appointment_date DATE,
+    appointment_time TIME,
+    doctor_name TEXT,
+    appointment_notes TEXT,
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
+
+-- 'status' table for various notifications and frontpage displays
+CREATE TABLE IF NOT EXISTS status (
+    status_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    notification TEXT,
+    importance INTEGER,
+    status_timestamp DATETIME,
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
+
 
 -- Some dummy users for debugging
 INSERT INTO credentials (username, email, password_hash) VALUES ('user1', 'user1@email.com', sha3('password1', 256));
