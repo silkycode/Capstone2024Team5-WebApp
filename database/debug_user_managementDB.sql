@@ -9,9 +9,9 @@ CREATE TABLE IF NOT EXISTS credentials (
 );
 
 -- 'users' table for server and client-side dynamic data display
+-- one-to-one relationship between user and credentials, 1 set of credentials for 1 user
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
-    username TEXT UNIQUE NOT NULL,
     first_name TEXT,
     last_name TEXT,
     dob DATE,
@@ -25,8 +25,7 @@ CREATE TABLE IF NOT EXISTS users (
     doctor_name TEXT,
     doctor_phone TEXT,
     doctor_fax TEXT,
-    FOREIGN KEY (id) REFERENCES credentials (id),
-    FOREIGN KEY (username) REFERENCES credentials (username)
+    FOREIGN KEY (id) REFERENCES credentials (id)
 );
 
 -- Some dummy users for debugging

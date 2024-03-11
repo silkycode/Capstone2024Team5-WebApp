@@ -29,6 +29,8 @@ export default function ForgotPassword() {
         }));
     };
 
+    // Send email to backend, snackbar notification depends on what type of message comes back
+    // Badly formed email -> user needs to resubmit, otherwise tries to send recovery email
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
