@@ -18,6 +18,7 @@ export default function Login({ setIsLoggedIn }) {
         email: '',
         password: '',
     });
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -29,17 +30,32 @@ export default function Login({ setIsLoggedIn }) {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        if (formData.email === 'user' && formData.password === 'password') {
+            setIsLoggedIn(true);
+        } 
         try {
-            if (formData.email === 'fakeuser' && formData.password === 'fakepass') {
-                setIsLoggedIn(true);
-                history.push('/dashboard');
+            const response = await fetch('http://127.0.0.1:5000/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.status === 'success') {
+                    setIsLoggedIn(true);
+                } else {
+                    setErrorMessage(data.message);
+                }
             } else {
-                console.error('Invalid credentials');
+                setErrorMessage('HTTP error: ' + response.status);
             }
         } catch (error) {
-            console.error('Some error during login:', error);
+            setErrorMessage('An error occurred: ' + error.message + '.');
         }
-    }
+    };
 
             
     return (
@@ -82,6 +98,11 @@ export default function Login({ setIsLoggedIn }) {
                         autoComplete="current-password"
                         onChange={handleInputChange}
                     />
+                    {errorMessage && (
+                        <Typography variant="body2" color="error" sx={{ mt: 1, fontSize: '18px', textAlign: 'center', fontWeight: 'bold' }}>
+                        {errorMessage}
+                        </Typography>
+                    )}
                     <Button
                         type="submit"
                         fullWidth
