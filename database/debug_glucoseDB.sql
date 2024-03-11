@@ -1,4 +1,4 @@
-.open products.db
+.open user_management.db
 
 CREATE TABLE IF NOT EXISTS glucose_logs (
     id INTEGER NOT NULL,
