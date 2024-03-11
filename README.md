@@ -19,6 +19,7 @@ For database things:
 
     `sqlite3`
     `sqlite3 .read debug_user_managementDB.sql`
+    etc. for other databases
 
     Run these inside ./database to generate a dummy users database that you can use for testing
 
