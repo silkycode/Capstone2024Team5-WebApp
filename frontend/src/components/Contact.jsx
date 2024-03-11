@@ -18,15 +18,51 @@ import EmailIcon from "@mui/icons-material/Email";
 export default function Contact() {
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    // TODO: API endpoint for user messages
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const name = formData.get("name");
-    const email = formData.get("email");
-    const message = formData.get("message");
-    e.target.reset();
+  const [responseMessage, setResponseMessage] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: '',
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+    }));
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        const response = await fetch('http://127.0.0.1:5000/services/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.status === 'success') {
+                setResponseMessage(data.message);
+                setFormData({
+                  email: '',
+                  name: '',
+                  message: '',
+                });
+            } else {
+              setResponseMessage(data.message);
+            }
+        } else {
+            setErrorMessage('HTTP error: ' + response.status);
+        }
+    } catch (error) {
+        setErrorMessage('An error occurred: ' + error.message + '.');
+    }
+};
 
   return (
     <Container component="main" maxWidth="md">
@@ -96,7 +132,9 @@ export default function Contact() {
                 label="Your Name"
                 name="name"
                 autoComplete="name"
+                value={formData.name}
                 autoFocus
+                onChange={handleInputChange}
               />
               <TextField
                 margin="normal"
@@ -106,6 +144,8 @@ export default function Contact() {
                 label="Your Email"
                 name="email"
                 autoComplete="email"
+                value={formData.email}
+                onChange={handleInputChange}
               />
               <TextField
                 margin="normal"
@@ -116,6 +156,8 @@ export default function Contact() {
                 id="message"
                 label="Your Message"
                 name="message"
+                value={formData.message}
+                onChange={handleInputChange}
               />
               <Button
                 type="submit"
@@ -129,11 +171,16 @@ export default function Contact() {
             <Button
               fullWidth
               variant="contained"
-              sx={{ mt: 1, mb: 8, fontWeight: 'strong' }}
+              sx={{ mt: 1, mb: 2, fontWeight: 'strong' }}
               onClick={() => navigate("/")}
               >
               Back
             </Button>
+            {responseMessage && (
+              <Typography variant="body2" sx={{ mt: 1, fontSize: '18px', textAlign: 'center', fontWeight: 'bold' }}>
+              {responseMessage}
+              </Typography>
+            )}
           </Box>
         </Grid>
       </Grid>

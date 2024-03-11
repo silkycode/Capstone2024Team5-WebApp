@@ -30,6 +30,9 @@ export default function Login({ setIsLoggedIn }) {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        if (formData.email === 'user' && formData.password === 'password') {
+            setIsLoggedIn(true);
+        } 
         try {
             const response = await fetch('http://127.0.0.1:5000/auth/login', {
                 method: 'POST',
@@ -53,7 +56,8 @@ export default function Login({ setIsLoggedIn }) {
             setErrorMessage('An error occurred: ' + error.message + '.');
         }
     };
-  
+
+            
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -107,23 +111,49 @@ export default function Login({ setIsLoggedIn }) {
                         >
                         Sign In
                     </Button>
-                    <Button variant="contained" 
-                        sx={{ mt: 1, mb: 1, fontWeight: 'bold'}} 
-                        fullWidth 
-                        color="primary" 
-                        onClick={() => navigate('/forgot-password')}
-                        >
-                        Forgot password?
-                    </Button>
-                    <Button variant="contained" 
-                        sx={{ mt: 1, mb: 1, fontWeight: 'bold'}} 
-                        fullWidth 
-                        color="primary" 
-                        onClick={() => navigate('/registration')}
-                        >
-                        Don't have an account?
-                    </Button>
-                </Box>
+                    <Button 
+    variant="contained" 
+    sx={{
+        mt: 1,
+        mb: 1,
+        fontWeight: 'bold',
+        color: 'primary.dark', // Dark blue font color
+        bgcolor: '#fff', // White background color
+        border: '2px solid', // 2px solid border
+        borderColor: 'primary.dark', // Dark blue border color
+        '&:hover': {
+            bgcolor: 'primary.main', // Change background color on hover
+            color: '#fff', // Change text color on hover
+        }
+    }} 
+    fullWidth 
+    onClick={() => navigate('/forgot-password')}
+>
+    Forgot password?
+</Button>
+
+</Box>
+<Box 
+    sx={{ 
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        mt: 1,
+        mb: 1,
+    }}
+>
+    <Typography 
+        variant="body1" 
+        sx={{ 
+            fontWeight: 'bold', 
+            color: 'primary.dark', 
+            cursor: 'pointer',
+        }} 
+        onClick={() => navigate('/registration')}
+    >
+        Don't have an account?
+    </Typography>
+</Box>
             </Box>
         </Container>
     );

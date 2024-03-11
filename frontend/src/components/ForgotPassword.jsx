@@ -45,6 +45,9 @@ export default function ForgotPassword() {
                 const data = await response.json();
                 if (data.status === 'success') {
                     setResponseMessage(data.message);
+                    setFormData({
+                      email:'',
+                    });
                 } else {
                     setResponseMessage(data.message);
                 }
@@ -82,6 +85,7 @@ export default function ForgotPassword() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                value={formData.email}
                 autoFocus
                 onChange={handleInputChange}
               />
