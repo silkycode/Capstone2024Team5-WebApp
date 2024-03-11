@@ -5,7 +5,6 @@ import base64
 import sqlite3
 from routes.auth_routes import auth_routes
 from config import Config
-from routes import debug
 from models.db_module import db
 
 app = Flask(__name__)

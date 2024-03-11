@@ -2,7 +2,6 @@ import re
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
 import hashlib
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 from models.db_module import db
 
@@ -52,6 +51,7 @@ class User(db.Model):
             - Respond with 'success,' indicating successful authentication.
         - If no match:
             - Respond with 'failure,' indicating authentication failure.
+        - Respond with detailed messages, used in message displays on frontend.
 """
 @auth_routes.route('/login', methods=['POST'])
 def login():
@@ -59,7 +59,6 @@ def login():
     email = data.get('email', '').strip()
     password = data.get('password', '').strip()
     hashed_password = hashlib.sha3_256(password.encode()).digest() 
-    print(email, password, hashed_password)
 
     try:
         creds = UserCredentials.query.filter_by(email=email, password_hash=hashed_password).first()
@@ -74,14 +73,14 @@ def login():
             }
         else:
             response_data = {
-                'message': 'Authentication failure',
+                'message': 'Sorry, could not find a user with provided credentials. Please try again.',
                 'status': 'failure',
                 'data': {}
             }
       
     except SQLAlchemyError as e:
         response_data = {
-            'message': 'Database issue',
+            'message': 'Database error occurred.',
             'status': 'error',
             'data': {}
         }
@@ -107,13 +106,13 @@ def forgot_password():
     
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
         return jsonify({
-            'message': 'Bad email format',
+            'message': 'Please enter a valid email.',
             'status': 'failure',
             'data': {}
         })
     
     response_data = {
-        'message': 'Email received',
+        'message': 'Thank you! Please check your email for recovery options.',
         'status': 'success',
         'data': {
             'Sending recovery email to': email
@@ -126,7 +125,7 @@ def forgot_password():
      
     except SQLAlchemyError as e:
         response_data = {
-            'message': 'Database issue',
+            'message': 'Database error occurred.',
             'status': 'error',
             'data': {}
         }
@@ -134,6 +133,16 @@ def forgot_password():
 
     return jsonify(response_data)
 
+"""
+    /register API endpoint:
+        - Expected format: {firstName: 'firstName', lastName: 'lastName', email: 'email', username: 'username', password: 'password'}
+        - Purpose: Validate and enter a user into the user database, create an account
+        - Validate the fields submitted, and enter them into user_management.db if no errors are found
+        - Response:
+            - Message: Information about submission/registration
+            - status: failure or success
+            - data: If anything is needed to be sent back
+"""
 @auth_routes.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -199,7 +208,7 @@ def register():
         }
     except SQLAlchemyError as e:
         response_data = {
-            'message': 'Database error occurred',
+            'message': 'Database error occurred.',
             'status': 'failure',
             'data': {}
         }

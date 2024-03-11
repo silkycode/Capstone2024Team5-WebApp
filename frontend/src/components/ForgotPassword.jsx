@@ -15,8 +15,7 @@ import EmailIcon from '@mui/icons-material/Email';
 export default function ForgotPassword() {
     const navigate = useNavigate();
 
-    const [showSnackbar, setShowSnackbar] = useState(false);
-    const [validEmail, setValidEmail] = useState(false);
+    const [responseMessage, setResponseMessage] = useState('');
     const [formData, setFormData] = useState({
         email: '',
     });
@@ -45,11 +44,9 @@ export default function ForgotPassword() {
             if (response.ok) {
                 const data = await response.json();
                 if (data.status === 'success') {
-                    setValidEmail(true);
-                    setShowSnackbar(true);
+                    setResponseMessage(data.message);
                 } else {
-                    setValidEmail(false);
-                    setShowSnackbar(true);
+                    setResponseMessage(data.message);
                 }
             } else {
               console.error('HTTP error:', response.status)
@@ -103,19 +100,13 @@ export default function ForgotPassword() {
               >
                   Back
               </Button>
+              {responseMessage && (
+                <Typography variant="body2" sx={{ mt: 1, fontSize: '18px', textAlign: 'center', fontWeight: 'bold' }}>
+                {responseMessage}
+                </Typography>
+              )}
             </Box>
           </Box>
-          <Snackbar
-                open={showSnackbar}
-                autoHideDuration={6000}
-                onClose={() => setShowSnackbar(false)}
-                message={
-                  <span style={{ fontSize: '22px', fontWeight: 'bold' }}>
-                    {validEmail ? "Thank you! Check your email for recovery options." : "Please enter a valid email address."}
-                  </span>
-              }
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          />
         </Container>
     );
   }

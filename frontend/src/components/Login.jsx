@@ -18,6 +18,7 @@ export default function Login({ setIsLoggedIn }) {
         email: '',
         password: '',
     });
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -41,17 +42,15 @@ export default function Login({ setIsLoggedIn }) {
             if (response.ok) {
                 const data = await response.json();
                 if (data.status === 'success') {
-                    console.log(data)
                     setIsLoggedIn(true);
                 } else {
-                    console.error('Login issue');
-                    console.log(data)
+                    setErrorMessage(data.message);
                 }
             } else {
-                console.error('HTTP error:', response.status);
+                setErrorMessage('HTTP error: ' + response.status);
             }
         } catch (error) {
-            console.error('Some error during login:', error);
+            setErrorMessage('An error occurred: ' + error.message + '.');
         }
     };
   
@@ -95,6 +94,11 @@ export default function Login({ setIsLoggedIn }) {
                         autoComplete="current-password"
                         onChange={handleInputChange}
                     />
+                    {errorMessage && (
+                        <Typography variant="body2" color="error" sx={{ mt: 1, fontSize: '18px', textAlign: 'center', fontWeight: 'bold' }}>
+                        {errorMessage}
+                        </Typography>
+                    )}
                     <Button
                         type="submit"
                         fullWidth
