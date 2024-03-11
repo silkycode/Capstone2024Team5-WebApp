@@ -15,7 +15,7 @@ db.init_app(app)
 
 app.register_blueprint(auth_routes, url_prefix='/auth')
 
-def get_db_connection():
+def get_productsDB_connection():
     database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'products.db')
     conn = sqlite3.connect(database_path)
     conn.row_factory = sqlite3.Row
@@ -23,7 +23,7 @@ def get_db_connection():
 
 @app.route('/products', methods=['GET'])
 def products():
-    conn = get_db_connection()
+    conn = get_productsDB_connection()
     products = conn.execute('SELECT * FROM products').fetchall()
     products_list = []
     for product in products:
@@ -34,6 +34,29 @@ def products():
     conn.close()
     return jsonify(products_list)
 
+def get_glucose_log_db_connection():
+    database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'glucose_log.db')
+    conn = sqlite3.connect(database_path)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+@app.route('/glucose', methods=['POST'])
+def add_glucose_log():
+    data = request.json
+    conn = get_glucose_log_db_connection()
+    conn.execute('INSERT INTO glucose_logs (username, date, time, glucose_level) VALUES (?, ?, ?, ?)',
+                 (data['username'], data['date'], data['time'], data['glucose_level']))
+    conn.commit()
+    conn.close()
+    return jsonify({'message': 'Log added successfully'}), 201
+
+@app.route('/glucose', methods=['GET'])
+def get_glucose_logs():
+    username = request.args.get('username') # Assume you pass username as query parameter
+    conn = get_glucose_log_db_connection()
+    logs = conn.execute('SELECT * FROM glucose_logs WHERE username = ?', (username,)).fetchall()
+    conn.close()
+    return jsonify([dict(log) for log in logs])
 
 if __name__ == '__main__':
     app.run(debug=True)
