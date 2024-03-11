@@ -50,7 +50,7 @@ export default function HelpInfo() {
           <LiveHelpIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Have questions?
+          Questions? How can we help?
         </Typography>
         <Box sx={{ mt: 3 }}>
           {faqData.map((faq, index) => (

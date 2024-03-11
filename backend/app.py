@@ -3,6 +3,7 @@ from flask_cors import CORS
 import os
 import base64
 import sqlite3
+from routes.client_data_routes import client_data_routes
 from routes.auth_routes import auth_routes
 from config import Config
 from models.db_module import db
@@ -14,6 +15,7 @@ CORS(app)
 db.init_app(app)
 
 app.register_blueprint(auth_routes, url_prefix='/auth')
+app.register_blueprint(client_data_routes, url_prefix='/services')
 
 def get_db_connection():
     database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'products.db')
