@@ -60,5 +60,30 @@ def get_glucose_logs():
     conn.close()
     return jsonify([dict(log) for log in logs])
 
+def get_appointmentDB_connection():
+    database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'appointments.db')
+    conn = sqlite3.connect(database_path)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+@app.route('/appointments', methods=['POST'])
+def add_appointment():
+    data = request.json
+    conn = get_appointmentDB_connection()  
+    conn.execute('INSERT INTO appointments (user_id, appointment_date, appointment_time, doctor_name, appointment_notes) VALUES (?, ?, ?, ?, ?)',
+                 (data['user_id'], data['date'], data['time'], data['doctor_name'], data['notes']))
+    conn.commit()
+    conn.close()
+    return jsonify({'message': 'Appointment added successfully'}), 201
+
+@app.route('/appointments/<int:appointment_id>', methods=['DELETE'])
+def delete_appointment(appointment_id):
+    conn = get_appointmentDB_connection()  
+    conn.execute('DELETE FROM appointments WHERE appointment_id = ?', (appointment_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({'message': 'Appointment deleted successfully'}), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True)

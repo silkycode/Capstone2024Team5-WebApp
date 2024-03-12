@@ -2,9 +2,9 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import BackButton from '../assets/images/svgs/white-go-back-button.png';
 import { Button, Grid, Paper, Typography, Link } from '@mui/material';
-import { makeStyles } from '@mui/styles';
+// import { makeStyles } from '@mui/styles';
 
-const useStyles = makeStyles((theme) => ({
+/*const useStyles = makeStyles((theme) => ({
     container: {
       marginTop: theme.spacing(4),
       padding: theme.spacing(2),
@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(2),
       textAlign: 'center',
     },
-  }));
+  }));*/
 
 const MedicalForms = () => {
     const navigate = useNavigate();
