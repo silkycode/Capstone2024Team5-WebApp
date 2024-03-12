@@ -186,7 +186,7 @@ export default function Dashboard() {
                         <ClickableBox title="Notifications" path="/dashboard/notifications"/>
                         <ClickableBox title="Profile" path="/dashboard/profile"/>
                         <ClickableBox title="Appointments"path="/dashboard/appointments" />
-                        <ClickableBox title="Product Info" path="/dashboard"/>
+                        <ClickableBox title="Product Info" path="/dashboard/products"/>
                         <ClickableBox title="Blank Medical Forms" path="/dashboard/medical-forms"/>
                     </Box>
                 )}
