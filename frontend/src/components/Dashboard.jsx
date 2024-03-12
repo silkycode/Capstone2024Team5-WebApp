@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { mainListItems, secondaryListItems } from './ListItems';
+import { mainListItems, secondaryListItems } from './DashboardNav';
 
 
 const drawerWidth = 250;
@@ -27,6 +27,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
         duration: theme.transitions.duration.enteringScreen,
       }),
       boxSizing: 'border-box',
+      background: theme.palette.primary.main,
       ...(!open && {
         overflowX: 'hidden',
         transition: theme.transitions.create('width', {
@@ -61,8 +62,9 @@ export default function Dashboard() {
                 px: [1],
             }}
             >
-            <IconButton onClick={toggleDrawer}>
-                {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            <IconButton onClick={toggleDrawer}
+            sx={{ color: 'white' }}>
+                {open ? <ChevronLeftIcon sx={{fontSize: '42px'}}/> : <ChevronRightIcon sx={{fontSize: '42px'}}/>}
             </IconButton>
             </Toolbar>
             <Divider />
