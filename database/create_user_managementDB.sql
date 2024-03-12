@@ -28,9 +28,38 @@ CREATE TABLE IF NOT EXISTS users (
     FOREIGN KEY (id) REFERENCES credentials (id)
 );
 
+-- 'glucose_logs' table for each user's log history + measurements
+CREATE TABLE IF NOT EXISTS glucose_logs (
+    log_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    glucose_level INTEGER,
+    log_timestamp DATETIME,
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
+
+-- 'appointments' table for upcoming appointments to track
+CREATE TABLE IF NOT EXISTS appointments (
+    appointment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    appointment_date DATE,
+    appointment_time TIME,
+    doctor_name TEXT,
+    appointment_notes TEXT,
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
+
+-- 'status' table for various notifications and frontpage displays
+CREATE TABLE IF NOT EXISTS status (
+    status_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    notification TEXT,
+    importance INTEGER,
+    status_timestamp DATETIME,
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
+
+
 -- Some dummy users for debugging
 INSERT INTO credentials (username, email, password_hash) VALUES ('user1', 'user1@email.com', sha3('password1', 256));
 INSERT INTO credentials (username, email, password_hash) VALUES ('user2', 'user2@email.com', sha3('password2', 256));
 INSERT INTO credentials (username, email, password_hash) VALUES ('user3', 'user3@email.com', sha3('password3', 256));
-INSERT INTO credentials (username, email, password_hash) VALUES ('user4', 'user4@email.com', sha3('password4', 256));
-INSERT INTO credentials (username, email, password_hash) VALUES ('user5', 'user5@email.com', sha3('password5', 256));

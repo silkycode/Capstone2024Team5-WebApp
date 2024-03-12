@@ -17,9 +17,11 @@ For node:
 
 For database things:
 
-    `sqlite3`
-    `sqlite3 .read debug_user_managementDB.sql`
-    etc. for other databases
+    `sqlite3` to open sqlite CLI
+    `.read create_user_managementDB.sql` to generate user data DB
+    `.read create_productDB.sql` to generate products DB
+
+    `python dataInsertionHelper.py` to generate product DB
 
     Run these inside ./database to generate a dummy users database that you can use for testing
 
