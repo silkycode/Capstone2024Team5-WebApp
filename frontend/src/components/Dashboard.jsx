@@ -13,7 +13,15 @@ import {
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { mainListItems, secondaryListItems } from './DashboardNav';
+import { mainListItems } from './DashboardNav';
+
+// Components
+import Appointments from './Appointments'
+import GlucoseLogs from './GlucoseLogs'
+import MedicalForms from './MedicalForms'
+import Products from './Products'
+import Profile from './Profile'
+import Notifications from './Notifications'
 
 
 const drawerWidth = 250;
@@ -44,11 +52,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const Profile = () => <div>Profile Page</div>;
-const GlucoseLogs = () => <div>Glucose Logs Page</div>;
-const Appointments = () => <div>Appointments Page</div>;
-const Notifications = () => <div>Notifications Page</div>;
-
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
 
@@ -58,6 +61,12 @@ export default function Dashboard() {
 
   return (
     <Box sx={{ display: 'flex' }}>
+        <Routes>
+            <Route path="/dashboard/profile" element={<Profile />} />
+            <Route path="/dashboard/glucose-logs" element={<GlucoseLogs />} />
+            <Route path="/dashboard/appointments" element={<Appointments />} />
+            <Route path="/dashboard/notifications" element={<Notifications />} />
+        </Routes>
         <CssBaseline />
         <Drawer variant="permanent" open={open}>
             <Toolbar
@@ -76,8 +85,6 @@ export default function Dashboard() {
             <Divider />
             <List component="nav">
                 {mainListItems}
-                <Divider sx={{ my: 1 }} />
-                {secondaryListItems}
             </List>
         </Drawer>
         <Box
@@ -89,14 +96,6 @@ export default function Dashboard() {
             }}
         >
             <Toolbar />
-            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Routes>
-                <Route path="/dashboard/profile" element={<Profile />} />
-                <Route path="/dashboard/glucose-logs" element={<GlucoseLogs />} />
-                <Route path="/dashboard/appointments" element={<Appointments />} />
-                <Route path="/dashboard/notifications" element={<Notifications />} />
-            </Routes>
-            </Container>
         </Box>
     </Box>
   );

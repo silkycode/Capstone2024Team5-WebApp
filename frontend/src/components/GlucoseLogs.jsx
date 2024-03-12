@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Button, CssBaseline, TextField, Container, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 
-function GlucoseLog() {
+function GlucoseLogs() {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [glucoseLevel, setGlucoseLevel] = useState('');
@@ -125,4 +125,4 @@ function GlucoseLog() {
   );
 }
 
-export default GlucoseLog;
+export default GlucoseLogs;

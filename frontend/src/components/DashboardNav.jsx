@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import {
   ListItemButton,
   ListItemIcon,
@@ -15,7 +16,7 @@ import {
 
 export const mainListItems = (
   <React.Fragment>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/dashboard/profile">
       <ListItemIcon sx={{color: "white"}}>
         <AccountBoxIcon />
       </ListItemIcon>
@@ -27,7 +28,7 @@ export const mainListItems = (
         }
       />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/dashboard/glucose-logs">
       <ListItemIcon sx={{color: "white"}}>
         <AssignmentIcon />
       </ListItemIcon>
@@ -39,7 +40,7 @@ export const mainListItems = (
         }
       />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/dashboard/appointments">
       <ListItemIcon sx={{color: "white"}}>
         <PeopleIcon />
       </ListItemIcon>
@@ -51,7 +52,7 @@ export const mainListItems = (
         }
       />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/dashboard/notifications">
       <ListItemIcon sx={{color: "white"}}>
         <NotificationsIcon />
       </ListItemIcon>
@@ -59,23 +60,6 @@ export const mainListItems = (
         primary={
           <Typography variant="h6" color="white" sx={{fontWeight: 'bold'}}>
             Notifications
-          </Typography>
-        }
-      />
-    </ListItemButton>
-  </React.Fragment>
-);
-
-export const secondaryListItems = (
-  <React.Fragment>
-    <ListItemButton>
-      <ListItemIcon sx={{color: "white"}}>
-        <LogoutIcon />
-      </ListItemIcon>
-      <ListItemText
-        primary={
-          <Typography variant="h7" color="white" sx={{fontWeight: 'bold'}}>
-            Log Out
           </Typography>
         }
       />

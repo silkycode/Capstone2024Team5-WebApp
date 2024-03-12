@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate} from 'react-router-dom';
 import { AppBar, Toolbar, Button, IconButton } from '@mui/material';
 import { Help as HelpIcon, 
 ContactMail as ContactIcon, 
@@ -14,6 +14,8 @@ const buttonStyles = {
 };
 
 export default function Header({ isLoggedIn, setIsLoggedIn }) {
+  const navigate = useNavigate();
+
   return (
     <AppBar position="sticky" sx={{ top: 0, backgroundColor: '#fff' }}>
       <Toolbar sx={{ height: '100px', color: '#333', justifyContent: 'space-between' }}>
