@@ -11,6 +11,7 @@ import {
   Container
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { mainListItems, secondaryListItems } from './ListItems';
 
 
@@ -61,7 +62,7 @@ export default function Dashboard() {
             }}
             >
             <IconButton onClick={toggleDrawer}>
-                <ChevronLeftIcon />
+                {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
             </Toolbar>
             <Divider />
@@ -74,10 +75,6 @@ export default function Dashboard() {
         <Box
             component="main"
             sx={{
-            backgroundColor: (theme) =>
-                theme.palette.mode === 'light'
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
             flexGrow: 1,
             height: '100vh',
             overflow: 'auto',
@@ -85,7 +82,6 @@ export default function Dashboard() {
         >
             <Toolbar />
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-
             </Container>
         </Box>
     </Box>

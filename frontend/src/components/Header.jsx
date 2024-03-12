@@ -10,7 +10,7 @@ Logout as LogoutIcon } from '@mui/icons-material';
 import TitleLogo from '../assets/images/svgs/title-removebg-preview.png';
 
 const buttonStyles = {
-  fontSize: '1.2rem',
+  fontSize: '1.3rem',
   padding: '15px',
 };
 
@@ -26,24 +26,20 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
         <div>
           <Button component={Link} to="/help" sx={buttonStyles}>
             <HelpIcon />
-            Help
+            <span style={{ marginLeft: '6px' }}>Help</span>
           </Button>
           <Button component={Link} to="/contact" sx={buttonStyles}>
             <ContactIcon />
-            Contact Us
-          </Button>
-          <Button component={Link} to={isLoggedIn ? "/orders" : "/"} sx={buttonStyles}>
-            <OrdersIcon />
-            My Orders
+            <span style={{ marginLeft: '6px' }}>Contact Us</span>
           </Button>
           <Button component={Link} to={isLoggedIn ? "/dashboard" : "/"} sx={buttonStyles}>
             <AccountCircleIcon />
-            Dashboard
+            <span style={{ marginLeft: '6px' }}>Dashboard</span>
           </Button>
           {isLoggedIn && (
           <Button onClick={() => {setIsLoggedIn(false); navigate('/');}} sx={buttonStyles}>
             <LogoutIcon />
-            Log Out
+            <span style={{ marginLeft: '6px' }}>Log Out</span>
           </Button>
           )}
         </div>
