@@ -11,8 +11,9 @@ import Registration from './components/Registration';
 import ForgotPassword from './components/ForgotPassword';
 import GlucoseLogs from './components/GlucoseLogs';
 import Profile from './components/Profile';
-import Appointments from './components/Appointments';
+import Appointment from './components/Appointment';
 import Notifications from './components/Notifications';
+import MedicalForms from './components/MedicalForms';
 
 function AimPlusMedicalSupplies() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -26,8 +27,9 @@ function AimPlusMedicalSupplies() {
           <Route path="/dashboard/*" element={isLoggedIn ? <Dashboard /> : <Navigate to="/" />} >
             <Route path="profile" element={<Profile />} />
             <Route path="glucose-logs" element={<GlucoseLogs />} />
-            <Route path="appointments" element={<Appointments />} />
+            <Route path="appointments" element={<Appointment />} />
             <Route path="notifications" element={<Notifications />} />
+            <Route path="medical-forms" elemet={<MedicalForms />} />
           </Route>
           <Route path="/help" element={<HelpInfo />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
