@@ -1,7 +1,11 @@
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppBar, Toolbar, Button, IconButton } from '@mui/material';
-import { Help as HelpIcon, ContactMail as ContactIcon, ShoppingCart as OrdersIcon, AccountCircle as AccountCircleIcon } from '@mui/icons-material';
+import { Help as HelpIcon, 
+ContactMail as ContactIcon, 
+ShoppingCart as OrdersIcon, 
+AccountCircle as AccountCircleIcon, 
+Logout as LogoutIcon } from '@mui/icons-material';
 
 import TitleLogo from '../assets/images/svgs/title-removebg-preview.png';
 
@@ -10,7 +14,7 @@ const buttonStyles = {
   padding: '15px',
 };
 
-export default function Header({ isLoggedIn }) {
+export default function Header({ isLoggedIn, setIsLoggedIn }) {
   return (
     <AppBar position="sticky" sx={{ top: 0, backgroundColor: '#fff' }}>
       <Toolbar sx={{ height: '100px', color: '#333', justifyContent: 'space-between' }}>
@@ -36,6 +40,12 @@ export default function Header({ isLoggedIn }) {
             <AccountCircleIcon />
             Dashboard
           </Button>
+          {isLoggedIn && (
+          <Button onClick={() => {setIsLoggedIn(false); navigate('/');}} sx={buttonStyles}>
+            <LogoutIcon />
+            Log Out
+          </Button>
+          )}
         </div>
       </Toolbar>
     </AppBar>
