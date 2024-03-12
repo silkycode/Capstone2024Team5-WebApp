@@ -2,39 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import BackButton from '../assets/images/svgs/white-go-back-button.png';
 import { Button, Grid, Paper, Typography, Link } from '@mui/material';
-<<<<<<< HEAD
-// import { makeStyles } from '@mui/styles';
-
-/*const useStyles = makeStyles((theme) => ({
-    container: {
-      marginTop: theme.spacing(4),
-      padding: theme.spacing(2),
-    },
-    backButton: {
-      marginBottom: theme.spacing(2),
-    },
-    paper: {
-      padding: theme.spacing(2),
-      textAlign: 'center',
-    },
-  }));*/
-=======
-import { makeStyles } from '@mui/system';
-
-const useStyles = makeStyles((theme) => ({
-  container: {
-    marginTop: theme.spacing(4),
-    padding: theme.spacing(2),
-  },
-  backButton: {
-    marginBottom: theme.spacing(2),
-  },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-  },
-}));
->>>>>>> 3396afe052ab9d95a738512eadce186cb0e66a4a
 
 const MedicalForms = () => {
   const navigate = useNavigate();
