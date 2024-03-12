@@ -125,7 +125,7 @@ function GlucoseLogs() {
                   <TableCell>{log.time}</TableCell>
                   <TableCell>{log.glucose_level}</TableCell>
                   <TableCell>
-                    <Button onCLick={() => deleteLog(log.log_id)}></Button>
+                    <Button onClick={() => deleteLog(log.log_id)}></Button>
                   </TableCell>
                 </TableRow>
               ))}

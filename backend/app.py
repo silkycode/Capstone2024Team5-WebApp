@@ -7,6 +7,7 @@ from routes.client_data_routes import client_data_routes
 from routes.auth_routes import auth_routes
 from config import Config
 from models.db_module import db
+from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -45,9 +46,14 @@ def get_glucose_log_db_connection():
 @app.route('/glucose', methods=['POST'])
 def add_glucose_log():
     data = request.json
+
+    # Combind dat and time into datetime
+    datetime_str = f"{data['date']} {data['time']}"
+    log_datetime = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
+
     conn = get_glucose_log_db_connection()
     conn.execute('INSERT INTO glucose_logs (username, date, time, glucose_level) VALUES (?, ?, ?, ?)',
-                 (data['username'], data['date'], data['time'], data['glucose_level']))
+                 (data['username'], log_datetime, data['glucose_level']))
     conn.commit()
     conn.close()
     return jsonify({'message': 'Log added successfully'}), 201
