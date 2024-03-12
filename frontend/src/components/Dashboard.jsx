@@ -1,5 +1,5 @@
-import React, { useState, lazy, Suspense } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import React from 'react';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { Route, Routes } from 'react-router-dom';
 import {
@@ -24,14 +24,6 @@ import {
     ChevronLeft as ChevronLeftIcon,
     ChevronRight as ChevronRightIcon
   } from '@mui/icons-material';
-
-// Components
-import Appointments from './Appointments'
-import Products from './Products'
-import Profile from './Profile'
-import Notifications from './Notifications'
-import GlucoseLogs from './GlucoseLogs';
-
 
 const drawerWidth = 250;
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -97,21 +89,14 @@ const ClickableBox = ({ title, path }) => {
 
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
+  const location = useLocation();
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
+  
   return (
     <Box sx={{ display: 'flex' }}>
-        <Routes>
-            <Route path="/dashboard/profile" element={<Profile />} />
-            <Route path="/dashboard/glucose-logs" element={<Outlet />}>
-                <Route element={<GlucoseLogs />} />
-            </Route>
-            <Route path="/dashboard/appointments" element={<Appointments />} />
-            <Route path="/dashboard/notifications" element={<Notifications />} />
-        </Routes>
         <CssBaseline />
         <Drawer variant="permanent" open={open} sx={{ zIndex: 1200 }}>
             <Toolbar
@@ -191,19 +176,21 @@ export default function Dashboard() {
             justifyContent: 'center',
             }}
         >
-            <Outlet />
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                 <Typography variant="h4" gutterBottom component="div">
                     Hello, USER!
                 </Typography>
-                <Box sx={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-                    <ClickableBox title="Log Your Glucose" path="/dashboard/glucose-logs" />
-                    <ClickableBox title="Notifications" path="/dashboard/notifications"/>
-                    <ClickableBox title="Profile" path="/dashboard/profile"/>
-                    <ClickableBox title="Appointments"path="/dashboard/appointments" />
-                    <ClickableBox title="Product Info" path="/dashboard"/>
-                    <ClickableBox title="Blank Medical Forms" path="/dashboard"/>
-                </Box>
+                {location.pathname === "/dashboard" && (
+                    <Box sx={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                        <ClickableBox title="Log Your Glucose" path="/dashboard/glucose-logs" />
+                        <ClickableBox title="Notifications" path="/dashboard/notifications"/>
+                        <ClickableBox title="Profile" path="/dashboard/profile"/>
+                        <ClickableBox title="Appointments"path="/dashboard/appointments" />
+                        <ClickableBox title="Product Info" path="/dashboard"/>
+                        <ClickableBox title="Blank Medical Forms" path="/dashboard"/>
+                    </Box>
+                )}
+                <Outlet />
             </Container>
         </Box>
     </Box>
