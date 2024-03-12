@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, lazy, Suspense } from 'react';
+import { Link, Outlet } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { Route, Routes } from 'react-router-dom';
 import {
@@ -27,11 +27,10 @@ import {
 
 // Components
 import Appointments from './Appointments'
-import GlucoseLogs from './GlucoseLogs'
-import MedicalForms from './MedicalForms'
 import Products from './Products'
 import Profile from './Profile'
 import Notifications from './Notifications'
+import GlucoseLogs from './GlucoseLogs';
 
 
 const drawerWidth = 250;
@@ -103,20 +102,18 @@ export default function Dashboard() {
     setOpen(!open);
   };
 
-
-
   return (
     <Box sx={{ display: 'flex' }}>
         <Routes>
             <Route path="/dashboard/profile" element={<Profile />} />
-            <Route path="/dashboard/glucose-logs" element={<GlucoseLogs />} />
+            <Route path="/dashboard/glucose-logs" element={<Outlet />}>
+                <Route element={<GlucoseLogs />} />
+            </Route>
             <Route path="/dashboard/appointments" element={<Appointments />} />
             <Route path="/dashboard/notifications" element={<Notifications />} />
-{/*         <Route path="/dashboard/product" element={<Profile />} />
-            <Route path="/dashboard/forms" element={<Profile />} /> */}
         </Routes>
         <CssBaseline />
-        <Drawer variant="permanent" open={open}>
+        <Drawer variant="permanent" open={open} sx={{ zIndex: 1200 }}>
             <Toolbar
                 sx={{
                     display: 'flex',
@@ -190,8 +187,11 @@ export default function Dashboard() {
             flexGrow: 1,
             height: '100vh',
             overflow: 'auto',
+            display: 'flex',
+            justifyContent: 'center',
             }}
         >
+            <Outlet />
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                 <Typography variant="h4" gutterBottom component="div">
                     Hello, USER!
@@ -202,7 +202,7 @@ export default function Dashboard() {
                     <ClickableBox title="Profile" path="/dashboard/profile"/>
                     <ClickableBox title="Appointments"path="/dashboard/appointments" />
                     <ClickableBox title="Product Info" path="/dashboard"/>
-                    <ClickableBox title="Profile" path="/dashboard"/>
+                    <ClickableBox title="Blank Medical Forms" path="/dashboard"/>
                 </Box>
             </Container>
         </Box>

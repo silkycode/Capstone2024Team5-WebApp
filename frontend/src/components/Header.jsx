@@ -17,7 +17,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
   const navigate = useNavigate();
 
   return (
-    <AppBar position="sticky" sx={{ top: 0, backgroundColor: '#fff' }}>
+    <AppBar position="sticky" sx={{ top: 0, zIndex: 1500, backgroundColor: '#fff' }}>
       <Toolbar sx={{ height: '100px', color: '#333', justifyContent: 'space-between' }}>
         <div>
           <IconButton edge="start" sx={{ mr: 2 }}>
