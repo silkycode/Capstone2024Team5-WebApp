@@ -1,4 +1,6 @@
-import json
+# Client data routes
+# Endpoints for retrieving user data for front end display
+
 import re
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
@@ -25,6 +27,6 @@ def contact():
         'data': {}
     }
 
-    #TODO: Add these to a DB or a queue or some other similar processing structure
+    #TODO: Add these to a DB or a queue or some other similar processing structure for reading messages
 
     return jsonify(response_data)

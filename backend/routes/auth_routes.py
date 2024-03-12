@@ -1,3 +1,6 @@
+# Auth routes
+# Endpoints for authentication, authorization, and interacting with user account details
+
 import re
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
