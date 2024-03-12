@@ -78,7 +78,9 @@ def profile():
 
 # Two routes -> GET to retrieve current appointments from DB, POST to add a new appointment. Implement autodelete?
 @dashboard_routes.route('/appointments', methods=['GET', 'POST'])
+@jwt_required()
 def appointments():
+    current_user_id = get_jwt_identity()
     if request.method == 'GET':
         response_data = {
             'message': 'ok',
