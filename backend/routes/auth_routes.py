@@ -4,6 +4,7 @@
 import re
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
+from flask_jwt_extended import create_access_token
 import hashlib
 from sqlalchemy.exc import SQLAlchemyError
 from models.db_module import db
@@ -66,12 +67,14 @@ def login():
     try:
         creds = UserCredentials.query.filter_by(email=email, password_hash=hashed_password).first()
         if creds:
+            access_token = create_access_token(identity=creds.id)
             response_data = {
                 'message': 'Authentication success',
                 'status': 'success',
                 'data': {
                     'email': email,
                     'username': creds.username,
+                    'access_token': access_token
                 }
             }
         else:

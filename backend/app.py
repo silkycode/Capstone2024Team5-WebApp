@@ -1,15 +1,19 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import os
-import base64
-import sqlite3
+from flask_jwt_extended import JWTManager
+
 from routes.dashboard_routes import dashboard_routes
 from routes.auth_routes import auth_routes
 from config import Config
 from models.db_module import db
 
+import os
+import base64
+import sqlite3
+
 app = Flask(__name__)
 app.config.from_object(Config)
+jwt = JWTManager(app)
 CORS(app)
 
 db.init_app(app)
