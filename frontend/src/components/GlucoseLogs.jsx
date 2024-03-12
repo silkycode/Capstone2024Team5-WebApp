@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Button, CssBaseline, TextField, Container, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 
-function GlucoseLog() {
+function GlucoseLogs() {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [glucoseLevel, setGlucoseLevel] = useState('');
@@ -22,12 +22,11 @@ function GlucoseLog() {
     });
     if (response.ok) {
       console.log('Log recorded successfully');
-      loadLogs(); // Reload logs to display the new entry
+      loadLogs();
     }
   };
 
   const loadLogs = async () => {
-    // Note: Ensure to adjust this call to include the username if your API requires it
     const response = await fetch('/api/glucose');
     if (response.ok) {
       const logs = await response.json();
@@ -125,4 +124,4 @@ function GlucoseLog() {
   );
 }
 
-export default GlucoseLog;
+export default GlucoseLogs;
