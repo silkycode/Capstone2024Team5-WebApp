@@ -34,6 +34,16 @@ function GlucoseLogs() {
     }
   };
 
+  const deleteLog = async (logId) => {
+    const response = await fetch(`/api/glucose/${logId}`, {
+      method: 'DELETE',
+    });
+    if (response.ok) {
+      console.log('Log deleted successfully');
+      loadLogs(); // Reload the logs to update the UI
+    }
+  };  
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -109,11 +119,14 @@ function GlucoseLogs() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {logs.map((log, index) => (
-                <TableRow key={index}>
+              {logs.map((log) => (
+                <TableRow key={log.log_id}>
                   <TableCell>{log.date}</TableCell>
                   <TableCell>{log.time}</TableCell>
                   <TableCell>{log.glucose_level}</TableCell>
+                  <TableCell>
+                    <Button onCLick={() => deleteLog(log.log_id)}></Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

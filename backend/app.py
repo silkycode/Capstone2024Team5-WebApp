@@ -52,6 +52,14 @@ def add_glucose_log():
     conn.close()
     return jsonify({'message': 'Log added successfully'}), 201
 
+@app.route('/glucose/<int:log_id>', methods=['DELETE'])
+def delete_glucose_log(log_id):
+    conn = get_glucose_log_db_connection()
+    conn.execute('DELETE FROM glucose_logs WHERE log_id = ?', (log_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({'message': 'Log deleted successfully'}), 200
+
 @app.route('/glucose', methods=['GET'])
 def get_glucose_logs():
     username = request.args.get('username') # Assume you pass username as query parameter
@@ -83,6 +91,13 @@ def delete_appointment(appointment_id):
     conn.commit()
     conn.close()
     return jsonify({'message': 'Appointment deleted successfully'}), 200
+
+@app.route('/appointments', methods=['GET'])
+def get_appointments():
+    conn = get_appointmentDB_connection()  
+    appointments = conn.execute('SELECT * FROM appointments').fetchall()
+    conn.close()
+    return jsonify([dict(appointment) for appointment in appointments])
 
 
 if __name__ == '__main__':
