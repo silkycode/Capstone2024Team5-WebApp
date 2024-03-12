@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { styled, createTheme, ThemeProvider } from '@mui/system';
+import { styled } from '@mui/system';
+import { Route, Routes } from 'react-router-dom';
 import {
   CssBaseline,
   Drawer as MuiDrawer,
@@ -43,6 +44,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
+const Profile = () => <div>Profile Page</div>;
+const GlucoseLogs = () => <div>Glucose Logs Page</div>;
+const Appointments = () => <div>Appointments Page</div>;
+const Notifications = () => <div>Notifications Page</div>;
+
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
 
@@ -84,6 +90,12 @@ export default function Dashboard() {
         >
             <Toolbar />
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Routes>
+                <Route path="/dashboard/profile" element={<Profile />} />
+                <Route path="/dashboard/glucose-logs" element={<GlucoseLogs />} />
+                <Route path="/dashboard/appointments" element={<Appointments />} />
+                <Route path="/dashboard/notifications" element={<Notifications />} />
+            </Routes>
             </Container>
         </Box>
     </Box>

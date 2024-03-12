@@ -19,7 +19,7 @@ function AimPlusMedicalSupplies() {
         <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
         <Routes>
           <Route path="/" element={isLoggedIn ? <Navigate to='/dashboard'/> : <Login setIsLoggedIn={setIsLoggedIn} />} />
-          <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/" />} />  
+          <Route path="/dashboard/*" element={isLoggedIn ? <Dashboard /> : <Navigate to="/" />} />  
           <Route path="/help" element={<HelpInfo />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/registration" element={<Registration />} />
