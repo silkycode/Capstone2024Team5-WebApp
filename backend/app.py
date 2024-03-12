@@ -1,22 +1,26 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import os
-import base64
-import sqlite3
-from routes.client_data_routes import client_data_routes
+from flask_jwt_extended import JWTManager
+
+from routes.dashboard_routes import dashboard_routes
 from routes.auth_routes import auth_routes
 from config import Config
 from models.db_module import db
 from datetime import datetime
 
+import os
+import base64
+import sqlite3
+
 app = Flask(__name__)
 app.config.from_object(Config)
+jwt = JWTManager(app)
 CORS(app)
 
 db.init_app(app)
 
 app.register_blueprint(auth_routes, url_prefix='/auth')
-app.register_blueprint(client_data_routes, url_prefix='/services')
+app.register_blueprint(dashboard_routes, url_prefix='/dashboard')
 
 def get_productsDB_connection():
     database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'products.db')

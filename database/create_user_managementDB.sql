@@ -41,8 +41,7 @@ CREATE TABLE IF NOT EXISTS glucose_logs (
 CREATE TABLE IF NOT EXISTS appointments (
     appointment_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
-    appointment_date DATE,
-    appointment_time TIME,
+    appointment_date DATETIME,
     doctor_name TEXT,
     appointment_notes TEXT,
     FOREIGN KEY (user_id) REFERENCES users (id)
