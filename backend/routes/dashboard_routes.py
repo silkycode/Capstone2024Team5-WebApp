@@ -1,10 +1,10 @@
 # Dashboard and data routes
 # Endpoints for retrieving user data for front end display + misc. non-auth tasks
 
-import datetime
 import re
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.db_module import db
 
 dashboard_routes = Blueprint('dashboard_routes', __name__)
@@ -46,13 +46,15 @@ def contact():
 
 # Two routes based on HTTP -> GET to populate profile fields, POST to update profile info
 @dashboard_routes.route('/profile', methods=['GET', 'POST'])
+@jwt_required()
 def profile():
+    current_user_id = get_jwt_identity()
     if request.method == 'GET':
         response_data = {
             'message': 'ok',
             'status': 'success',
             'data': {
-                'user_id': 1,
+                'user_id': current_user_id,
                 'email': 'doejohn@email.com',
                 'username': 'johndoe',
                 'first_name': 'John',
