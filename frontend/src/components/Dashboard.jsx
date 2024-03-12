@@ -87,7 +87,7 @@ const ClickableBox = ({ title, path }) => {
     );
 };
 
-export default function Dashboard() {
+export default function Dashboard({jwtToken}) {
   const [open, setOpen] = React.useState(true);
   const location = useLocation();
 

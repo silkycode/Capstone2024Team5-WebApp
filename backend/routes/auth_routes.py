@@ -71,11 +71,7 @@ def login():
             response_data = {
                 'message': 'Authentication success',
                 'status': 'success',
-                'data': {
-                    'email': email,
-                    'username': creds.username,
-                    'access_token': access_token
-                }
+                'access_token': access_token
             }
         else:
             response_data = {

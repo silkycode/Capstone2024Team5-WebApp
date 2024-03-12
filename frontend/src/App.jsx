@@ -23,7 +23,7 @@ function AimPlusMedicalSupplies() {
   return (
     <Router>
       <div>
-        <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+        <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} setJwtToken={setJwtToken} />
         <Routes>
           <Route path="/" element={isLoggedIn ? <Navigate to='/dashboard'/> : <Login setIsLoggedIn={setIsLoggedIn} setJwtToken={setJwtToken} />} />
           <Route path="/dashboard/*" element={isLoggedIn ? <Dashboard jwtToken={jwtToken}/> : <Navigate to="/" />} >

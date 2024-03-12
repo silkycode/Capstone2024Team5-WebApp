@@ -13,7 +13,7 @@ const buttonStyles = {
   padding: '15px',
 };
 
-export default function Header({ isLoggedIn, setIsLoggedIn }) {
+export default function Header({ isLoggedIn, setIsLoggedIn, setJwtToken }) {
   const navigate = useNavigate();
 
   return (
@@ -38,7 +38,11 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
             <span style={{ marginLeft: '6px' }}>Dashboard</span>
           </Button>
           {isLoggedIn && (
-          <Button onClick={() => {setIsLoggedIn(false); navigate('/');}} sx={buttonStyles}>
+          <Button onClick={() => {
+            setIsLoggedIn(false); 
+            setJwtToken(''); 
+            navigate('/');}} 
+            sx={buttonStyles}>
             <LogoutIcon />
             <span style={{ marginLeft: '6px' }}>Log Out</span>
           </Button>
