@@ -8,8 +8,7 @@ from flask_jwt_extended import create_access_token
 import hashlib
 from sqlalchemy.exc import SQLAlchemyError
 from models.db_module import db
-from models.user_credentials import UserCredentials
-from models.user import User
+from models.user_management_models import UserCredentials, User
 
 # Register auth_routes as a blueprint for importing into app.py + set up CORS functionality and DB connection
 auth_routes = Blueprint('auth_routes', __name__)
@@ -34,7 +33,7 @@ def login():
     try:
         creds = UserCredentials.query.filter_by(email=email, password_hash=hashed_password).first()
         if creds:
-            access_token = create_access_token(identity=creds.id)
+            access_token = create_access_token(identity=creds.credentials_id)
             response_data = {
                 'message': 'Authentication success',
                 'status': 'success',
@@ -162,22 +161,22 @@ def register():
 
         #TODO: Fix user table update after credentials registration, verification email
 
-        """         
-        user_id = new_creds.id
+     
+        user_id = new_creds.credentials_id
         new_user = User(
-            id=user_id,
+            credentials_id=user_id,
             first_name=first_name,
             last_name=last_name,
         )
         db.session.add(new_user)
         db.session.commit() 
-        """
         
         response_data = {
             'message': 'Registration successful! Check your email for verification.',
             'status': 'success',
             'data': {}
         }
+
     except SQLAlchemyError as e:
         response_data = {
             'message': 'Database error occurred.',

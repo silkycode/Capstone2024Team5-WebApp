@@ -2,7 +2,7 @@
 
 -- 'credentials' table, relevant for authentication
 CREATE TABLE IF NOT EXISTS credentials (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    credentials_id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS credentials (
 -- 'users' table for server and client-side dynamic data display
 -- one-to-one relationship between user and credentials, 1 user per set of credentials
 CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY,
+    credentials_id INTEGER PRIMARY KEY,
     first_name TEXT,
     last_name TEXT,
     dob DATE,
@@ -25,36 +25,36 @@ CREATE TABLE IF NOT EXISTS users (
     doctor_name TEXT,
     doctor_phone TEXT,
     doctor_fax TEXT,
-    FOREIGN KEY (id) REFERENCES credentials (id)
+    FOREIGN KEY (credentials_id) REFERENCES credentials (id) ON DELETE CASCADE
 );
 
 -- 'glucose_logs' table for each user's log history + measurements
-CREATE TABLE IF NOT EXISTS glucose_logs (
+CREATE TABLE IF NOT EXISTS glucose_log (
     log_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
     glucose_level INTEGER,
     log_timestamp DATETIME,
-    FOREIGN KEY (user_id) REFERENCES users (id)
+    FOREIGN KEY (user_id) REFERENCES users (credentials_id) ON DELETE CASCADE
 );
 
 -- 'appointments' table for upcoming appointments to track
-CREATE TABLE IF NOT EXISTS appointments (
+CREATE TABLE IF NOT EXISTS appointment (
     appointment_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
     appointment_date DATETIME,
     doctor_name TEXT,
     appointment_notes TEXT,
-    FOREIGN KEY (user_id) REFERENCES users (id)
+    FOREIGN KEY (user_id) REFERENCES users (credentials_id) ON DELETE CASCADE
 );
 
 -- 'status' table for various notifications and frontpage displays
-CREATE TABLE IF NOT EXISTS status (
+CREATE TABLE IF NOT EXISTS notification (
     status_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
     notification TEXT,
     importance INTEGER,
     status_timestamp DATETIME,
-    FOREIGN KEY (user_id) REFERENCES users (id)
+    FOREIGN KEY (user_id) REFERENCES users (credentials_id) ON DELETE CASCADE
 );
 
 
