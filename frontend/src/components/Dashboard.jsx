@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { styled } from '@mui/system';
-import { Route, Routes } from 'react-router-dom';
 import {
   CssBaseline,
   Drawer as MuiDrawer,
@@ -18,6 +17,11 @@ import {
 } from '@mui/material';
 import {
     AccountBox as AccountBoxIcon,
+    EditCalendar as EditCalendarIcon,
+    MedicalServices as MedicalServicesIcon,
+    Print as PrintIcon,
+    EditNote as EditNoteIcon,
+    PriorityHigh as PriorityHighIcon,
     People as PeopleIcon,
     Notifications as NotificationsIcon,
     Assignment as AssignmentIcon,
@@ -53,7 +57,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const ClickableBox = ({ title, path }) => {
+const ClickableBox = ({ title, path, icon: Icon }) => {
     return (
         <Link to={path} style={{ textDecoration: 'none' }}>
             <Box
@@ -73,11 +77,13 @@ const ClickableBox = ({ title, path }) => {
                 <Box sx={{ 
                     display: 'flex',
                     alignItems: 'center',
+                    flexDirection: 'column',
                     justifyContent: 'center',
                     height: '100%',
                     padding: '20px',
                 }}
                 >
+                {Icon && <Icon sx={{ color: 'white', fontSize: 40 }} />}
                 <Typography variant="h5" component="div" color="white" fontWeight={'bold'} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)' }}>
                     {title}
                 </Typography>
@@ -177,17 +183,17 @@ export default function Dashboard() {
             }}
         >
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                <Typography variant="h4" gutterBottom component="div">
-                    Hello, USER!
+                <Typography variant="h6" gutterBottom component="div">
+                    Logged in as: USER
                 </Typography>
                 {location.pathname === "/dashboard" && (
-                    <Box sx={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-                        <ClickableBox title="Log Your Glucose" path="/dashboard/glucose-logs" />
-                        <ClickableBox title="Notifications" path="/dashboard/notifications"/>
-                        <ClickableBox title="Profile" path="/dashboard/profile"/>
-                        <ClickableBox title="Appointments"path="/dashboard/appointments" />
-                        <ClickableBox title="Product Info" path="/dashboard/products"/>
-                        <ClickableBox title="Blank Medical Forms" path="/dashboard/medical-forms"/>
+                    <Box sx={{ display: 'flex', alignContent: 'vertical', gap: '40px', flexWrap: 'wrap' }}>
+                        <ClickableBox title="Log Your Glucose" path="/dashboard/glucose-logs" icon={EditNoteIcon} />
+                        <ClickableBox title="Notifications" path="/dashboard/notifications" icon={PriorityHighIcon} />
+                        <ClickableBox title="Appointments"path="/dashboard/appointments" icon={EditCalendarIcon} />
+                        <ClickableBox title="Profile" path="/dashboard/profile" icon={AccountBoxIcon}/>
+                        <ClickableBox title="Product Info" path="/dashboard/products" icon={MedicalServicesIcon}/>
+                        <ClickableBox title="Blank Medical Forms" path="/dashboard/medical-forms" icon={PrintIcon}/>
                     </Box>
                 )}
                 <Outlet />
