@@ -1,13 +1,31 @@
-import React, { useState } from 'react';
-import { TextField, Button, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { TextField, Button, Typography, Box, CssBaseline, Paper, Container } from '@mui/material';
+import { ArrowBack as ArrowBackIcon} from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const ProfilePage = () => {
   const [editing, setEditing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [profileInfo, setProfileInfo] = useState({
-    name: 'John Doe',
-    email: 'john@example.com',
-    bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    first_name: '',
+    last_name: '',
+    dob: '',
+    primary_phone: '',
+    secondary_phone: '',
+    address: '',
+    primary_insurance: '',
+    id_number: '',
+    contact_person: '',
+    doctor_name: '',
+    doctor_phone: '',
+    doctor_fax: '',
   });
+  const token = localStorage.getItem('jwtToken');
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const navigate = useNavigate();
 
   const handleEdit = () => {
     setEditing(true);
@@ -22,46 +40,195 @@ const ProfilePage = () => {
     setProfileInfo({ ...profileInfo, [name]: value });
   };
 
+  const fetchProfile = async () => {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/dashboard/profile', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
+        if (response.ok) {
+            const dataBody = await response.json();
+            if (dataBody.status === 'success') {
+              setProfileInfo(dataBody.data);
+            } else {
+                setErrorMessage(data.message);
+            }
+        } else {
+            setErrorMessage('HTTP error: ' + response.status);
+        }
+    } catch (error) {
+        setErrorMessage('An error occurred: ' + error.message + '.');
+    }
+};
+
   return (
-    <div>
-      {editing ? (
-        <>
-          <TextField
-            name="name"
-            label="Name"
-            value={profileInfo.name}
-            onChange={handleChange}
-          />
-          <TextField
-            name="email"
-            label="Email"
-            value={profileInfo.email}
-            onChange={handleChange}
-          />
-          <TextField
-            name="bio"
-            label="Bio"
-            multiline
-            rows={4}
-            value={profileInfo.bio}
-            onChange={handleChange}
-          />
-          <Button variant="contained" color="primary" onClick={handleSave}>
-            Save
-          </Button>
-        </>
-      ) : (
-        <>
-          <Typography variant="h4">Profile Information</Typography>
-          <Typography>Name: {profileInfo.name}</Typography>
-          <Typography>Email: {profileInfo.email}</Typography>
-          <Typography>Bio: {profileInfo.bio}</Typography>
-          <Button variant="contained" color="primary" onClick={handleEdit}>
-            Edit
-          </Button>
-        </>
-      )}
-    </div>
+    <Container component="main" maxWidth="sm">
+      <CssBaseline />
+      <Paper elevation={3} sx={{ padding: '20px', marginTop: '30px' }}>
+        <div sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          maxWidth: '800px', // Increase maximum width
+          margin: 'auto',
+          padding: '16px',
+          backgroundColor: '#f9f9f9',
+          borderRadius: '8px',
+          boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        }}>
+          <CssBaseline />
+          {editing ? (
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<ArrowBackIcon />}
+                onClick={handleSave}
+                sx={{ mb: 2, width: '150px', height: '40px' }}
+                >
+                Go Back
+              </Button>
+              <Button 
+                variant="contained"
+                color="primary"
+                onClick={handleSave}
+                sx={{ ml: 4, mb: 2, width: '100px', height: '40px' }}
+                >
+                  Save
+              </Button>
+              <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                <Box sx={{ flex: 1, marginRight: '20px' }}>
+                  <Typography variant="h4" sx={{ marginBottom: '12px', fontWeight: 'bold' }}>Edit Profile Information</Typography>
+                  <TextField
+                    name="first_name"
+                    label="First Name"
+                    value={profileInfo.first_name}
+                    onChange={handleChange}
+                    sx={{ marginBottom: '12px' }}
+                  />
+                  <TextField
+                    name="last_name"
+                    label="Last Name"
+                    value={profileInfo.last_name}
+                    onChange={handleChange}
+                    sx={{ marginBottom: '12px' }}
+                  />
+                  <TextField
+                    name="dob"
+                    label="Date of Birth"
+                    type="date"
+                    value={profileInfo.dob}
+                    onChange={handleChange}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    sx={{ marginBottom: '12px' }}
+                  />
+                  <TextField
+                    name="primary_phone"
+                    label="Primary Phone"
+                    value={profileInfo.primary_phone}
+                    onChange={handleChange}
+                    sx={{ marginBottom: '12px' }}
+                  />
+                  <TextField
+                    name="secondary_phone"
+                    label="Secondary Phone"
+                    value={profileInfo.secondary_phone}
+                    onChange={handleChange}
+                    sx={{ marginBottom: '12px' }}
+                  />
+                </Box>
+                <Box sx={{ flex: 1 }}>
+                  <TextField
+                    name="address"
+                    label="Address"
+                    multiline
+                    rows={4}
+                    value={profileInfo.address}
+                    onChange={handleChange}
+                    sx={{ marginBottom: '12px' }}
+                  />
+                  <TextField
+                    name="primary_insurance"
+                    label="Primary Insurance"
+                    value={profileInfo.primary_insurance}
+                    onChange={handleChange}
+                    sx={{ marginBottom: '12px' }}
+                  />
+                  <TextField
+                    name="id_number"
+                    label="ID Number"
+                    value={profileInfo.id_number}
+                    onChange={handleChange}
+                    sx={{ marginBottom: '12px' }}
+                  />
+                  <TextField
+                    name="contact_person"
+                    label="Contact Person"
+                    value={profileInfo.contact_person}
+                    onChange={handleChange}
+                    sx={{ marginBottom: '12px' }}
+                  />
+                  <TextField
+                    name="doctor_name"
+                    label="Doctor Name"
+                    value={profileInfo.doctor_name}
+                    onChange={handleChange}
+                    sx={{ marginBottom: '12px' }}
+                  />
+                  <TextField
+                    name="doctor_phone"
+                    label="Doctor Phone"
+                    value={profileInfo.doctor_phone}
+                    onChange={handleChange}
+                    sx={{ marginBottom: '12px' }}
+                  />
+                  <TextField
+                    name="doctor_fax"
+                    label="Doctor Fax"
+                    value={profileInfo.doctor_fax}
+                    onChange={handleChange}
+                    sx={{ marginBottom: '12px' }}
+                  />
+                </Box>
+              </Box>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<ArrowBackIcon />}
+                onClick={() => navigate('/')}
+                sx={{ mb: 2, width: '150px', height: '40px' }}
+                >
+                Go Back
+              </Button>
+              <Typography variant="h4" sx={{ fontWeight: 'bold' }}>Profile Information</Typography>
+              <Typography><span style={{ fontWeight: 'bold' }}>First Name:</span> {profileInfo.first_name}</Typography>
+              <Typography><span style={{ fontWeight: 'bold' }}>Last Name:</span> {profileInfo.last_name}</Typography>
+              <Typography><span style={{ fontWeight: 'bold' }}>Date of Birth:</span> {profileInfo.dob}</Typography>
+              <Typography><span style={{ fontWeight: 'bold' }}>Primary Phone:</span> {profileInfo.primary_phone}</Typography>
+              <Typography><span style={{ fontWeight: 'bold' }}>Secondary Phone:</span> {profileInfo.secondary_phone}</Typography>
+              <Typography><span style={{ fontWeight: 'bold' }}>Address:</span> {profileInfo.address}</Typography>
+              <Typography><span style={{ fontWeight: 'bold' }}>Primary Insurance:</span> {profileInfo.primary_insurance}</Typography>
+              <Typography><span style={{ fontWeight: 'bold' }}>ID Number:</span> {profileInfo.id_number}</Typography>
+              <Typography><span style={{ fontWeight: 'bold' }}>Contact Person:</span> {profileInfo.contact_person}</Typography>
+              <Typography><span style={{ fontWeight: 'bold' }}>Doctor Name:</span> {profileInfo.doctor_name}</Typography>
+              <Typography><span style={{ fontWeight: 'bold' }}>Doctor Phone:</span> {profileInfo.doctor_phone}</Typography>
+              <Typography><span style={{ fontWeight: 'bold' }}>Doctor Fax:</span> {profileInfo.doctor_fax}</Typography>
+              <Button variant="contained" color="primary" onClick={handleEdit} sx={{ marginTop: '16px' }}>
+                Edit
+              </Button>
+            </>
+          )}
+        </div>
+      </Paper>
+    </Container>
   );
 };
 

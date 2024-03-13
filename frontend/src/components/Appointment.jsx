@@ -8,6 +8,7 @@ const Appointment = () => {
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
+  const token = localStorage.getItem('jwtToken');
   const navigate = useNavigate();
 
   // Fetch appointments from the backend
@@ -15,19 +16,35 @@ const Appointment = () => {
     fetchAppointments();
   }, []);
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+    return date.toLocaleDateString('en-US', options);
+  };
+
   const fetchAppointments = async () => {
-    const response = await fetch('/appointments');
+    const response = await fetch('http://127.0.0.1:5000/dashboard/appointments', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      }
+    });
     if (response.ok) {
-      const appointments = await response.json();
+      const responseData = await response.json();
+      const { appointments } = responseData.data;
       setAppointments(appointments);
     }
+
   };
+
   const recordAppointment = async () => {
     const appointment = { title, date, time };
-    const response = await fetch('/appointments', {
+    const response = await fetch('http://127.0.0.1:5000/dashboard/appointments', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(appointment),
     });
@@ -43,7 +60,7 @@ const Appointment = () => {
     });
     if (response.ok) {
       console.log('Appointment deleted successfully');
-      fetchAppointments(); // Reload the appointments to update the UI
+      fetchAppointments(); 
     }
   };
 
@@ -117,15 +134,15 @@ const Appointment = () => {
           </Button>
         </Box>
       </Box>
-      {appointments.length > 0 && (
-        <Paper sx={{ marginTop: 4, padding: 2 }}>
-          <Typography variant="h6" gutterBottom>
+      {appointments && (
+        <Paper elevation={6} sx={{ marginTop: 4, padding: 2 }}>
+          <Typography variant="6" gutterBottom>
             Scheduled Appointments
           </Typography>
           {appointments.map((appointment) => (
             <Box key={appointment.appointment_id} sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
               <Typography>
-                {appointment.title} - {appointment.date} at {appointment.time}
+                {appointment.doctor_name} - {appointment.appointment_notes} at {formatDate(appointment.appointment_date)}
               </Typography>
               <Button variant="outlined" color="error" onClick={() => deleteAppointment(appointment.appointment_id)}>
                 Delete

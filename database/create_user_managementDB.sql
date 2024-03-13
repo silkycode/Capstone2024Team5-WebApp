@@ -58,7 +58,29 @@ CREATE TABLE IF NOT EXISTS notification (
 );
 
 
--- Some dummy users for debugging
+-- Some dummy database info for debugging
 INSERT INTO credentials (username, email, password_hash) VALUES ('user1', 'user1@email.com', sha3('password1', 256));
 INSERT INTO credentials (username, email, password_hash) VALUES ('user2', 'user2@email.com', sha3('password2', 256));
 INSERT INTO credentials (username, email, password_hash) VALUES ('user3', 'user3@email.com', sha3('password3', 256));
+
+INSERT INTO glucose_log (user_id, glucose_level, log_timestamp) VALUES 
+(1, 120, '2024-03-10 08:00:00'),
+(1, 110, '2024-03-11 09:30:00'),
+(2, 130, '2024-03-10 07:45:00'),
+(2, 140, '2024-03-12 10:15:00'),
+(3, 100, '2024-03-09 11:00:00');
+
+-- Inserting dummy appointments
+INSERT INTO appointment (user_id, appointment_date, doctor_name, appointment_notes) VALUES
+(1, '2024-03-15 10:00:00', 'Dr. Smith', 'Screening checkup'),
+(2, '2024-03-16 11:30:00', 'Dr. Johnson', 'Discuss medication dosage, DME'),
+(3, '2024-03-20 09:15:00', 'Dr. Brown', 'Blood test and consultation'),
+(1, '2024-03-25 14:00:00', 'Dr. Lee', 'Follow-up appointment');
+
+-- Inserting dummy notifications
+INSERT INTO notification (user_id, notification, importance, status_timestamp) VALUES
+(1, 'Reminder: Your appointment with Dr. Smith is tomorrow.', 2, '2024-03-14 15:00:00'),
+(2, 'You have a scheduled appointment with Dr. Johnson on Thursday.', 1, '2024-03-13 10:30:00'),
+(3, 'Your blood test results are ready. Please schedule an appointment for review.', 3, '2024-03-12 12:45:00'),
+(1, 'New glucose log entry: 120 mg/dL at 8:00 AM.', 1, '2024-03-10 08:15:00'),
+(2, 'New glucose log entry: 140 mg/dL at 10:15 AM.', 1, '2024-03-12 10:30:00');

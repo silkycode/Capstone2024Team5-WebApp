@@ -11,18 +11,6 @@ function GlucoseLogs() {
   const token = localStorage.getItem('jwtToken');
   const navigate = useNavigate();
 
-  const fetchLogs = async () => {
-    const response = await fetchLogs('/api/glucose', {
-      headers: {
-        'Authorization': 'Bearer ${token}',
-      }
-    });
-    if (response.ok) {
-      const logs = await response.json();
-      setLogs(logs);
-    }
-  };
-
   const recordLog = async () => {
     const log = { date, time, glucoseLevel };
     const response = await fetch('/api/glucose', {

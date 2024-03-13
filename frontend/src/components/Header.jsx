@@ -13,7 +13,7 @@ const buttonStyles = {
   padding: '15px',
 };
 
-export default function Header({ isLoggedIn, setIsLoggedIn, setJwtToken }) {
+export default function Header({ isLoggedIn, setIsLoggedIn }) {
   const navigate = useNavigate();
 
   return (
@@ -39,7 +39,6 @@ export default function Header({ isLoggedIn, setIsLoggedIn, setJwtToken }) {
           <Button onClick={() => {
             localStorage.removeItem('jwtToken'); // Properly clear the token on logout
             setIsLoggedIn(false); 
-            setJwtToken(''); 
             navigate('/');}} 
             sx={buttonStyles}>
             <LogoutIcon />

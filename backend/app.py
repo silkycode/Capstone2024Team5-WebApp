@@ -94,7 +94,7 @@ def get_glucose_logs():
 
 # Appointment Page
 def get_appointmentDB_connection():
-    database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'appointments.db')
+    database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'user_management.db')
     conn = sqlite3.connect(database_path)
     conn.row_factory = sqlite3.Row
     return conn

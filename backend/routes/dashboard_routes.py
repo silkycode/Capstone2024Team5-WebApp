@@ -1,11 +1,13 @@
 # Dashboard and data routes
 # Endpoints for retrieving user data for front end display + misc. non-auth tasks
 
+import datetime
 import re
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.db_module import db
+from models.user_management_models import Appointment
 
 dashboard_routes = Blueprint('dashboard_routes', __name__)
 CORS(dashboard_routes)
@@ -66,7 +68,6 @@ def profile():
                 'primary_insurance': 'Insurance Company ABC',
                 'id_number': 'ABC123',
                 'contact_person': 'Jane Doe',
-                'last_office_visit': '2022-01-01',
                 'doctor_name': 'Dr. Smith',
                 'doctor_phone': '555-555-5555',
                 'doctor_fax': '555-555-5556'
@@ -82,23 +83,44 @@ def profile():
 def appointments():
     current_user_id = get_jwt_identity()
     if request.method == 'GET':
+        user_appointments = Appointment.query.filter_by(user_id=current_user_id).all()
+        appointments = []
+        for appointment in user_appointments:
+            appointments.append({
+                'appointment_id': appointment.appointment_id,
+                'appointment_date': appointment.appointment_date.strftime('%Y-%m-%d %H:%M:%S'),
+                'doctor_name': appointment.doctor_name,
+                'appointment_notes': appointment.appointment_notes
+            })
         response_data = {
             'message': 'ok',
             'status': 'success',
             'data': {
-                'appointment_id1': {
-                    'appointment_date': '2024-03-15 09:00:00',
-                    'doctor_name': 'Dr. Smith',
-                    'appointment_notes': 'Follow up appointment for screening.'
-                },
-                'appointment_id2': {
-                    'appointment_date': '2024-03-18 12:00:00',
-                    'doctor_name': 'Dr. James',
-                    'appointment_notes': 'Blood draw.'
-                }
+                'appointments': appointments
             }
         }
         return jsonify(response_data)
+    
     else:
-        response_data = {}
+        request_data = request.get_json()
+        appointment_date = appointment.appointment_data.strptime(request_data['appointment_date'], '%Y-%m-%d %H:%M:%S')
+        doctor_name = request_data['doctor_name']
+        appointment_notes = request_data['appointment_notes']
+
+        new_appointment = Appointment(
+            user_id=current_user_id,
+            appointment_date=appointment_date,
+            doctor_name=doctor_name,
+            appointment_notes=appointment_notes
+        )
+
+        db.session.add(new_appointment)
+        db.session.commit()
+
+        response_data = {
+            'message': 'Appointment created!',
+            'status': 'success',
+        }
+
+        return jsonify({'message': 'Appointment created successfully'})
 
