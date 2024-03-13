@@ -5,9 +5,9 @@ import { ArrowBack as ArrowBackIcon} from '@mui/icons-material';
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
-  const [title, setTitle] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
+  const [doctor, setDoctor] = useState('');
+  const [dateTime, setDateTime] = useState('');
+  const [notes, setNotes] = useState('');
   const token = localStorage.getItem('jwtToken');
   const navigate = useNavigate();
 
@@ -39,7 +39,7 @@ const Appointment = () => {
   };
 
   const recordAppointment = async () => {
-    const appointment = { title, date, time };
+    const appointment = { doctor, dateTime, notes };
     const response = await fetch('http://127.0.0.1:5000/dashboard/appointments', {
       method: 'POST',
       headers: {
@@ -55,8 +55,13 @@ const Appointment = () => {
   };
 
   const deleteAppointment = async (appointmentId) => {
-    const response = await fetch(`/appointments/${appointmentId}`, {
+    const response = await fetch('http://127.0.0.1:5000/dashboard/appointments', {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ appointment_id: appointmentId }),
     });
     if (response.ok) {
       console.log('Appointment deleted successfully');
@@ -89,39 +94,40 @@ const Appointment = () => {
         </Typography>
         <Box component="form" noValidate sx={{ mt: 1 }}>
           <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="title"
-            label="Title"
-            name="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="dateTime"
+          label="Date & Time"
+          type="datetime-local"
+          InputLabelProps={{ shrink: true }}
+          value={dateTime}
+          onChange={(e) => setDateTime(e.target.value)}
           />
           <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            name="date"
-            label="Date"
-            type="date"
+            name="doctor_name"
+            label="Doctor Name"
+            type="text"
             InputLabelProps={{ shrink: true }}
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+            value={doctor}
+            onChange={(e) => setDoctor(e.target.value)}
           />
           <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            name="time"
-            label="Time"
-            type="time"
+            name="notes"
+            label="Notes/Description"
+            type="text"
             InputLabelProps={{ shrink: true }}
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
           />
           <Button
             type="button"

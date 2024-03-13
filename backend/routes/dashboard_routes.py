@@ -1,7 +1,7 @@
 # Dashboard and data routes
 # Endpoints for retrieving user data for front end display + misc. non-auth tasks
 
-import datetime
+from datetime import datetime
 import re
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
@@ -78,10 +78,11 @@ def profile():
         response_data = {}
 
 # Two routes -> GET to retrieve current appointments from DB, POST to add a new appointment. Implement autodelete?
-@dashboard_routes.route('/appointments', methods=['GET', 'POST'])
+@dashboard_routes.route('/appointments', methods=['GET', 'POST', 'DELETE'])
 @jwt_required()
 def appointments():
     current_user_id = get_jwt_identity()
+    
     if request.method == 'GET':
         user_appointments = Appointment.query.filter_by(user_id=current_user_id).all()
         appointments = []
@@ -101,11 +102,11 @@ def appointments():
         }
         return jsonify(response_data)
     
-    else:
+    elif request.method == 'POST':
         request_data = request.get_json()
-        appointment_date = appointment.appointment_data.strptime(request_data['appointment_date'], '%Y-%m-%d %H:%M:%S')
-        doctor_name = request_data['doctor_name']
-        appointment_notes = request_data['appointment_notes']
+        appointment_date = datetime.strptime(request_data['dateTime'], '%Y-%m-%d %H:%M:%S')
+        doctor_name = request_data['doctor']
+        appointment_notes = request_data['notes']
 
         new_appointment = Appointment(
             user_id=current_user_id,
@@ -123,4 +124,22 @@ def appointments():
         }
 
         return jsonify({'message': 'Appointment created successfully'})
+    
+    elif request.method == 'DELETE':
+        request_data = request.get_json()
+        appointment_id = request_data['appointment_id']
+        appointment = Appointment.query.get(appointment_id)
 
+        if appointment:
+            db.session.delete(appointment)
+            db.session.commit()
+            response_data = {
+                'message': 'Appointment deleted!',
+                'status': 'success',
+            }
+        else:
+            response_data = {
+                'message': 'No appointment id found',
+                'status': 'failure',
+            }   
+        return jsonify(response_data)         
