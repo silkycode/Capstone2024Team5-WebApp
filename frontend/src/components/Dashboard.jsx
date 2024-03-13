@@ -87,8 +87,8 @@ const ClickableBox = ({ title, path }) => {
     );
 };
 
-export default function Dashboard({jwtToken}) {
-  const [open, setOpen] = React.useState(true);
+export default function Dashboard() {
+  const [open, setOpen] = React.useState(false);
   const location = useLocation();
 
   const toggleDrawer = () => {
@@ -96,7 +96,7 @@ export default function Dashboard({jwtToken}) {
   };
   
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
         <CssBaseline />
         <Drawer variant="permanent" open={open} sx={{ zIndex: 1200 }}>
             <Toolbar
@@ -170,7 +170,6 @@ export default function Dashboard({jwtToken}) {
             component="main"
             sx={{
             flexGrow: 1,
-            height: '100vh',
             overflow: 'auto',
             display: 'flex',
             justifyContent: 'center',
