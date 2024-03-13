@@ -7,7 +7,7 @@ from flask import request, jsonify, Blueprint
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.db_module import db
-from models.user_management_models import Appointment
+from models.user_management_models import Appointment, GlucoseLog, Notification
 
 dashboard_routes = Blueprint('dashboard_routes', __name__)
 CORS(dashboard_routes)
@@ -77,7 +77,7 @@ def profile():
     else:
         response_data = {}
 
-# Two routes -> GET to retrieve current appointments from DB, POST to add a new appointment. Implement autodelete?
+# Three routes -> GET to retrieve current appointments from DB, POST to add a new appointment, delete appointments
 @dashboard_routes.route('/appointments', methods=['GET', 'POST', 'DELETE'])
 @jwt_required()
 def appointments():
@@ -104,13 +104,14 @@ def appointments():
     
     elif request.method == 'POST':
         request_data = request.get_json()
-        appointment_date = datetime.strptime(request_data['dateTime'], '%Y-%m-%d %H:%M:%S')
+        appointment_date = request_data['dateTime']
+        formatted_date = datetime.strptime(appointment_date, "%Y-%m-%dT%H:%M:%S.%fZ") 
         doctor_name = request_data['doctor']
         appointment_notes = request_data['notes']
 
         new_appointment = Appointment(
             user_id=current_user_id,
-            appointment_date=appointment_date,
+            appointment_date=formatted_date,
             doctor_name=doctor_name,
             appointment_notes=appointment_notes
         )
@@ -143,3 +144,51 @@ def appointments():
                 'status': 'failure',
             }   
         return jsonify(response_data)         
+    
+# Three routes -> GET to retrieve current glucose logs from DB, POST to add a new log, delete logs
+@dashboard_routes.route('/glucose', methods=['GET', 'POST', 'DELETE'])
+@jwt_required()
+def glucose():
+    current_user_id = get_jwt_identity()
+    
+    if request.method == 'GET':
+        glucose_logs = GlucoseLog.query.filter_by(user_id=current_user_id).all()
+        logs = []
+        for log in glucose_logs:
+            logs.append({
+                'log_id': log.log_id,
+                'log_timestamp': log.log_timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                'glucose_level': log.glucose_level
+            })
+        response_data = {
+            'message': 'ok',
+            'status': 'success',
+            'data': {
+                'logs': logs
+            }
+        }
+        return jsonify(response_data)
+    
+@dashboard_routes.route('/notifications', methods=['GET'])
+@jwt_required()
+def notifications():
+    current_user_id = get_jwt_identity()
+    
+    if request.method == 'GET':
+        notifications = Notification.query.filter_by(user_id=current_user_id).all()
+        notifications_array = []
+        for notif in notifications:
+            notifications_array.append({
+                'status_id': notif.status_id,
+                'notification': notif.notification,
+                'status_timestamp': notif.status_timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            })
+            print(notif)
+        response_data = {
+            'message': 'ok',
+            'status': 'success',
+            'data': {
+                'notifications': notifications_array
+            }
+        }
+        return jsonify(response_data)

@@ -1,15 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, CssBaseline, TextField, Container, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { ArrowBack as ArrowBackIcon} from '@mui/icons-material';
 
 function GlucoseLogs() {
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
+  const [dateTime, setDateTime] = useState('');
   const [glucoseLevel, setGlucoseLevel] = useState('');
   const [logs, setLogs] = useState([]);
+
   const token = localStorage.getItem('jwtToken');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchLogs();
+  }, []);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+    return date.toLocaleDateString('en-US', options);
+  };
+
+  const fetchLogs = async () => {
+    const response = await fetch('http://127.0.0.1:5000/dashboard/glucose', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+    if (response.ok) {
+      const responseData = await response.json();
+      const { logs } = responseData.data;
+      setLogs(logs);
+    }
+  }
 
   const recordLog = async () => {
     const log = { date, time, glucoseLevel };
@@ -27,28 +52,16 @@ function GlucoseLogs() {
     }
   };
 
-  const loadLogs = async () => {
-    const response = await fetch('/api/glucose', {
-      headers:{
-        'Authorization': `Bearer ${token}`,
-      }
-    });
-    if (response.ok) {
-      const logs = await response.json();
-      setLogs(logs);
-    }
-  };
-
-  const deleteLog = async (logId) => {
-    const response = await fetch(`/api/glucose/${logId}`, {
+  const deleteLog = async () => {
+    const response = await fetch('http://127.0.0.1:5000/dashboard/glucose', {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${token}`, // And here
+        'Authorization': `Bearer ${token}`,
       },
     });
     if (response.ok) {
       console.log('Log deleted successfully');
-      loadLogs(); // Reload the logs to update the UI
+      loadLogs();
     }
   };  
 
@@ -77,30 +90,16 @@ function GlucoseLogs() {
         </Typography>
         <Box component="form" noValidate sx={{ mt: 1 }}>
           <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="date"
-            label="Date"
-            name="date"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="time"
-            label="Time"
-            type="time"
-            id="time"
-            InputLabelProps={{ shrink: true }}
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="dateTime"
+          label="Date & Time"
+          type="datetime-local"
+          InputLabelProps={{ shrink: true }}
+          value={dateTime}
+          onChange={(e) => setDateTime(e.target.value)}
           />
           <TextField
             variant="outlined"
@@ -125,30 +124,22 @@ function GlucoseLogs() {
           </Button>
         </Box>
       </Box>
-      {logs.length > 0 && (
-        <TableContainer component={Paper} sx={{ marginTop: 4 }}>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell>Time</TableCell>
-                <TableCell>Glucose Level (mg/dL)</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {logs.map((log) => (
-                <TableRow key={log.log_id}>
-                  <TableCell>{log.date}</TableCell>
-                  <TableCell>{log.time}</TableCell>
-                  <TableCell>{log.glucose_level}</TableCell>
-                  <TableCell>
-                    <Button onClick={() => deleteLog(log.log_id)}>Delete</Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+      {logs && (
+        <Paper elevation={6} sx={{ marginTop: 4, padding: 2 }}>
+          <Typography variant="6" gutterBottom>
+            Previous Glucose Logs
+          </Typography>
+          {logs.map((log) => (
+            <Box key={log.log_id} sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+              <Typography>
+               {formatDate(log.log_timestamp)}: {log.glucose_level} mg/dL 
+              </Typography>
+              <Button variant="outlined" color="error" onClick={() => deleteLog(log.log_id)}>
+                Delete
+              </Button>
+            </Box>
+          ))}
+        </Paper>
       )}
     </Container>
   );

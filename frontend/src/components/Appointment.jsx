@@ -8,6 +8,7 @@ const Appointment = () => {
   const [doctor, setDoctor] = useState('');
   const [dateTime, setDateTime] = useState('');
   const [notes, setNotes] = useState('');
+  
   const token = localStorage.getItem('jwtToken');
   const navigate = useNavigate();
 

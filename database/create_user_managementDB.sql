@@ -70,14 +70,12 @@ INSERT INTO glucose_log (user_id, glucose_level, log_timestamp) VALUES
 (2, 140, '2024-03-12 10:15:00'),
 (3, 100, '2024-03-09 11:00:00');
 
--- Inserting dummy appointments
 INSERT INTO appointment (user_id, appointment_date, doctor_name, appointment_notes) VALUES
 (1, '2024-03-15 10:00:00', 'Dr. Smith', 'Screening checkup'),
 (2, '2024-03-16 11:30:00', 'Dr. Johnson', 'Discuss medication dosage, DME'),
 (3, '2024-03-20 09:15:00', 'Dr. Brown', 'Blood test and consultation'),
 (1, '2024-03-25 14:00:00', 'Dr. Lee', 'Follow-up appointment');
 
--- Inserting dummy notifications
 INSERT INTO notification (user_id, notification, importance, status_timestamp) VALUES
 (1, 'Reminder: Your appointment with Dr. Smith is tomorrow.', 2, '2024-03-14 15:00:00'),
 (2, 'You have a scheduled appointment with Dr. Johnson on Thursday.', 1, '2024-03-13 10:30:00'),
