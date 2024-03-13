@@ -1,6 +1,5 @@
 # Auth routes
 # Endpoints for authentication, authorization, and interacting with user account details
-
 import re
 import time
 from flask import request, jsonify, Blueprint
@@ -9,43 +8,12 @@ from flask_jwt_extended import create_access_token
 import hashlib
 from sqlalchemy.exc import SQLAlchemyError
 from models.db_module import db
+from models.user_credentials import UserCredentials
+from models.user import User
 
 # Register auth_routes as a blueprint for importing into app.py + set up CORS functionality and DB connection
 auth_routes = Blueprint('auth_routes', __name__)
 CORS(auth_routes)
-
-# Define credentials model
-class UserCredentials(db.Model):
-    __tablename__ = 'credentials'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), unique=True, nullable=False)
-    password_hash = db.Column(db.String(64), nullable=False)
-    email = db.Column(db.String(255), nullable=False)
-
-# Define user info model
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(255))
-    last_name = db.Column(db.String(255))
-    dob = db.Column(db.Date)
-    primary_phone = db.Column(db.String(20))
-    secondary_phone = db.Column(db.String(20))
-    address = db.Column(db.Text)
-    primary_insurance = db.Column(db.String(255))
-    id_number = db.Column(db.String(20))
-    contact_person = db.Column(db.String(255))
-    last_office_visit = db.Column(db.Date)
-    doctor_name = db.Column(db.String(255))
-    doctor_phone = db.Column(db.String(20))
-    doctor_fax = db.Column(db.String(20))
-
-    credentials_id = db.Column(db.Integer, db.ForeignKey('credentials.id'), nullable=False)
-    credentials = db.relationship('UserCredentials', backref=db.backref('user', uselist=False, lazy=True))
-
-    def __repr__(self):
-        return f"<User {self.credentials.username}>"
-
 
 """
     /login API endpoint:
@@ -74,7 +42,7 @@ def login():
             }
             return jsonify(response_data), 200
         else:
-            time.sleep(0,1)
+            time.sleep(0.1)
             response_data = {
                 'message': 'Authentication failure. Please try again.',
                 'status': 'failure',
@@ -191,7 +159,7 @@ def register():
         db.session.add(new_creds)
         db.session.commit()
 
-        #TODO: Fix user table update after credentials registration
+        #TODO: Fix user table update after credentials registration, verification email
 
         """         
         user_id = new_creds.id

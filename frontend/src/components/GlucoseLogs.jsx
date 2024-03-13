@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Avatar, Button, CssBaseline, TextField, Container, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 
 function GlucoseLogs() {
@@ -6,12 +6,19 @@ function GlucoseLogs() {
   const [time, setTime] = useState('');
   const [glucoseLevel, setGlucoseLevel] = useState('');
   const [logs, setLogs] = useState([]);
-
-  useEffect(() => {
-    loadLogs();
-  }, []);
-
   const token = localStorage.getItem('jwtToken');
+
+  const fetchLogs = async () => {
+    const response = await fetchLogs('/api/glucose', {
+      headers: {
+        'Authorization': 'Bearer ${token}',
+      }
+    });
+    if (response.ok) {
+      const logs = await response.json();
+      setLogs(logs);
+    }
+  };
 
   const recordLog = async () => {
     const log = { date, time, glucoseLevel };
