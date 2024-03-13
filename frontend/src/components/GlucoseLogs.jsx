@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Avatar, Button, CssBaseline, TextField, Container, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Button, CssBaseline, TextField, Container, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { ArrowBack as ArrowBackIcon} from '@mui/icons-material';
 
 function GlucoseLogs() {
   const [date, setDate] = useState('');
@@ -7,6 +9,7 @@ function GlucoseLogs() {
   const [glucoseLevel, setGlucoseLevel] = useState('');
   const [logs, setLogs] = useState([]);
   const token = localStorage.getItem('jwtToken');
+  const navigate = useNavigate();
 
   const fetchLogs = async () => {
     const response = await fetchLogs('/api/glucose', {
@@ -64,6 +67,15 @@ function GlucoseLogs() {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<ArrowBackIcon />}
+        onClick={() => navigate('/')}
+        sx={{ mb: 2, width: '150px', height: '40px' }}
+        >
+        Go Back
+      </Button>
       <Box
         sx={{
           marginTop: 8,

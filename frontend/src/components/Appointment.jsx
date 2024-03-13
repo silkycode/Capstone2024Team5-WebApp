@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, CssBaseline, TextField, Container, Box, Typography, Paper } from '@mui/material';
+import { ArrowBack as ArrowBackIcon} from '@mui/icons-material';
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
+  const navigate = useNavigate();
 
   // Fetch appointments from the backend
   useEffect(() => {
@@ -47,6 +50,15 @@ const Appointment = () => {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<ArrowBackIcon />}
+        onClick={() => navigate('/')}
+        sx={{ mb: 2, width: '150px', height: '40px' }}
+        >
+        Go Back
+      </Button>
       <Box
         sx={{
           marginTop: 8,

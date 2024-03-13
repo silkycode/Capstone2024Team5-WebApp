@@ -38,7 +38,8 @@ def login():
             response_data = {
                 'message': 'Authentication success',
                 'status': 'success',
-                'access_token': access_token
+                'access_token': access_token,
+                'username': creds.username
             }
             return jsonify(response_data), 200
         else:

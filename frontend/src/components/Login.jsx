@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
-export default function Login({ setIsLoggedIn, setJwtToken }) {
+export default function Login({ setIsLoggedIn, setUsername }) {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -46,6 +46,7 @@ export default function Login({ setIsLoggedIn, setJwtToken }) {
                 const data = await response.json();
                 if (data.status === 'success') {
                     localStorage.setItem('jwtToken', data.access_token);
+                    setUsername(data.username);
                     setIsLoggedIn(true);
                 } else {
                     setErrorMessage(data.message);

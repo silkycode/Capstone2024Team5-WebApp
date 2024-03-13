@@ -18,15 +18,15 @@ import Products from './components/Products';
 
 export default function AimPlusMedicalSupplies() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [jwtToken, setJwtToken] = useState('');
+  const [username, setUsername] = useState('');
 
   return (
     <Router>
       <div>
-        <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} setJwtToken={setJwtToken} />
+        <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
         <Routes>
-          <Route path="/" element={isLoggedIn ? <Navigate to='/dashboard'/> : <Login setIsLoggedIn={setIsLoggedIn} setJwtToken={setJwtToken} />} />
-          <Route path="/dashboard/*" element={isLoggedIn ? <Dashboard jwtToken={jwtToken}/> : <Navigate to="/" />} >
+          <Route path="/" element={isLoggedIn ? <Navigate to='/dashboard'/> : <Login setIsLoggedIn={setIsLoggedIn} setUsername={setUsername}/>} />
+          <Route path="/dashboard/*" element={isLoggedIn ? <Dashboard username={username}/> : <Navigate to="/" />} >
             <Route path="profile" element={<Profile />} />
             <Route path="glucose-logs" element={<GlucoseLogs />} />
             <Route path="appointments" element={<Appointment />} />
