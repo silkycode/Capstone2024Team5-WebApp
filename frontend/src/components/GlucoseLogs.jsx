@@ -11,12 +11,15 @@ function GlucoseLogs() {
     loadLogs();
   }, []);
 
+  const token = localStorage.getItem('jwtToken');
+
   const recordLog = async () => {
     const log = { date, time, glucoseLevel };
     const response = await fetch('/api/glucose', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(log),
     });
@@ -27,7 +30,11 @@ function GlucoseLogs() {
   };
 
   const loadLogs = async () => {
-    const response = await fetch('/api/glucose');
+    const response = await fetch('/api/glucose', {
+      headers:{
+        'Authorization': `Bearer ${token}`,
+      }
+    });
     if (response.ok) {
       const logs = await response.json();
       setLogs(logs);
@@ -37,6 +44,9 @@ function GlucoseLogs() {
   const deleteLog = async (logId) => {
     const response = await fetch(`/api/glucose/${logId}`, {
       method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`, // And here
+      },
     });
     if (response.ok) {
       console.log('Log deleted successfully');
@@ -125,7 +135,7 @@ function GlucoseLogs() {
                   <TableCell>{log.time}</TableCell>
                   <TableCell>{log.glucose_level}</TableCell>
                   <TableCell>
-                    <Button onClick={() => deleteLog(log.log_id)}></Button>
+                    <Button onClick={() => deleteLog(log.log_id)}>Delete</Button>
                   </TableCell>
                 </TableRow>
               ))}

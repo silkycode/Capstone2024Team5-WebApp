@@ -37,6 +37,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn, setJwtToken }) {
           </Button>
           {isLoggedIn && (
           <Button onClick={() => {
+            localStorage.removeItem('jwtToken'); // Properly clear the token on logout
             setIsLoggedIn(false); 
             setJwtToken(''); 
             navigate('/');}} 

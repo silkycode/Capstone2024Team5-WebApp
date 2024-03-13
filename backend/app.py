@@ -7,6 +7,7 @@ from routes.auth_routes import auth_routes
 from config import Config
 from models.db_module import db
 from datetime import datetime
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 import os
 import base64
@@ -22,6 +23,8 @@ db.init_app(app)
 app.register_blueprint(auth_routes, url_prefix='/auth')
 app.register_blueprint(dashboard_routes, url_prefix='/dashboard')
 
+
+# Product Page
 def get_productsDB_connection():
     database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'products.db')
     conn = sqlite3.connect(database_path)
@@ -41,6 +44,8 @@ def products():
     conn.close()
     return jsonify(products_list)
 
+
+# Glucose Log Page
 def get_glucose_log_db_connection():
     database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'glucose_log.db')
     conn = sqlite3.connect(database_path)
@@ -48,36 +53,46 @@ def get_glucose_log_db_connection():
     return conn
 
 @app.route('/glucose', methods=['POST'])
+@jwt_required()
 def add_glucose_log():
+    current_user_id = get_jwt_identity()
     data = request.json
 
-    # Combind dat and time into datetime
+    # Combind date and time into datetime
     datetime_str = f"{data['date']} {data['time']}"
     log_datetime = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
 
     conn = get_glucose_log_db_connection()
-    conn.execute('INSERT INTO glucose_logs (username, date, time, glucose_level) VALUES (?, ?, ?, ?)',
-                 (data['username'], log_datetime, data['glucose_level']))
+    conn.execute('INSERT INTO glucose_logs (user_id, glucose_level, log_timestamp) VALUES (?, ?, ?)',
+                 (current_user_id, data['glucose_level'], log_datetime))
     conn.commit()
     conn.close()
     return jsonify({'message': 'Log added successfully'}), 201
 
 @app.route('/glucose/<int:log_id>', methods=['DELETE'])
+@jwt_required()
 def delete_glucose_log(log_id):
+    current_user_id = get_jwt_identity()
     conn = get_glucose_log_db_connection()
+    log_owner = conn.execute('SELECT user_id FROM glucose_logs WHERE log_id = ?', (log_id,)).fetchone()
+    if log_owner is None or log_owner['user_id'] != current_user_id:
+        return jsonify({'message': 'Unauthorized to delete this log'}), 403
     conn.execute('DELETE FROM glucose_logs WHERE log_id = ?', (log_id,))
     conn.commit()
     conn.close()
     return jsonify({'message': 'Log deleted successfully'}), 200
 
 @app.route('/glucose', methods=['GET'])
+@jwt_required()
 def get_glucose_logs():
-    username = request.args.get('username') # Assume you pass username as query parameter
+    current_user_id = get_jwt_identity()
     conn = get_glucose_log_db_connection()
-    logs = conn.execute('SELECT * FROM glucose_logs WHERE username = ?', (username,)).fetchall()
+    logs = conn.execute('SELECT * FROM glucose_logs WHERE user_id = ?', (current_user_id,)).fetchall()
     conn.close()
     return jsonify([dict(log) for log in logs])
 
+
+# Appointment Page
 def get_appointmentDB_connection():
     database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'appointments.db')
     conn = sqlite3.connect(database_path)
