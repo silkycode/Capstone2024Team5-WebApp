@@ -45,7 +45,7 @@ export default function Login({ setIsLoggedIn, setJwtToken }) {
             if (response.ok) {
                 const data = await response.json();
                 if (data.status === 'success') {
-                    localStorage.setItem('jwtToken', data.access_token); // Save token to localStorage
+                    localStorage.setItem('jwtToken', data.access_token);
                     setIsLoggedIn(true);
                 } else {
                     setErrorMessage(data.message);

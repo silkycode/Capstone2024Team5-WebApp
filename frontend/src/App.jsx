@@ -16,7 +16,7 @@ import Notifications from './components/Notifications';
 import MedicalForms from './components/MedicalForms';
 import Products from './components/Products';
 
-function AimPlusMedicalSupplies() {
+export default function AimPlusMedicalSupplies() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [jwtToken, setJwtToken] = useState('');
 
@@ -43,5 +43,3 @@ function AimPlusMedicalSupplies() {
     </Router>
   )
 }
-
-export default AimPlusMedicalSupplies;

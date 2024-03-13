@@ -2,6 +2,7 @@
 # Endpoints for authentication, authorization, and interacting with user account details
 
 import re
+import time
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token
@@ -49,20 +50,18 @@ class User(db.Model):
 """
     /login API endpoint:
         - Expected format: {email: email, password: password}
-        - Purpose: Validates and authenticates submitted credentials
+        - Purpose: Validates and authenticates submitted credentials, to return an auth token
         - Compare hashed password with the stored hash for the given email if exists.
         - If match:
-            - Respond with 'success,' indicating successful authentication.
+            - Respond with 'success,' indicating user exists and has valid credentials.
         - If no match:
-            - Respond with 'failure,' indicating authentication failure.
-        - Respond with detailed messages, used in message displays on frontend.
+            - Respond with 'failure,' indicating bad credentials.
 """
 @auth_routes.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
     email = data.get('email', '').strip()
-    password = data.get('password', '').strip()
-    hashed_password = hashlib.sha3_256(password.encode()).digest() 
+    hashed_password = hashlib.sha3_256(data.get('password').encode()).digest() 
 
     try:
         creds = UserCredentials.query.filter_by(email=email, password_hash=hashed_password).first()
@@ -73,12 +72,15 @@ def login():
                 'status': 'success',
                 'access_token': access_token
             }
+            return jsonify(response_data), 200
         else:
+            time.sleep(0,1)
             response_data = {
-                'message': 'Sorry, could not find a user with provided credentials. Please try again.',
+                'message': 'Authentication failure. Please try again.',
                 'status': 'failure',
                 'data': {}
-            }
+            } 
+            return jsonify(response_data), 401
       
     except SQLAlchemyError as e:
         response_data = {
@@ -87,8 +89,7 @@ def login():
             'data': {}
         }
         print(e)
-    
-    return jsonify(response_data)
+        return jsonify(response_data), 500
 
 """
     /forgot-password API endpoint:
