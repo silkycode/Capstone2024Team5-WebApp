@@ -34,7 +34,7 @@ def get_productsDB_connection():
 @app.route('/products', methods=['GET'])
 def products():
     conn = get_productsDB_connection()
-    products = conn.execute('SELECT * FROM products').fetchall()
+    products = conn.execute('SELECT * FROM product').fetchall()
     products_list = []
     for product in products:
         product_dict = dict(product)
