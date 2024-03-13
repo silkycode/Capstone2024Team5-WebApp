@@ -170,6 +170,7 @@ export default function Dashboard() {
             component="main"
             sx={{
             flexGrow: 1,
+            height: '100vh',
             overflow: 'auto',
             display: 'flex',
             justifyContent: 'center',
