@@ -14,7 +14,7 @@ import Profile from './components/Profile';
 import Appointment from './components/Appointment';
 import Notifications from './components/Notifications';
 import MedicalForms from './components/MedicalForms';
-import Products from './components/products';
+import Products from './components/Products';
 
 export default function AimPlusMedicalSupplies() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
