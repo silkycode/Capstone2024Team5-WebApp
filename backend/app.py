@@ -1,14 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-
 from routes.dashboard_routes import dashboard_routes
 from routes.auth_routes import auth_routes
 from config import Config
 from models.db_module import db
 from datetime import datetime
 from flask_jwt_extended import jwt_required, get_jwt_identity
-
 import os
 import base64
 import sqlite3

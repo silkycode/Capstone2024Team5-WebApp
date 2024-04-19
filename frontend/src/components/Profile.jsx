@@ -14,11 +14,8 @@ const ProfilePage = () => {
     secondary_phone: '',
     address: '',
     primary_insurance: '',
-    id_number: '',
+    medical_id: '',
     contact_person: '',
-    doctor_name: '',
-    doctor_phone: '',
-    doctor_fax: '',
   });
   const token = localStorage.getItem('jwtToken');
   useEffect(() => {
@@ -160,9 +157,9 @@ const ProfilePage = () => {
                     sx={{ marginBottom: '12px' }}
                   />
                   <TextField
-                    name="id_number"
+                    name="medical_id"
                     label="ID Number"
-                    value={profileInfo.id_number}
+                    value={profileInfo.medical_id}
                     onChange={handleChange}
                     sx={{ marginBottom: '12px' }}
                   />
@@ -170,27 +167,6 @@ const ProfilePage = () => {
                     name="contact_person"
                     label="Contact Person"
                     value={profileInfo.contact_person}
-                    onChange={handleChange}
-                    sx={{ marginBottom: '12px' }}
-                  />
-                  <TextField
-                    name="doctor_name"
-                    label="Doctor Name"
-                    value={profileInfo.doctor_name}
-                    onChange={handleChange}
-                    sx={{ marginBottom: '12px' }}
-                  />
-                  <TextField
-                    name="doctor_phone"
-                    label="Doctor Phone"
-                    value={profileInfo.doctor_phone}
-                    onChange={handleChange}
-                    sx={{ marginBottom: '12px' }}
-                  />
-                  <TextField
-                    name="doctor_fax"
-                    label="Doctor Fax"
-                    value={profileInfo.doctor_fax}
                     onChange={handleChange}
                     sx={{ marginBottom: '12px' }}
                   />
@@ -216,11 +192,8 @@ const ProfilePage = () => {
               <Typography><span style={{ fontWeight: 'bold' }}>Secondary Phone:</span> {profileInfo.secondary_phone}</Typography>
               <Typography><span style={{ fontWeight: 'bold' }}>Address:</span> {profileInfo.address}</Typography>
               <Typography><span style={{ fontWeight: 'bold' }}>Primary Insurance:</span> {profileInfo.primary_insurance}</Typography>
-              <Typography><span style={{ fontWeight: 'bold' }}>ID Number:</span> {profileInfo.id_number}</Typography>
+              <Typography><span style={{ fontWeight: 'bold' }}>Medical ID Number:</span> {profileInfo.id_number}</Typography>
               <Typography><span style={{ fontWeight: 'bold' }}>Contact Person:</span> {profileInfo.contact_person}</Typography>
-              <Typography><span style={{ fontWeight: 'bold' }}>Doctor Name:</span> {profileInfo.doctor_name}</Typography>
-              <Typography><span style={{ fontWeight: 'bold' }}>Doctor Phone:</span> {profileInfo.doctor_phone}</Typography>
-              <Typography><span style={{ fontWeight: 'bold' }}>Doctor Fax:</span> {profileInfo.doctor_fax}</Typography>
               <Button variant="contained" color="primary" onClick={handleEdit} sx={{ marginTop: '16px' }}>
                 Edit
               </Button>

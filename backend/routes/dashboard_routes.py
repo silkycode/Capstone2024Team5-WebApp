@@ -1,81 +1,125 @@
 # Dashboard and data routes
 # Endpoints for retrieving user data for front end display + misc. non-auth tasks
-
-from datetime import datetime
 import re
+from datetime import datetime
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy.exc import SQLAlchemyError
 from models.db_module import db
-from models.user_management_models import Appointment, GlucoseLog, Notification
+from models.user_management_models import Account, User, Appointment, GlucoseLog, Notification
 
+# Register dashboard_routes as a blueprint for importing into app.py + set up CORS
 dashboard_routes = Blueprint('dashboard_routes', __name__)
 CORS(dashboard_routes)
 
-# Basic debug route to test server
+# Respond 200 if Flask server is running
 @dashboard_routes.route('/debug', methods=['GET'])
 def debug():
-    response_data = {
-        'message': 'Debug endpoint accessed',
-        'status': 'success',
-        'data': {}
-    }
+    return jsonify({'message': 'Debug check, server is running'}), 200
 
-    return jsonify(response_data)
-
-# Sending messages from front end to server for user feedback/contact
+"""
+    /dashboard/contact API endpoint:
+        - Expected fields: {name, email, password}
+        - Purpose: Save visitor-submitted messages
+        - Responses:
+            - 400 for poorly formed email or missing message
+            - 200 for message received
+            - 500 for backend errors (message storage)
+"""
 @dashboard_routes.route('/contact', methods=['POST'])
 def contact():
     data = request.get_json()
-    email = data.get('email').strip()
+    name = data.get('name', '').strip()
+    email = data.get('email', '').strip()
+    message = data.get('message', '').strip()
     
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-        return jsonify({
-            'message': 'Please enter a valid email.',
-            'status': 'failure',
-            'data': {}
-        })
+        return jsonify({'message': 'Please enter a valid email.',}), 400    
     
-    response_data = {
-        'message': 'Thank you for the message! We will get back to you shortly.',
-        'status': 'success',
-        'data': {}
-    }
+    if not message:
+        return jsonify({'message': 'Please provide a feedback message.',}), 400
+    
+    #TODO: Add these to a DB or a queue or some other similar processing structure for reading messages. Just writes to textfile for now.
+    try:
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        with open('feedback.txt', 'a') as file:
+            file.write(f"[{timestamp}] Email: {email}, Message: {message}, Author: {name}\n")
+    except Exception as e:
+        return jsonify({'message': 'Error handling feedback message. Try again.'}), 500
 
-    #TODO: Add these to a DB or a queue or some other similar processing structure for reading messages
+    return jsonify({'message': 'Thank you for the message! We will get back to you shortly.'}), 200
 
-    return jsonify(response_data)
-
-# Two routes based on HTTP -> GET to populate profile fields, POST to update profile info
+"""
+    /dashboard/profile API endpoint:
+        GET:
+            - Expected fields: {token}
+            - Purpose: Populate profile info fields from user's account
+            - Query database to retrieve fields and return in message
+            - Response:
+                - 200: Profile information retrieved
+                - 401: Token authorization failure
+                - 500: Database issues
+        POST:
+            - Expected fields: {first_name, last_name, dob, primary_phone, secondary_phone, address, primary_insurance, medical_id, contact_person}
+            - Purpose: Update user info in users DB
+            - Insert provided fields into DB for current user
+            - Response:
+                - 200: Profile information updated
+                - 400: Missing fields/incorrect formatting
+                - 401: Token authorization failure
+                - 500: Database issues
+"""
 @dashboard_routes.route('/profile', methods=['GET', 'POST'])
 @jwt_required()
 def profile():
     current_user_id = get_jwt_identity()
+
     if request.method == 'GET':
         response_data = {
-            'message': 'ok',
-            'status': 'success',
-            'data': {
-                'user_id': current_user_id,
-                'email': 'doejohn@email.com',
-                'username': 'johndoe',
-                'first_name': 'John',
-                'last_name': 'Doe',
-                'dob': '1990-01-01',
-                'primary_phone': '123-456-7890',
-                'secondary_phone': '987-654-3210',
-                'address': '123 Main St, City, Country',
-                'primary_insurance': 'Insurance Company ABC',
-                'id_number': 'ABC123',
-                'contact_person': 'Jane Doe',
-                'doctor_name': 'Dr. Smith',
-                'doctor_phone': '555-555-5555',
-                'doctor_fax': '555-555-5556'
-            }
+            'message': current_user_id
         }
-        return jsonify(response_data)
-    else:
-        response_data = {}
+        user = User.query.get(current_user_id)
+
+        if user:
+            user_data = {
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'dob': user.date_of_birth,
+                'primary_phone': user.primary_phone,
+                'secondary_phone': user.secondary_phone,
+                'address': user.address,
+                'primary_insurance': user.primary_insurance,
+                'medical_id': user.medical_id,
+                'contact_person': user.contact_person
+            }
+            return jsonify(user_data), 200
+        else:
+            return jsonify({'message': 'Authorization failure'}), 401
+    
+    if request.method == 'POST':
+        data = request.get_json()
+        user = User.query.get(current_user_id)
+
+        allowed_fields = [
+            'first_name', 'last_name', 'dob', 'primary_phone',
+            'secondary_phone', 'address', 'primary_insurance',
+            'medical_id', 'contact_person'
+        ]
+
+        for field in allowed_fields:
+            if field in data:
+                setattr(user, field, data[field].strip())
+
+        try: 
+            db.session.commit()
+            return jsonify({'message': 'Profile updated successfully.'}), 200
+        except SQLAlchemyError:
+            response_data = {
+                'message': 'Database error occurred.',
+            }
+            return jsonify(response_data), 500
+
 
 # Three routes -> GET to retrieve current appointments from DB, POST to add a new appointment, delete appointments
 @dashboard_routes.route('/appointments', methods=['GET', 'POST', 'DELETE'])
