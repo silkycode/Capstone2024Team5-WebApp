@@ -28,6 +28,7 @@ const ProfilePage = () => {
     setEditing(true);
   };
 
+  // TODO: Send a POST to update info
   const handleSave = () => {
     setEditing(false);
   };

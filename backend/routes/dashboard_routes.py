@@ -85,7 +85,7 @@ def profile():
             user_data = {
                 'first_name': user.first_name,
                 'last_name': user.last_name,
-                'dob': user.date_of_birth,
+                'dob': user.dob,
                 'primary_phone': user.primary_phone,
                 'secondary_phone': user.secondary_phone,
                 'address': user.address,
