@@ -41,15 +41,13 @@ def login():
             }
             access_token = create_access_token(identity=jwt_payload)
             response_data = {
-                'message': 'Authentication success',
                 'access_token': access_token,
-                'username': account.username
             }
             return jsonify(response_data), 200
         else:
             time.sleep(0.1)
             response_data = {
-                'message': 'Authentication failure. Please try again.',
+                'message': 'Could not log in with provided credentials. Please try again.',
             } 
             return jsonify(response_data), 401
       

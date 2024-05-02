@@ -58,7 +58,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function Dashboard({username}) {
+export default function Dashboard() {
   const [open, setOpen] = React.useState(false);
   const location = useLocation();
 
@@ -148,9 +148,6 @@ export default function Dashboard({username}) {
             }}
         >
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                <Typography variant="h6" gutterBottom component="div">
-                    {username}'s Dashboard
-                </Typography>
                 {location.pathname === "/dashboard" && (
                     <Box sx={{ display: 'flex', alignContent: 'vertical', gap: '40px', flexWrap: 'wrap' }}>
                         <ClickableBox title="Log Your Glucose" path="/dashboard/glucose-logs" icon={EditNoteIcon} />

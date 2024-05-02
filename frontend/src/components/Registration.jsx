@@ -15,7 +15,6 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 export default function Registration() {
     const navigate = useNavigate();
-
     const [showSnackbar, setShowSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [formData, setFormData] = useState({
@@ -44,16 +43,18 @@ export default function Registration() {
                 },
                 body: JSON.stringify(formData),
             });
-
             if (response.ok) {
                 const data = await response.json();
                 setSnackbarMessage(data.message)
                 setShowSnackbar(true)
-            } else {
-                console.error('HTTP error:', response.status);
+            } else if (response.status !== 200) {
+                const data = await response.json();
+                setSnackbarMessage(data.message);
+                setShowSnackbar(true)
             }
         } catch (error) {
-            console.error('Error during submission:', error);
+            setSnackbarMessage(error.message);
+            setShowSnackbar(true)
         }
     };
 

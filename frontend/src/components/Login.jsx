@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
-export default function Login({ setIsLoggedIn, setUsername }) {
+export default function Login({ setIsLoggedIn }) {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
@@ -29,10 +29,6 @@ export default function Login({ setIsLoggedIn, setUsername }) {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        if (formData.email === 'user' && formData.password === 'password') {
-            setIsLoggedIn(true);
-        } 
-
         try {
             const response = await fetch('http://127.0.0.1:5000/auth/login', {
                 method: 'POST',
@@ -42,12 +38,11 @@ export default function Login({ setIsLoggedIn, setUsername }) {
                 body: JSON.stringify(formData),
             });
             if (response.ok) {
+                setErrorMessage('');
                 const data = await response.json();
                 localStorage.setItem('jwtToken', data.access_token);
-                setUsername(data.username);
                 setIsLoggedIn(true);
-                setErrorMessage('');
-            } else if (response.status === 401) {
+            } else if (response.status !== 200) {
                 const data = await response.json();
                 setErrorMessage(data.message);
             }

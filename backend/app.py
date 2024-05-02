@@ -10,36 +10,16 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 import os
 import base64
 import sqlite3
+import logging
 
 app = Flask(__name__)
 app.config.from_object(Config)
 jwt = JWTManager(app)
 CORS(app)
-
 db.init_app(app)
 
 app.register_blueprint(auth_routes, url_prefix='/auth')
 app.register_blueprint(dashboard_routes, url_prefix='/dashboard')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

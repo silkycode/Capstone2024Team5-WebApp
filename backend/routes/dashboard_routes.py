@@ -204,7 +204,7 @@ def appointments():
                 - 401: Token authorization failure
                 - 500: Database issues
         POST:
-            - Expected fields: {token, glucose_level}
+            - Expected fields: {token, glucose_level, creation_date}
             - Purpose: Create a new glucose log entry for the user
             - Response:
                 - 200: Glucose log information created
@@ -240,16 +240,17 @@ def glucose():
                 'creation_date': glucose_log.creation_date
             }
             glucose_log_list.append(glucose_log_info)
-        return jsonify(glucose_logs=glucose_log_list), 200
+        return jsonify(glucose_logs = glucose_log_list), 200
            
     if request.method == 'POST':
-        data, error = handle_request_errors(request, ['glucose_level'])
+        data, error = handle_request_errors(request, ['glucose_level', 'creation_date'])
         if error:
             return error, 400
         
         new_glucose_log = GlucoseLog(
             user_id=user_id,
-            glucose_level=data['glucose_level']
+            glucose_level=data['glucose_level'],
+            creation_date=data['creation_date']
         )
 
         db.session.add(new_glucose_log)
@@ -257,12 +258,11 @@ def glucose():
         return jsonify(message='New glucose log created.'), 200
 
     if request.method == 'DELETE':
-        data, error = handle_request_errors(request, ['glucose_log_id'])
-        if error:
-            return error, 400
+        glucose_log_id = request.args.get('glucose_log_id') 
         
-        glucose_log_id = data['glucose_log_id']
-
+        if not glucose_log_id:
+            return jsonify(message='glucose_log_id parameter is required'), 400
+        
         glucose_log = GlucoseLog.query.filter_by(id=glucose_log_id, user_id=user_id).first() 
         if not glucose_log:
             return jsonify(message='Glucose log not found'), 404
