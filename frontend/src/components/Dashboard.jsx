@@ -21,7 +21,6 @@ import {
     MedicalServices as MedicalServicesIcon,
     Print as PrintIcon,
     EditNote as EditNoteIcon,
-    PriorityHigh as PriorityHighIcon,
     People as PeopleIcon,
     Notifications as NotificationsIcon,
     Assignment as AssignmentIcon,
@@ -29,7 +28,6 @@ import {
     ChevronRight as ChevronRightIcon
   } from '@mui/icons-material';
 import ClickableBox from './ClickableBox';
-import Notifications from './Notifications';
 
 const drawerWidth = 250;
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -119,18 +117,6 @@ export default function Dashboard() {
                         primary={
                         <Typography variant="h6" color="white" sx={{fontWeight: 'bold'}} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
                             Appointments
-                        </Typography>
-                        }
-                    />
-                    </ListItemButton>
-                    <ListItemButton component={Link} to="/dashboard/notifications">
-                    <ListItemIcon sx={{color: "white"}}>
-                        <NotificationsIcon />
-                    </ListItemIcon>
-                    <ListItemText
-                        primary={
-                        <Typography variant="h6" color="white" sx={{fontWeight: 'bold'}} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
-                            Notifications
                         </Typography>
                         }
                     />
