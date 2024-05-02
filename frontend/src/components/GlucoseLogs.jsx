@@ -140,22 +140,29 @@ export default function GlucoseLogs() {
                     </Box>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <Paper elevation={6} sx={{ padding: 2 }}>
-                        <Typography variant="h6" gutterBottom>
-                            Previous Glucose Logs
-                        </Typography>
-                        {logs.map((log) => (
-                            <Box key={log.id} sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                                <Typography>
-                                    {log.creation_date}: {log.glucose_level} mg/dL
+                <Paper elevation={6} sx={{ padding: 2 }}>
+                    <Typography variant="h6" gutterBottom>
+                        Previous Glucose Logs:
+                    </Typography>
+                    {logs.map((log) => (
+                        <Box key={log.id} sx={{ marginBottom: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #ccc', paddingBottom: 1 }}>
+                                <Typography variant="subtitle1">
+                                    {log.creation_date}
                                 </Typography>
                                 <Button variant="outlined" color="error" onClick={() => deleteLog(log.id)}>
                                     Delete
                                 </Button>
                             </Box>
-                        ))}
-                    </Paper>
-                </Grid>
+                            <Box sx={{ marginTop: 1 }}>
+                                <Typography variant="body1">
+                                    Glucose Level: {log.glucose_level} mg/dL
+                                </Typography>
+                            </Box>
+                        </Box>
+                    ))}
+                </Paper>
+            </Grid>
             </Grid>
         </Container>
     );

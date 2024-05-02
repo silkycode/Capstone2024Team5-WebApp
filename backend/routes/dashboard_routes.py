@@ -144,14 +144,11 @@ def appointments():
     user_id = token['user_id']
     
     if request.method == 'GET':
+        appointment_list = []
         appointments, error = query_database(Appointment, user_id)
         if error:
             return jsonify(message = error), 500
 
-        if not appointments:
-            return jsonify(message='No appointments found for this user.'), 404
-
-        appointment_list = []
         for appointment in appointments:
             appointment_info = {
                 'id': appointment.id,
@@ -179,19 +176,18 @@ def appointments():
         return jsonify(message = 'New appointment created.'), 200
 
     if request.method == 'DELETE':
-        data, error = handle_request_errors(request, ['appointment_id'])
-        if error:
-            return error, 400
+        appointment_id = request.args.get('appointment_id') 
         
-        appointment_id = data['appointment_id']
-
+        if not appointment_id:
+            return jsonify(message='appointment_id parameter is required'), 400
+        
         appointment = Appointment.query.filter_by(id=appointment_id, user_id=user_id).first() 
         if not appointment:
-            return jsonify(message = 'Appointment not found'), 400
+            return jsonify(message='Appointment not found'), 404
         
         db.session.delete(appointment)
         db.session.commit()
-        return jsonify(message = 'Appointment deleted.'), 200
+        return jsonify(message='Appointment deleted.'), 200
     
 """
     /dashboard/glucose API endpoint:
