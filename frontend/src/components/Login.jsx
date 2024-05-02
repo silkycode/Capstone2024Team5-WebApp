@@ -11,9 +11,8 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
-export default function Login({ setIsLoggedIn, setJwtToken }) {
+export default function Login({ setIsLoggedIn }) {
     const navigate = useNavigate();
-
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -30,9 +29,6 @@ export default function Login({ setIsLoggedIn, setJwtToken }) {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        if (formData.email === 'user' && formData.password === 'password') {
-            setIsLoggedIn(true);
-        } 
         try {
             const response = await fetch('http://127.0.0.1:5000/auth/login', {
                 method: 'POST',
@@ -41,17 +37,14 @@ export default function Login({ setIsLoggedIn, setJwtToken }) {
                 },
                 body: JSON.stringify(formData),
             });
-
             if (response.ok) {
+                setErrorMessage('');
                 const data = await response.json();
-                if (data.status === 'success') {
-                    localStorage.setItem('jwtToken', data.access_token); // Save token to localStorage
-                    setIsLoggedIn(true);
-                } else {
-                    setErrorMessage(data.message);
-                }
-            } else {
-                setErrorMessage('HTTP error: ' + response.status);
+                localStorage.setItem('jwtToken', data.access_token);
+                setIsLoggedIn(true);
+            } else if (response.status !== 200) {
+                const data = await response.json();
+                setErrorMessage(data.message);
             }
         } catch (error) {
             setErrorMessage('An error occurred: ' + error.message + '.');

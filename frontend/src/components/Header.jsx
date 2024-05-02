@@ -13,17 +13,15 @@ const buttonStyles = {
   padding: '15px',
 };
 
-export default function Header({ isLoggedIn, setIsLoggedIn, setJwtToken }) {
+export default function Header({ isLoggedIn, setIsLoggedIn }) {
   const navigate = useNavigate();
 
   return (
     <AppBar position="sticky" sx={{ top: 0, zIndex: 1500, backgroundColor: '#fff' }}>
-      <Toolbar sx={{ height: '100px', color: '#333', justifyContent: 'space-between' }}>
-        <div>
-          <IconButton edge="start" sx={{ mr: 2 }}>
-            <img src={TitleLogo} alt="Company Logo" height="100px" />
-          </IconButton>
-        </div>
+      <Toolbar sx={{ color: '#333', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+        <IconButton edge="start" sx={{ mr: 2 }}>
+          <img src={TitleLogo} alt="Company Logo" height="100px" />
+        </IconButton>
         <div>
           <Button component={Link} to="/help" sx={buttonStyles}>
             <HelpIcon />
@@ -41,7 +39,6 @@ export default function Header({ isLoggedIn, setIsLoggedIn, setJwtToken }) {
           <Button onClick={() => {
             localStorage.removeItem('jwtToken'); // Properly clear the token on logout
             setIsLoggedIn(false); 
-            setJwtToken(''); 
             navigate('/');}} 
             sx={buttonStyles}>
             <LogoutIcon />

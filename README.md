@@ -1,6 +1,6 @@
 For Flask:
 
-    create a virtual environment (assuming you have Python installed):
+    create a virtual environment:
         `python -m venv venv`
     Activate the virtual environment:
         On Windows: `.\venv\Scripts\activate`
@@ -29,6 +29,7 @@ Have two separate terminals running the Flask server and the vite dev server -- 
 
 Current tasks:
 
-    - Dashboard implementation
+    - Further backend robustness
     - Filling out user profile options
-    - Product page implementation and dynamic information loading
+    - Data analytics, reminders, graphs, etc.
+    - Admin page

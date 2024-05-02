@@ -35,8 +35,9 @@ export default function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-        const response = await fetch('http://127.0.0.1:5000/services/contact', {
+        const response = await fetch('http://127.0.0.1:5000/dashboard/contact', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -44,23 +45,20 @@ export default function Contact() {
             body: JSON.stringify(formData),
         });
 
-        if (response.ok) {
+        if (response.status === 200) {
             const data = await response.json();
-            if (data.status === 'success') {
-                setResponseMessage(data.message);
-                setFormData({
-                  email: '',
-                  name: '',
-                  message: '',
-                });
-            } else {
-              setResponseMessage(data.message);
-            }
-        } else {
-            setErrorMessage('HTTP error: ' + response.status);
+            setResponseMessage(data.message);
+            setFormData({
+              email: '',
+              name: '',
+              message: '',
+            });
+        } else if (response.status === 400) {
+            const data = await response.json();
+            setResponseMessage(data.message);
         }
     } catch (error) {
-        setErrorMessage('An error occurred: ' + error.message + '.');
+      setResponseMessage('An error occurred: ' + error.message + '.');
     }
 };
 

@@ -1,150 +1,169 @@
-import React, { useEffect, useState } from 'react';
-import { Avatar, Button, CssBaseline, TextField, Container, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, CssBaseline, TextField, Container, Box, Typography, Paper, Grid } from '@mui/material';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 
-function GlucoseLogs() {
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
-  const [glucoseLevel, setGlucoseLevel] = useState('');
-  const [logs, setLogs] = useState([]);
+export default function GlucoseLogs() {
+    const navigate = useNavigate();
+    const [dateTime, setDateTime] = useState('');
+    const [glucoseLevel, setGlucoseLevel] = useState('');
+    const [logs, setLogs] = useState([]);
+    const token = localStorage.getItem('jwtToken');
 
-  useEffect(() => {
-    loadLogs();
-  }, []);
+    useEffect(() => { fetchLogs(); }, []);
 
-  const token = localStorage.getItem('jwtToken');
+    const formatDateTime = (dateTimeString) => {
+        const date = new Date(dateTimeString);
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        
+        return `${year}-${month}-${day} ${hours}:${minutes}`;
+    };
 
-  const recordLog = async () => {
-    const log = { date, time, glucoseLevel };
-    const response = await fetch('/api/glucose', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(log),
-    });
-    if (response.ok) {
-      console.log('Log recorded successfully');
-      loadLogs();
-    }
-  };
+    const fetchLogs = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/dashboard/glucose', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
+            if (response.ok) {
+                const responseData = await response.json();
+                setLogs(responseData.glucose_logs);
+            }
+        } catch (error) {
+            console.error('Error fetching logs:', error);
+        }
+    };
 
-  const loadLogs = async () => {
-    const response = await fetch('/api/glucose', {
-      headers:{
-        'Authorization': `Bearer ${token}`,
-      }
-    });
-    if (response.ok) {
-      const logs = await response.json();
-      setLogs(logs);
-    }
-  };
+    const recordLog = async () => {
+        const log = { glucose_level: glucoseLevel, creation_date: dateTime };
+        try {
+            const response = await fetch('http://127.0.0.1:5000/dashboard/glucose', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(log),
+            });
+            if (response.ok) {
+                console.log('Log recorded successfully');
+                fetchLogs();
+            }
+        } catch (error) {
+            console.error('Error recording log:', error);
+        }
+    };
 
-  const deleteLog = async (logId) => {
-    const response = await fetch(`/api/glucose/${logId}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`, // And here
-      },
-    });
-    if (response.ok) {
-      console.log('Log deleted successfully');
-      loadLogs(); // Reload the logs to update the UI
-    }
-  };  
+    const deleteLog = async (logID) => {
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/dashboard/glucose?glucose_log_id=${logID}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            if (response.ok) {
+                console.log('Log deleted successfully');
+                fetchLogs();
+            }
+        } catch (error) {
+            console.error('Error deleting log:', error);
+        }
+    };
 
-  return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Typography component="h1" variant="h5">
-          Glucose Log Tracker
-        </Typography>
-        <Box component="form" noValidate sx={{ mt: 1 }}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="date"
-            label="Date"
-            name="date"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="time"
-            label="Time"
-            type="time"
-            id="time"
-            InputLabelProps={{ shrink: true }}
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="glucoseLevel"
-            label="Glucose Level (mg/dL)"
-            type="number"
-            id="glucoseLevel"
-            value={glucoseLevel}
-            onChange={(e) => setGlucoseLevel(e.target.value)}
-          />
-          <Button
-            type="button"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-            onClick={recordLog}
-          >
-            Record Log
-          </Button>
-        </Box>
-      </Box>
-      {logs.length > 0 && (
-        <TableContainer component={Paper} sx={{ marginTop: 4 }}>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell>Time</TableCell>
-                <TableCell>Glucose Level (mg/dL)</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {logs.map((log) => (
-                <TableRow key={log.log_id}>
-                  <TableCell>{log.date}</TableCell>
-                  <TableCell>{log.time}</TableCell>
-                  <TableCell>{log.glucose_level}</TableCell>
-                  <TableCell>
-                    <Button onClick={() => deleteLog(log.log_id)}>Delete</Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-    </Container>
-  );
+    return (
+        <Container component="main" maxWidth="md">
+            <CssBaseline />
+            <Button
+                variant="contained"
+                color="primary"
+                startIcon={<ArrowBackIcon />}
+                onClick={() => navigate('/')}
+                sx={{ mb: 2 }}
+            >
+                Go Back
+            </Button>
+            <Grid container spacing={3}>
+                <Grid item xs={12} sm={6}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Typography component="h1" variant="h5">
+                            Glucose Log Tracker
+                        </Typography>
+                        <Box component="form" noValidate sx={{ mt: 1 }}>
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="dateTime"
+                                label="Date & Time"
+                                type="datetime-local"
+                                InputLabelProps={{ shrink: true }}
+                                value={dateTime}
+                                onChange={(e) => setDateTime(formatDateTime(e.target.value))}
+                            />
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="glucoseLevel"
+                                label="Glucose Level (mg/dL)"
+                                type="number"
+                                id="glucoseLevel"
+                                value={glucoseLevel}
+                                onChange={(e) => setGlucoseLevel(e.target.value)}
+                            />
+                            <Button
+                                type="button"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3 }}
+                                onClick={recordLog}
+                            >
+                                Record Log
+                            </Button>
+                        </Box>
+                    </Box>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                <Paper elevation={6} sx={{ padding: 2 }}>
+                    <Typography variant="h6" gutterBottom>
+                        Previous Glucose Logs:
+                    </Typography>
+                    {logs.map((log) => (
+                        <Box key={log.id} sx={{ marginBottom: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #ccc', paddingBottom: 1 }}>
+                                <Typography variant="subtitle1">
+                                    {log.creation_date}
+                                </Typography>
+                                <Button variant="outlined" color="error" onClick={() => deleteLog(log.id)}>
+                                    Delete
+                                </Button>
+                            </Box>
+                            <Box sx={{ marginTop: 1 }}>
+                                <Typography variant="body1">
+                                    Glucose Level: {log.glucose_level} mg/dL
+                                </Typography>
+                            </Box>
+                        </Box>
+                    ))}
+                </Paper>
+            </Grid>
+            </Grid>
+        </Container>
+    );
 }
-
-export default GlucoseLogs;

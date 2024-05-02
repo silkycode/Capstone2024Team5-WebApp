@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { styled } from '@mui/system';
-import { Route, Routes } from 'react-router-dom';
 import {
   CssBaseline,
   Drawer as MuiDrawer,
@@ -18,12 +17,17 @@ import {
 } from '@mui/material';
 import {
     AccountBox as AccountBoxIcon,
+    EditCalendar as EditCalendarIcon,
+    MedicalServices as MedicalServicesIcon,
+    Print as PrintIcon,
+    EditNote as EditNoteIcon,
     People as PeopleIcon,
     Notifications as NotificationsIcon,
     Assignment as AssignmentIcon,
     ChevronLeft as ChevronLeftIcon,
     ChevronRight as ChevronRightIcon
   } from '@mui/icons-material';
+import ClickableBox from './ClickableBox';
 
 const drawerWidth = 250;
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -53,42 +57,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const ClickableBox = ({ title, path }) => {
-    return (
-        <Link to={path} style={{ textDecoration: 'none' }}>
-            <Box
-                sx={{
-                width: '300px',
-                height: '200px',
-                backgroundColor: '#ff3856',
-                borderRadius: '4px',
-                boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
-                cursor: 'pointer',
-                transition: 'transform 0.3s',
-                '&:hover': {
-                    transform: 'translateY(-5px)',
-                },
-                }}
-            >
-                <Box sx={{ 
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    padding: '20px',
-                }}
-                >
-                <Typography variant="h5" component="div" color="white" fontWeight={'bold'} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)' }}>
-                    {title}
-                </Typography>
-                </Box>
-            </Box>
-        </Link>
-    );
-};
-
-export default function Dashboard({jwtToken}) {
-  const [open, setOpen] = React.useState(true);
+export default function Dashboard() {
+  const [open, setOpen] = React.useState(false);
   const location = useLocation();
 
   const toggleDrawer = () => {
@@ -96,7 +66,7 @@ export default function Dashboard({jwtToken}) {
   };
   
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
         <CssBaseline />
         <Drawer variant="permanent" open={open} sx={{ zIndex: 1200 }}>
             <Toolbar
@@ -151,18 +121,6 @@ export default function Dashboard({jwtToken}) {
                         }
                     />
                     </ListItemButton>
-                    <ListItemButton component={Link} to="/dashboard/notifications">
-                    <ListItemIcon sx={{color: "white"}}>
-                        <NotificationsIcon />
-                    </ListItemIcon>
-                    <ListItemText
-                        primary={
-                        <Typography variant="h6" color="white" sx={{fontWeight: 'bold'}} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
-                            Notifications
-                        </Typography>
-                        }
-                    />
-                    </ListItemButton>
                 </React.Fragment>
             </List>
         </Drawer>
@@ -177,22 +135,19 @@ export default function Dashboard({jwtToken}) {
             }}
         >
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                <Typography variant="h4" gutterBottom component="div">
-                    Hello, USER!
-                </Typography>
                 {location.pathname === "/dashboard" && (
-                    <Box sx={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-                        <ClickableBox title="Log Your Glucose" path="/dashboard/glucose-logs" />
-                        <ClickableBox title="Notifications" path="/dashboard/notifications"/>
-                        <ClickableBox title="Profile" path="/dashboard/profile"/>
-                        <ClickableBox title="Appointments"path="/dashboard/appointments" />
-                        <ClickableBox title="Product Info" path="/dashboard/products"/>
-                        <ClickableBox title="Blank Medical Forms" path="/dashboard/medical-forms"/>
+                    <Box sx={{ display: 'flex', alignContent: 'vertical', gap: '40px', flexWrap: 'wrap' }}>
+                        <ClickableBox title="Log Your Glucose" path="/dashboard/glucose-logs" icon={EditNoteIcon} />
+                        <ClickableBox title="Appointments"path="/dashboard/appointments" icon={EditCalendarIcon} />
+                        <ClickableBox title="Profile" path="/dashboard/profile" icon={AccountBoxIcon}/>
+                        <ClickableBox title="Product Info" path="/dashboard/products" icon={MedicalServicesIcon}/>
+                        <ClickableBox title="Blank Medical Forms" path="/dashboard/medical-forms" icon={PrintIcon}/>
                     </Box>
                 )}
                 <Outlet />
             </Container>
         </Box>
+
     </Box>
   );
 }

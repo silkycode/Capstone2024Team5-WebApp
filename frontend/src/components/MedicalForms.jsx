@@ -33,7 +33,7 @@ const MedicalForms = () => {
       <Grid container spacing={2}>
         {documents.map((doc, index) => (
           <Grid item xs={12} sm={6} key={index}>
-            <Paper sx={{ p: 2, textAlign: 'center' }}>
+            <Paper elevation={6} sx={{ p: 2, textAlign: 'center' }}>
               <Typography variant="h6">{doc.name}</Typography>
               <Link href={doc.docPath} target="_blank" sx={{ textDecoration: 'none', mt: 2, display: 'block' }}>
                 Open PDF

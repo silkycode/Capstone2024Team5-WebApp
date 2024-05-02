@@ -15,12 +15,11 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 export default function Registration() {
     const navigate = useNavigate();
-
     const [showSnackbar, setShowSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
+        first_name: '',
+        last_name: '',
         username: '',
         email: '',
         password: '',
@@ -44,16 +43,18 @@ export default function Registration() {
                 },
                 body: JSON.stringify(formData),
             });
-
             if (response.ok) {
                 const data = await response.json();
                 setSnackbarMessage(data.message)
                 setShowSnackbar(true)
-            } else {
-                console.error('HTTP error:', response.status);
+            } else if (response.status !== 200) {
+                const data = await response.json();
+                setSnackbarMessage(data.message);
+                setShowSnackbar(true)
             }
         } catch (error) {
-            console.error('Error during submission:', error);
+            setSnackbarMessage(error.message);
+            setShowSnackbar(true)
         }
     };
 
@@ -79,10 +80,10 @@ export default function Registration() {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 autoComplete="given-name"
-                                name="firstName"
+                                name="first_name"
                                 required
                                 fullWidth
-                                id="firstName"
+                                id="first_name"
                                 label="First Name"
                                 autoFocus
                                 onChange={handleInputChange}
@@ -92,9 +93,9 @@ export default function Registration() {
                             <TextField
                                 required
                                 fullWidth
-                                id="lastName"
+                                id="last_name"
                                 label="Last Name"
-                                name="lastName"
+                                name="last_name"
                                 autoComplete="family-name"
                                 onChange={handleInputChange}
                             />
