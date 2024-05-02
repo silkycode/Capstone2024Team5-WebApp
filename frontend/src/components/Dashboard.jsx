@@ -29,6 +29,7 @@ import {
     ChevronRight as ChevronRightIcon
   } from '@mui/icons-material';
 import ClickableBox from './ClickableBox';
+import Notifications from './Notifications';
 
 const drawerWidth = 250;
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -151,7 +152,6 @@ export default function Dashboard() {
                 {location.pathname === "/dashboard" && (
                     <Box sx={{ display: 'flex', alignContent: 'vertical', gap: '40px', flexWrap: 'wrap' }}>
                         <ClickableBox title="Log Your Glucose" path="/dashboard/glucose-logs" icon={EditNoteIcon} />
-                        <ClickableBox title="Notifications" path="/dashboard/notifications" icon={PriorityHighIcon} />
                         <ClickableBox title="Appointments"path="/dashboard/appointments" icon={EditCalendarIcon} />
                         <ClickableBox title="Profile" path="/dashboard/profile" icon={AccountBoxIcon}/>
                         <ClickableBox title="Product Info" path="/dashboard/products" icon={MedicalServicesIcon}/>
@@ -161,6 +161,7 @@ export default function Dashboard() {
                 <Outlet />
             </Container>
         </Box>
+
     </Box>
   );
 }
