@@ -22,6 +22,29 @@ app.register_blueprint(auth_routes, url_prefix='/auth')
 app.register_blueprint(dashboard_routes, url_prefix='/dashboard')
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Product Page
 def get_productsDB_connection():
     database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'products.db')

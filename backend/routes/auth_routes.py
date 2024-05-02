@@ -1,10 +1,9 @@
-# Auth routes
 # Endpoints for authentication, authorization, and interacting with user account details
-import re
-import time
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token
+import re
+import time
 import hashlib
 from sqlalchemy.exc import SQLAlchemyError
 from models.db_module import db
@@ -32,9 +31,15 @@ def login():
     hashed_password = hashlib.sha3_256(data.get('password').encode()).digest() 
 
     try:
+        # Encode ID, username, and admin privileges in access token
         account = Account.query.filter_by(email=email, password_hash=hashed_password).first()
         if account:
-            access_token = create_access_token(identity=account.id)
+            jwt_payload = {
+                'user_id': account.id,
+                'username': account.username,
+                'is_admin': account.is_admin
+            }
+            access_token = create_access_token(identity=jwt_payload)
             response_data = {
                 'message': 'Authentication success',
                 'access_token': access_token,
@@ -50,7 +55,7 @@ def login():
       
     except SQLAlchemyError:
         response_data = {
-            'message': 'Database error occurred.',
+            'message': 'Server error occurred.',
         }
         return jsonify(response_data), 500
 
@@ -145,6 +150,7 @@ def register():
 
     except SQLAlchemyError:
         response_data = {
-            'message': 'Database error occurred.',
+            'message': 'Server error occurred.',
         }
+        db.session.rollback()
         return jsonify(response_data), 500

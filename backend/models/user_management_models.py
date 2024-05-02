@@ -11,6 +11,7 @@ class Account(db.Model):
     last_login_date = db.Column(db.String, default=None)
     failed_logins = db.Column(db.Integer, default=0)
     date_created = db.Column(db.String, default=db.func.current_timestamp(), nullable=False)
+    is_admin = db.Column(db.Integer, default=0, nullable=False)
     
     # one-to-one relationship between account and user tables (1 user per account, 1 account per user)
     user = db.relationship('User', uselist=False, backref='account', cascade='all, delete-orphan')

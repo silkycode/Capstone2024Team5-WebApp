@@ -7,7 +7,8 @@ from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.exc import SQLAlchemyError
 from models.db_module import db
-from models.user_management_models import Account, User, Appointment, GlucoseLog, Notification
+from utils import handle_request_errors, handle_sqlalchemy_errors, query_database
+from models.user_management_models import User, Appointment, GlucoseLog, Notification
 
 # Register dashboard_routes as a blueprint for importing into app.py + set up CORS
 dashboard_routes = Blueprint('dashboard_routes', __name__)
@@ -45,7 +46,7 @@ def contact():
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         with open('feedback.txt', 'a') as file:
             file.write(f"[{timestamp}] Email: {email}, Message: {message}, Author: {name}\n")
-    except Exception as e:
+    except Exception:
         return jsonify({'message': 'Error handling feedback message. Try again.'}), 500
 
     return jsonify({'message': 'Thank you for the message! We will get back to you shortly.'}), 200
@@ -72,15 +73,13 @@ def contact():
 """
 @dashboard_routes.route('/profile', methods=['GET', 'POST'])
 @jwt_required()
+@handle_sqlalchemy_errors
 def profile():
-    current_user_id = get_jwt_identity()
+    token = get_jwt_identity()
+    user_id = token['user_id']
 
     if request.method == 'GET':
-        response_data = {
-            'message': current_user_id
-        }
-        user = User.query.get(current_user_id)
-
+        user = User.query.get(user_id)
         if user:
             user_data = {
                 'first_name': user.first_name,
@@ -95,144 +94,259 @@ def profile():
             }
             return jsonify(user_data), 200
         else:
-            return jsonify({'message': 'Authorization failure'}), 401
-    
+            return jsonify({'message': 'Authorization failure'}), 401 
+        
     if request.method == 'POST':
-        data = request.get_json()
-        user = User.query.get(current_user_id)
+        data, error = handle_request_errors(request, ['first_name', 'last_name', 'dob', 'primary_phone', 'secondary_phone', 'address', 'primary_insurance', 'medical_id', 'contact_person'])
+        if error:
+            return error, 400
+        
+        user = User.query.get(user_id)
 
-        allowed_fields = [
-            'first_name', 'last_name', 'dob', 'primary_phone',
-            'secondary_phone', 'address', 'primary_insurance',
-            'medical_id', 'contact_person'
-        ]
+        for field in data:
+            setattr(user, field, data[field].strip())
 
-        for field in allowed_fields:
-            if field in data:
-                setattr(user, field, data[field].strip())
+        db.session.commit()
+        return jsonify({'message': 'Profile updated successfully.'}), 200
 
-        try: 
-            db.session.commit()
-            return jsonify({'message': 'Profile updated successfully.'}), 200
-        except SQLAlchemyError:
-            response_data = {
-                'message': 'Database error occurred.',
-            }
-            return jsonify(response_data), 500
-
-
-# Three routes -> GET to retrieve current appointments from DB, POST to add a new appointment, delete appointments
+"""
+    /dashboard/appointments API endpoint:
+        GET:
+            - Expected fields: {token}
+            - Purpose: Populate dashboard with user's existing appointments
+            - Query database to retrieve appoints and return in message
+            - Response:
+                - 200: Appointment information retrieved
+                - 401: Token authorization failure
+                - 500: Database issues
+        POST:
+            - Expected fields: {token, date, doctor_name, notes}
+            - Purpose: Create new appointment entry for user
+            - Response:
+                - 200: Appointment information created
+                - 400: Missing fields/incorrect formatting
+                - 401: Token authorization failure
+                - 500: Database issues
+        DELETE:
+            - Expected fields: {token, appointment_id}
+            - Purpose: Remove appointment from dashboard and database
+            - Response:
+                - 200: Appointment deletion successful
+                - 400: No existing appointment ID
+                - 401: Token authorization failure
+                - 500: Database issues
+"""
 @dashboard_routes.route('/appointments', methods=['GET', 'POST', 'DELETE'])
 @jwt_required()
+@handle_sqlalchemy_errors
 def appointments():
-    current_user_id = get_jwt_identity()
+    token = get_jwt_identity()
+    user_id = token['user_id']
     
     if request.method == 'GET':
-        user_appointments = Appointment.query.filter_by(user_id=current_user_id).all()
-        appointments = []
-        for appointment in user_appointments:
-            appointments.append({
-                'appointment_id': appointment.appointment_id,
-                'appointment_date': appointment.appointment_date.strftime('%Y-%m-%d %H:%M:%S'),
-                'doctor_name': appointment.doctor_name,
-                'appointment_notes': appointment.appointment_notes
-            })
-        response_data = {
-            'message': 'ok',
-            'status': 'success',
-            'data': {
-                'appointments': appointments
-            }
-        }
-        return jsonify(response_data)
-    
-    elif request.method == 'POST':
-        request_data = request.get_json()
-        appointment_date = request_data['dateTime']
-        formatted_date = datetime.strptime(appointment_date, "%Y-%m-%dT%H:%M:%S.%fZ") 
-        doctor_name = request_data['doctor']
-        appointment_notes = request_data['notes']
+        appointments, error = query_database(Appointment, user_id)
+        if error:
+            return jsonify(message = error), 500
 
+        if not appointments:
+            return jsonify(message='No appointments found for this user.'), 404
+
+        appointment_list = []
+        for appointment in appointments:
+            appointment_info = {
+                'id': appointment.id,
+                'date': appointment.appointment_date,
+                'doctor_name': appointment.doctor_name,
+                'notes': appointment.appointment_notes
+            }
+            appointment_list.append(appointment_info)
+        return jsonify(appointments = appointment_list), 200
+           
+    if request.method == 'POST':
+        data, error = handle_request_errors(request, ['date', 'doctor_name', 'notes'])
+        if error:
+            return error, 400
+        
         new_appointment = Appointment(
-            user_id=current_user_id,
-            appointment_date=formatted_date,
-            doctor_name=doctor_name,
-            appointment_notes=appointment_notes
+            user_id=user_id,
+            appointment_date=data['date'],
+            doctor_name=data['doctor_name'],
+            appointment_notes=data['notes']
         )
 
         db.session.add(new_appointment)
         db.session.commit()
+        return jsonify(message = 'New appointment created.'), 200
 
-        response_data = {
-            'message': 'Appointment created!',
-            'status': 'success',
-        }
+    if request.method == 'DELETE':
+        data, error = handle_request_errors(request, ['appointment_id'])
+        if error:
+            return error, 400
+        
+        appointment_id = data['appointment_id']
 
-        return jsonify({'message': 'Appointment created successfully'})
+        appointment = Appointment.query.filter_by(id=appointment_id, user_id=user_id).first() 
+        if not appointment:
+            return jsonify(message = 'Appointment not found'), 400
+        
+        db.session.delete(appointment)
+        db.session.commit()
+        return jsonify(message = 'Appointment deleted.'), 200
     
-    elif request.method == 'DELETE':
-        request_data = request.get_json()
-        appointment_id = request_data['appointment_id']
-        appointment = Appointment.query.get(appointment_id)
-
-        if appointment:
-            db.session.delete(appointment)
-            db.session.commit()
-            response_data = {
-                'message': 'Appointment deleted!',
-                'status': 'success',
-            }
-        else:
-            response_data = {
-                'message': 'No appointment id found',
-                'status': 'failure',
-            }   
-        return jsonify(response_data)         
-    
-# Three routes -> GET to retrieve current glucose logs from DB, POST to add a new log, delete logs
+"""
+    /dashboard/glucose API endpoint:
+        GET:
+            - Expected fields: {token}
+            - Purpose: Retrieve user's existing glucose logs
+            - Query database to retrieve glucose logs and return in message
+            - Response:
+                - 200: Glucose logs information retrieved
+                - 401: Token authorization failure
+                - 500: Database issues
+        POST:
+            - Expected fields: {token, glucose_level}
+            - Purpose: Create a new glucose log entry for the user
+            - Response:
+                - 200: Glucose log information created
+                - 400: Missing glucose level
+                - 401: Token authorization failure
+                - 500: Database issues
+        DELETE:
+            - Expected fields: {token, glucose_log_id}
+            - Purpose: Remove glucose log from dashboard and database
+            - Response:
+                - 200: Glucose log deletion successful
+                - 400: No existing glucose log ID
+                - 401: Token authorization failure
+                - 500: Database issues
+"""
 @dashboard_routes.route('/glucose', methods=['GET', 'POST', 'DELETE'])
 @jwt_required()
+@handle_sqlalchemy_errors
 def glucose():
-    current_user_id = get_jwt_identity()
+    token = get_jwt_identity()
+    user_id = token['user_id']
     
     if request.method == 'GET':
-        glucose_logs = GlucoseLog.query.filter_by(user_id=current_user_id).all()
-        logs = []
-        for log in glucose_logs:
-            logs.append({
-                'log_id': log.log_id,
-                'log_timestamp': log.log_timestamp.strftime('%Y-%m-%d %H:%M:%S'),
-                'glucose_level': log.glucose_level
-            })
-        response_data = {
-            'message': 'ok',
-            'status': 'success',
-            'data': {
-                'logs': logs
+        glucose_logs, error = query_database(GlucoseLog, user_id)
+        if error:
+            return jsonify(message=error), 500
+
+        glucose_log_list = []
+        for glucose_log in glucose_logs:
+            glucose_log_info = {
+                'id': glucose_log.id,
+                'glucose_level': glucose_log.glucose_level,
+                'creation_date': glucose_log.creation_date
             }
-        }
-        return jsonify(response_data)
-    
+            glucose_log_list.append(glucose_log_info)
+        return jsonify(glucose_logs=glucose_log_list), 200
+           
+    if request.method == 'POST':
+        data, error = handle_request_errors(request, ['glucose_level'])
+        if error:
+            return error, 400
+        
+        new_glucose_log = GlucoseLog(
+            user_id=user_id,
+            glucose_level=data['glucose_level']
+        )
+
+        db.session.add(new_glucose_log)
+        db.session.commit()
+        return jsonify(message='New glucose log created.'), 200
+
+    if request.method == 'DELETE':
+        data, error = handle_request_errors(request, ['glucose_log_id'])
+        if error:
+            return error, 400
+        
+        glucose_log_id = data['glucose_log_id']
+
+        glucose_log = GlucoseLog.query.filter_by(id=glucose_log_id, user_id=user_id).first() 
+        if not glucose_log:
+            return jsonify(message='Glucose log not found'), 404
+        
+        db.session.delete(glucose_log)
+        db.session.commit()
+        return jsonify(message='Glucose log deleted.'), 200
+
+"""
+    /dashboard/notifications API endpoint:
+        GET:
+            - Expected fields: {token}
+            - Purpose: Retrieve user's existing notifications
+            - Query database to retrieve notifications and return in message
+            - Response:
+                - 200: Notifications information retrieved
+                - 401: Token authorization failure
+                - 500: Database issues
+        POST:
+            - Expected fields: {token, notification, importance}
+            - Purpose: Create a new notification entry for the user
+            - Response:
+                - 200: Notification information created
+                - 400: Missing notification and/or importance
+                - 401: Token authorization failure
+                - 500: Database issues
+        DELETE:
+            - Expected fields: {token, notification_id}
+            - Purpose: Remove notification from dashboard and database
+            - Response:
+                - 200: Notification deletion successful
+                - 400: No existing notification ID
+                - 401: Token authorization failure
+                - 500: Database issues
+"""    
 @dashboard_routes.route('/notifications', methods=['GET'])
 @jwt_required()
+@handle_sqlalchemy_errors
 def notifications():
-    current_user_id = get_jwt_identity()
+    token = get_jwt_identity()
+    user_id = token['user_id']
     
     if request.method == 'GET':
-        notifications = Notification.query.filter_by(user_id=current_user_id).all()
-        notifications_array = []
-        for notif in notifications:
-            notifications_array.append({
-                'status_id': notif.status_id,
-                'notification': notif.notification,
-                'status_timestamp': notif.status_timestamp.strftime('%Y-%m-%d %H:%M:%S')
-            })
-            print(notif)
-        response_data = {
-            'message': 'ok',
-            'status': 'success',
-            'data': {
-                'notifications': notifications_array
+        notifications, error = query_database(Notification, user_id)
+        if error:
+            return jsonify(message=error), 500
+
+        notification_list = []
+        for notification in notifications:
+            notification_info = {
+                'id': notification.id,
+                'notification': notification.notification,
+                'importance': notification.importance,
+                'creation_date': notification.creation_date
             }
-        }
-        return jsonify(response_data)
+            notification_list.append(notification_info)
+        return jsonify(notifications=notification_list), 200
+           
+    if request.method == 'POST':
+        data, error = handle_request_errors(request, ['notification', 'importance'])
+        if error:
+            return error, 400
+        
+        new_notification = Notification(
+            user_id=user_id,
+            notification=data['notification'],
+            importance=data['importance']
+        )
+
+        db.session.add(new_notification)
+        db.session.commit()
+        return jsonify(message='New notification created.'), 200
+
+    if request.method == 'DELETE':
+        data, error = handle_request_errors(request, ['notification_id'])
+        if error:
+            return error, 400
+        
+        notification_id = data['notification_id']
+
+        notification = Notification.query.filter_by(id=notification_id, user_id=user_id).first() 
+        if not notification:
+            return jsonify(message='Notification not found'), 404
+        
+        db.session.delete(notification)
+        db.session.commit()
+        return jsonify(message='Notification deleted.'), 200

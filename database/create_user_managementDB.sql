@@ -1,6 +1,7 @@
 .open user_management.db
 
--- 'credentials' table, relevant for authentication
+-- 'account' table, relevant for authentication
+-- 1, admin, 0 not admin
 CREATE TABLE IF NOT EXISTS account (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
@@ -8,7 +9,8 @@ CREATE TABLE IF NOT EXISTS account (
     password_hash TEXT NOT NULL,
     last_login_date TEXT DEFAULT NULL,
     failed_logins INTEGER DEFAULT 0,
-    date_created TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL
+    date_created TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    is_admin INTEGER DEFAULT 0
 );
 
 -- 'user' table for server and client-side dynamic data display
@@ -59,10 +61,11 @@ CREATE TABLE IF NOT EXISTS notification (
 
 
 -- Some dummy database info for debugging
-INSERT INTO account (username, email, password_hash) VALUES 
-('user1', 'user1@email.com', sha3('password1', 256)),
-('user2', 'user2@email.com', sha3('password2', 256)),
-('user3', 'user3@email.com', sha3('password3', 256));
+INSERT INTO account (username, email, password_hash, is_admin) VALUES 
+('user1', 'user1@email.com', sha3('password1', 256), 0),
+('user2', 'user2@email.com', sha3('password2', 256), 0),
+('user3', 'user3@email.com', sha3('password3', 256), 0),
+('admin1', 'admin1@email.com', sha3('adminpassword', 256), 1);
 
 INSERT INTO user (id, first_name, last_name, dob, primary_phone, secondary_phone, address, primary_insurance, medical_id, contact_person) VALUES 
 (1, 'John', 'Doe', '12/21/1991', '3062915555', '4253284555', '123 St.', 'Blue Cross', '1213914', 'Jane Doe'),
