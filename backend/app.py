@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from flask_mail import Mail, Message
 
 from routes.dashboard_routes import dashboard_routes
 from routes.auth_routes import auth_routes
@@ -8,6 +9,7 @@ from config import Config
 from models.db_module import db
 from datetime import datetime
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from apscheduler.schedulers.background import BackgroundScheduler
 
 import os
 import base64
@@ -124,6 +126,12 @@ def get_appointments():
     conn.close()
     return jsonify([dict(appointment) for appointment in appointments])
 
+## Treviour Lee email reminder function
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'aimplusportal@gmail.com'
+app.config['MAIL_PASSWORD'] = 'cwyb czoj koub aikm'
 
 if __name__ == '__main__':
     app.run(debug=True)
