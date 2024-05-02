@@ -80,10 +80,10 @@ INSERT INTO glucose_log (user_id, glucose_level) VALUES
 (3, 100);
 
 INSERT INTO appointment (user_id, appointment_date, doctor_name, appointment_notes) VALUES
-(1, '2024-03-15 10:00:00', 'Dr. Smith', 'Screening checkup'),
-(2, '2024-03-16 11:30:00', 'Dr. Johnson', 'Discuss medication dosage, DME'),
-(3, '2024-03-20 09:15:00', 'Dr. Brown', 'Blood test and consultation'),
-(1, '2024-03-25 14:00:00', 'Dr. Lee', 'Follow-up appointment');
+(1, '2024-03-15 10:00', 'Dr. Smith', 'Screening checkup'),
+(2, '2024-03-16 11:30', 'Dr. Johnson', 'Discuss medication dosage, DME'),
+(3, '2024-03-20 09:15', 'Dr. Brown', 'Blood test and consultation'),
+(1, '2024-03-25 14:00', 'Dr. Lee', 'Follow-up appointment');
 
 INSERT INTO notification (user_id, notification, importance) VALUES
 (1, 'Reminder: Your appointment with Dr. Smith is tomorrow.', 2),
