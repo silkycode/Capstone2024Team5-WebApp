@@ -1,38 +1,27 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-<<<<<<< HEAD
-from flask_mail import Mail, Message
 
-=======
->>>>>>> 129620a5a54532700d9f2a288c845c109aaaaf39
 from routes.dashboard_routes import dashboard_routes
 from routes.auth_routes import auth_routes
 from config import Config
 from models.db_module import db
 from datetime import datetime
 from flask_jwt_extended import jwt_required, get_jwt_identity
-<<<<<<< HEAD
-from apscheduler.schedulers.background import BackgroundScheduler
 
-=======
->>>>>>> 129620a5a54532700d9f2a288c845c109aaaaf39
 import os
 import base64
 import sqlite3
-import logging
 
 app = Flask(__name__)
 app.config.from_object(Config)
 jwt = JWTManager(app)
 CORS(app)
+
 db.init_app(app)
 
 app.register_blueprint(auth_routes, url_prefix='/auth')
 app.register_blueprint(dashboard_routes, url_prefix='/dashboard')
-
-
-
 
 
 # Product Page
@@ -105,7 +94,7 @@ def get_glucose_logs():
 
 # Appointment Page
 def get_appointmentDB_connection():
-    database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'user_management.db')
+    database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'appointments.db')
     conn = sqlite3.connect(database_path)
     conn.row_factory = sqlite3.Row
     return conn
@@ -135,12 +124,6 @@ def get_appointments():
     conn.close()
     return jsonify([dict(appointment) for appointment in appointments])
 
-## Treviour Lee email reminder function
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'aimplusportal@gmail.com'
-app.config['MAIL_PASSWORD'] = 'cwyb czoj koub aikm'
 
 if __name__ == '__main__':
     app.run(debug=True)
