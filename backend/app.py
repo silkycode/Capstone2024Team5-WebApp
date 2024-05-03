@@ -3,14 +3,12 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from routes.dashboard_routes import dashboard_routes
 from routes.auth_routes import auth_routes
+from routes.admin_routes import admin_routes
 from config import Config
 from models.db_module import db
-from datetime import datetime
-from flask_jwt_extended import jwt_required, get_jwt_identity
 import os
 import base64
 import sqlite3
-import logging
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -20,6 +18,7 @@ db.init_app(app)
 
 app.register_blueprint(auth_routes, url_prefix='/auth')
 app.register_blueprint(dashboard_routes, url_prefix='/dashboard')
+app.register_blueprint(admin_routes, url_prefix='/admin')
 
 # Product Page
 def get_productsDB_connection():
