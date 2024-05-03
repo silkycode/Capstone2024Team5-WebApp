@@ -27,6 +27,8 @@ For database things:
 
 Have two separate terminals running the Flask server and the vite dev server -- they both need to be running in order to interact (VS code can open multiple terminals)
 
+Time format for DB: YYYY:MM:DD HH:SS
+
 Current tasks:
 
     - Further backend robustness
