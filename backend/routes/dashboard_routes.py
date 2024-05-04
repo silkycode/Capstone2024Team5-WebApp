@@ -5,7 +5,6 @@ from datetime import datetime
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from sqlalchemy.exc import SQLAlchemyError
 from models.db_module import db
 from utils import handle_request_errors, handle_sqlalchemy_errors, query_database
 from models.user_management_models import User, Appointment, GlucoseLog, Notification

@@ -1,4 +1,5 @@
 # Functions for improving routing/modeling, probably other stuff will go here too related to backend services
+# Don't need to use these functions for every route, just remember they exist for helping
 from functools import wraps
 from flask import jsonify
 from sqlalchemy.exc import SQLAlchemyError
