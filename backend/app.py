@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+
 from routes.dashboard_routes import dashboard_routes
 from routes.auth_routes import auth_routes
 from routes.admin_routes import admin_routes
@@ -14,6 +15,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 jwt = JWTManager(app)
 CORS(app)
+
 db.init_app(app)
 
 app.register_blueprint(auth_routes, url_prefix='/auth')
