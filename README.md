@@ -22,6 +22,7 @@ For database things:
     `.read create_productDB.sql` to generate products DB
 
     `python dataInsertionHelper.py` to generate product DB
+    `python db_populate.py` to fill user DB
 
     Run these inside ./database to generate a dummy users database that you can use for testing
 
