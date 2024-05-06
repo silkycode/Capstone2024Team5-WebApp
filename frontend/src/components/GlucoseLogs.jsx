@@ -88,7 +88,7 @@ export default function GlucoseLogs() {
     
         return (
             <div>
-                <h2>Glucose Logs</h2>
+                <h2>Your Glucose History</h2>
                 <VictoryChart
                     width={1000}
                     height={320}
@@ -134,7 +134,7 @@ export default function GlucoseLogs() {
                         }}
                     >
                         <Typography component="h1" variant="h5">
-                            Glucose Log Tracker
+                            Add New Logs
                         </Typography>
                         <Box component="form" noValidate sx={{ mt: 1 }}>
                             <TextField
@@ -184,18 +184,35 @@ export default function GlucoseLogs() {
                                     <TableRow>
                                         <TableCell>Date & Time</TableCell>
                                         <TableCell>Glucose Level (mg/dL)</TableCell>
+                                        <TableCell>Action</TableCell>
                                     </TableRow>
-                                    {logs.slice().reverse().map((log) => (
-                                        <TableRow key={log.id}>
-                                            <TableCell>{formatDateTime(log.creation_date)}</TableCell>
-                                            <TableCell>{log.glucose_level} mg/dL</TableCell>
-                                            <TableCell>
-                                                <Button variant="outlined" color="error" onClick={() => deleteLog(log.id)}>
-                                                    Delete
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
+                                    {logs
+                                        .slice()
+                                        .reverse()
+                                        .map((log) => {
+                                            const logDate = new Date(log.creation_date);
+                                            const formattedDate = logDate.toLocaleDateString(undefined, {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric',
+                                            });
+                                            const formattedTime = logDate.toLocaleTimeString(undefined, {
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                            });
+                                            
+                                            return (
+                                                <TableRow key={log.id}>
+                                                    <TableCell>{formattedDate} at {formattedTime}</TableCell>
+                                                    <TableCell>{log.glucose_level} mg/dL</TableCell>
+                                                    <TableCell>
+                                                        <Button variant="outlined" color="error" onClick={() => deleteLog(log.id)}>
+                                                            Delete
+                                                        </Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
                                 </TableBody>
                             </Table>
                         </Paper>
