@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, CssBaseline, TextField, Container, Box, Typography, Paper, Grid } from '@mui/material';
+import { Button, CssBaseline, TextField, Container, Box, Typography, Paper, Grid, Table, TableRow, TableCell, TableBody } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { VictoryChart, VictoryLine, VictoryTooltip } from 'victory';
 
@@ -91,7 +91,7 @@ export default function GlucoseLogs() {
                 <h2>Glucose Logs</h2>
                 <VictoryChart
                     width={1000}
-                    height={400}
+                    height={320}
                     padding={{ top: 20, bottom: 40, left: 50, right: 50 }}
                     domainPadding={{ x: 20, y: 20 }}
                 >
@@ -174,28 +174,30 @@ export default function GlucoseLogs() {
                     </Box>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <Box sx={{ maxHeight: '400px', overflow: 'auto' }}> {/* Adjust maxHeight and overflow */}
+                    <Box sx={{ maxHeight: '400px', overflow: 'auto' }}>
                         <Paper elevation={6} sx={{ padding: 2 }}>
                             <Typography variant="h6" gutterBottom>
                                 Previous Glucose Logs:
                             </Typography>
-                            {logs.map((log) => (
-                                <Box key={log.id} sx={{ marginBottom: 2 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #ccc', paddingBottom: 1 }}>
-                                        <Typography variant="subtitle1">
-                                            {log.creation_date}
-                                        </Typography>
-                                        <Button variant="outlined" color="error" onClick={() => deleteLog(log.id)}>
-                                            Delete
-                                        </Button>
-                                    </Box>
-                                    <Box sx={{ marginTop: 1 }}>
-                                        <Typography variant="body1">
-                                            Glucose Level: {log.glucose_level} mg/dL
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                            ))}
+                            <Table>
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell>Date & Time</TableCell>
+                                        <TableCell>Glucose Level (mg/dL)</TableCell>
+                                    </TableRow>
+                                    {logs.slice().reverse().map((log) => (
+                                        <TableRow key={log.id}>
+                                            <TableCell>{formatDateTime(log.creation_date)}</TableCell>
+                                            <TableCell>{log.glucose_level} mg/dL</TableCell>
+                                            <TableCell>
+                                                <Button variant="outlined" color="error" onClick={() => deleteLog(log.id)}>
+                                                    Delete
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </Paper>
                     </Box>
                 </Grid>

@@ -101,7 +101,7 @@ export default function GlucoseLogs() {
                         }}
                     >
                         <Typography component="h1" variant="h5">
-                            Appointment Reminder Scheduler
+                            Appointment Scheduler
                         </Typography>
                         <Box component="form" noValidate sx={{ mt: 1 }}>
                             <TextField
@@ -154,31 +154,34 @@ export default function GlucoseLogs() {
                     </Box>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <Paper elevation={6} sx={{ padding: 2 }}>
-                    <Typography variant="h6" gutterBottom>
-                    Current Appointments:
-                    </Typography>
-                    {appointments.map((appointment) => (
-                        <Box key={appointment.id} sx={{ marginBottom: 2 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #ccc', paddingBottom: 1 }}>
-                                <Typography variant="subtitle1">
-                                    {appointment.date}
-                                </Typography>
-                                <Button variant="outlined" color="error" onClick={() => deleteAppointment(appointment.id)}>
-                                    Delete
-                                </Button>
-                            </Box>
-                            <Box sx={{ marginTop: 1 }}>
-                                <Typography variant="body1">
-                                    {appointment.doctor_name}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    Notes: {appointment.notes}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    ))}
-                    </Paper>
+                    {appointments
+                        .sort((a, b) => new Date(a.date) - new Date(b.date)) // Sort appointments by date in ascending order
+                        .map((appointment) => {
+                            const appointmentDate = new Date(appointment.date);
+                            const formattedDate = appointmentDate.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+                            const formattedTime = appointmentDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+                            
+                            return (
+                                <Paper key={appointment.id} elevation={6} sx={{ padding: 2, marginBottom: 2 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #ccc', paddingBottom: 1 }}>
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                            {formattedDate} at {formattedTime}
+                                        </Typography>
+                                        <Button variant="outlined" color="error" onClick={() => deleteAppointment(appointment.id)}>
+                                            Delete
+                                        </Button>
+                                    </Box>
+                                    <Box sx={{ marginTop: 1 }}>
+                                        <Typography variant="body1" sx={{ textAlign: 'right', paddingBottom: 1 }}>
+                                            Dr. {appointment.doctor_name}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ fontSize: 16 }}>
+                                            {appointment.notes}
+                                        </Typography>
+                                    </Box>
+                                </Paper>
+                            );
+                        })}
                 </Grid>
             </Grid>
         </Container>

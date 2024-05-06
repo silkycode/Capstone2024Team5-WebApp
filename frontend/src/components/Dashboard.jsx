@@ -29,13 +29,12 @@ import {
   } from '@mui/icons-material';
 import ClickableBox from './ClickableBox';
 
-const drawerWidth = 250;
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
     '& .MuiDrawer-paper': {
       position: 'relative',
       whiteSpace: 'nowrap',
-      width: drawerWidth,
+      width: 250,
       transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
@@ -147,7 +146,6 @@ export default function Dashboard() {
                 <Outlet />
             </Container>
         </Box>
-
     </Box>
   );
 }
