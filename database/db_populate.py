@@ -41,9 +41,19 @@ def insert_user():
     contact_person = fake.name()
     password = b"password"
 
-    email = f"{first_name.lower()}.{last_name.lower()}{random.randint(1, 100)}@example.com"
+    while True:
+        email = f"{first_name.lower()}.{last_name.lower()}{random.randint(1, 100)}@example.com"
+        cursor.execute("SELECT COUNT(*) FROM account WHERE email = ?", (email,))
+        count = cursor.fetchone()[0]
+        if count == 0:
+            break
 
-    username = f"{first_name.lower()}{last_name.lower()}{random.randint(1, 100)}"
+    while True:
+        username = f"{first_name.lower()}{last_name.lower()}{random.randint(1, 100)}"
+        cursor.execute("SELECT COUNT(*) FROM account WHERE username = ?", (username,))
+        count = cursor.fetchone()[0]
+        if count == 0:
+            break
 
     password_hash = hashlib.sha3_256(password).digest()
 
@@ -57,7 +67,7 @@ def insert_user():
     return user_id
 
 def insert_glucose_logs(user_id):
-    for _ in range(random.randint(1, 25)):
+    for _ in range(random.randint(1, 40)):
         glucose_level = generate_glucose_level()
         creation_date = fake.date_time_this_year(before_now=True, after_now=False).strftime('%Y-%m-%d %H:%M:%S')
 
@@ -81,7 +91,7 @@ def insert_notifications(user_id):
         cursor.execute("INSERT INTO notification (user_id, notification, importance) VALUES (?, ?, ?)",
                        (user_id, notification, importance))
 
-for _ in range(100):
+for _ in range(10000):
     user_id = insert_user()
     insert_glucose_logs(user_id)
     insert_appointments(user_id)

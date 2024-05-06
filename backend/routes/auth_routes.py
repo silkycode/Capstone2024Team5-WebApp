@@ -7,6 +7,7 @@ import time
 import hashlib
 from sqlalchemy.exc import SQLAlchemyError
 from utils.db_module import db
+from utils.utils import handle_sqlalchemy_errors, handle_request_errors, query_database
 from models.user_management_models import Account, User
 
 # Register auth_routes as a blueprint for importing into app.py + set up CORS
@@ -18,6 +19,7 @@ CORS(auth_routes)
         - Expected format: {email: email, password: password}
         - Purpose: Validates and authenticates submitted credentials, to return an auth token
         - Compare hashed password with the stored hash for the given email if exists.
+        - Return 400 on missing fields
         - If match:
             - Respond with 200 indicating user exists and has valid credentials.
         - If no match:
@@ -25,37 +27,38 @@ CORS(auth_routes)
         - Return 500 on backend errors
 """
 @auth_routes.route('/login', methods=['POST'])
+@handle_sqlalchemy_errors
 def login():
-    data = request.get_json()
-    email = data.get('email', '').strip()
-    hashed_password = hashlib.sha3_256(data.get('password').encode()).digest() 
+    expected_fields = ['email', 'password']
+    data, error = handle_request_errors(request, expected_fields)
+    if error:
+        return error, 400
 
-    try:
-        # Encode ID, username, and admin privileges in access token
-        account = Account.query.filter_by(email=email, password_hash=hashed_password).first()
-        if account:
-            jwt_payload = {
+    email = data['email'].strip()
+    hashed_password = hashlib.sha3_256(data['password'].encode()).digest() 
+
+    account = Account.query.filter_by(email=email).first()
+    
+    if not account:
+        time.sleep(0.)
+        return jsonify(message = 'Could not log in with provided credentials. Please try again.'), 401
+    
+    if hashed_password == account.password_hash:
+        jwt_payload = {
                 'user_id': account.id,
                 'username': account.username,
                 'is_admin': account.is_admin
-            }
-            access_token = create_access_token(identity=jwt_payload)
-            response_data = {
-                'access_token': access_token,
-            }
-            return jsonify(response_data), 200
-        else:
-            time.sleep(0.1)
-            response_data = {
-                'message': 'Could not log in with provided credentials. Please try again.',
-            } 
-            return jsonify(response_data), 401
-      
-    except SQLAlchemyError:
-        response_data = {
-            'message': 'Server error occurred.',
         }
-        return jsonify(response_data), 500
+        access_token = create_access_token(identity=jwt_payload)
+        response_data = {
+            'access_token': access_token,
+        }
+        return jsonify(response_data), 200
+    else:
+        account.failed_logins += 1
+        db.session.commit()
+        time.sleep(0.1)
+        return jsonify(message = 'Could not log in with provided credentials. Please try again.'), 401
 
 """
     /auth/forgot-password API endpoint:
@@ -122,7 +125,6 @@ def register():
         return jsonify(response_data), 401
 
     try:
-        # Create a new account to be put into account table
         new_account = Account(
             username=username,
             email=email,

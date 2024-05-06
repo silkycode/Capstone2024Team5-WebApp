@@ -3,6 +3,7 @@ import secrets
 
 class Config:
     DEBUG = True
+
     # Mail configs
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
@@ -12,6 +13,7 @@ class Config:
     MAIL_PASSWORD = 'cwyb czoj koub aikm'
 
     # Database configs
+    # Cloud service URIs go here when implemented
     SQLALCHEMY_BINDS = {
         'user_management': 'sqlite:///' + os.path.abspath('../database/user_management.db'),
         'products': 'sqlite:///' + os.path.abspath('../database/products.db')
