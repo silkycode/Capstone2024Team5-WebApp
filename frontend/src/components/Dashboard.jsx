@@ -13,19 +13,17 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Typography
+  Typography,
 } from '@mui/material';
 import {
-    AccountBox as AccountBoxIcon,
     EditCalendar as EditCalendarIcon,
     MedicalServices as MedicalServicesIcon,
     Print as PrintIcon,
     EditNote as EditNoteIcon,
     People as PeopleIcon,
-    Notifications as NotificationsIcon,
     Assignment as AssignmentIcon,
     ChevronLeft as ChevronLeftIcon,
-    ChevronRight as ChevronRightIcon
+    ChevronRight as ChevronRightIcon,
   } from '@mui/icons-material';
 import ClickableBox from './ClickableBox';
 
@@ -84,7 +82,7 @@ export default function Dashboard() {
             <Divider />
             <List component="nav">
                 <React.Fragment>
-                    <ListItemButton component={Link} to="/dashboard/profile">
+                    {/* <ListItemButton component={Link} to="/dashboard/profile">
                     <ListItemIcon sx={{color: "white"}}>
                         <AccountBoxIcon />
                     </ListItemIcon>
@@ -95,7 +93,7 @@ export default function Dashboard() {
                         </Typography>
                         }
                     />
-                    </ListItemButton>
+                    </ListItemButton> */}
                     <ListItemButton component={Link} to="/dashboard/glucose-logs">
                     <ListItemIcon sx={{color: "white"}}>
                         <AssignmentIcon />
@@ -135,12 +133,12 @@ export default function Dashboard() {
         >
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                 {location.pathname === "/dashboard" && (
-                    <Box sx={{ display: 'flex', alignContent: 'vertical', gap: '40px', flexWrap: 'wrap' }}>
+                    <Box sx={{ display: 'flex', alignContent: 'vertical', gap: '45px', flexWrap: 'wrap' }}>
                         <ClickableBox title="Log Your Glucose" path="/dashboard/glucose-logs" icon={EditNoteIcon} />
                         <ClickableBox title="Appointments"path="/dashboard/appointments" icon={EditCalendarIcon} />
-                        <ClickableBox title="Profile" path="/dashboard/profile" icon={AccountBoxIcon}/>
-                        <ClickableBox title="Product Info" path="/dashboard/products" icon={MedicalServicesIcon}/>
-                        <ClickableBox title="Blank Medical Forms" path="/dashboard/medical-forms" icon={PrintIcon}/>
+                        {/* <ClickableBox title="Profile" path="/dashboard/profile" icon={AccountBoxIcon}/> */}
+                        <ClickableBox title="Product Info" path="/dashboard/products" icon={MedicalServicesIcon} />
+                        <ClickableBox title="Blank Medical Forms" path="/dashboard/medical-forms" icon={PrintIcon} />
                     </Box>
                 )}
                 <Outlet />
