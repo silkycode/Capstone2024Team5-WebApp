@@ -3,7 +3,7 @@
 from functools import wraps
 from flask import jsonify
 from sqlalchemy.exc import SQLAlchemyError
-from models.db_module import db
+from utils.db_module import db
 
 # Decorator pattern to handle SQLAlchemy errors and rollback the db session
 def handle_sqlalchemy_errors(func):

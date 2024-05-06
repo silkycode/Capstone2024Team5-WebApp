@@ -6,7 +6,7 @@ import re
 import time
 import hashlib
 from sqlalchemy.exc import SQLAlchemyError
-from models.db_module import db
+from utils.db_module import db
 from models.user_management_models import Account, User
 
 # Register auth_routes as a blueprint for importing into app.py + set up CORS

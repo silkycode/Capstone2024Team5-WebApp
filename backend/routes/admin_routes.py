@@ -3,7 +3,8 @@
 from flask import Blueprint, jsonify, request
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from models import db, GlucoseLog, Appointment, Account
+from utils.db_module import db
+from models.user_management_models import GlucoseLog, Appointment, Account
 from sqlalchemy.exc import SQLAlchemyError
 
 # Register admin_routes as a blueprint for importing into app.py + set up CORS
