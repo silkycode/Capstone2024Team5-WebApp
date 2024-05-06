@@ -12,7 +12,10 @@ class Config:
     MAIL_PASSWORD = 'cwyb czoj koub aikm'
 
     # Database configs
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.abspath('../database/user_management.db')
+    SQLALCHEMY_BINDS = {
+        'user_management': 'sqlite:///' + os.path.abspath('../database/user_management.db'),
+        'products': 'sqlite:///' + os.path.abspath('../database/products.db')
+    }
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # JWT configs

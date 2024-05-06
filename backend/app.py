@@ -11,10 +11,6 @@ from utils.db_module import db
 from utils.email import mail
 from utils.scheduler import scheduler as job_scheduler
 
-import os
-import base64
-import sqlite3
-
 app = Flask(__name__)
 app.config.from_object(Config)
 jwt = JWTManager(app)
@@ -31,26 +27,6 @@ job_scheduler.start()
 app.register_blueprint(auth_routes, url_prefix='/auth')
 app.register_blueprint(dashboard_routes, url_prefix='/dashboard')
 app.register_blueprint(admin_routes, url_prefix='/admin')
-
-# Product Page
-def get_productsDB_connection():
-    database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'products.db')
-    conn = sqlite3.connect(database_path)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-@app.route('/products', methods=['GET'])
-def products():
-    conn = get_productsDB_connection()
-    products = conn.execute('SELECT * FROM product').fetchall()
-    products_list = []
-    for product in products:
-        product_dict = dict(product)
-        if product_dict['image']:
-            product_dict['image'] = base64.b64encode(product_dict['image']).decode('utf-8')
-        products_list.append(product_dict)
-    conn.close()
-    return jsonify(products_list)
 
 if __name__ == '__main__':
     app.run(debug=True)

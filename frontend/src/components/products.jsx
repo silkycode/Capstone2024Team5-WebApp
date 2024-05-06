@@ -3,22 +3,27 @@ import { useNavigate } from "react-router-dom";
 import { Button, CircularProgress, Grid } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-function ShowProducts() {
+export default function Products() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:5000/products')
-      .then(response => response.json())
-      .then(data => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/dashboard/products')
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        const data = await response.json();
         setProducts(data);
         setLoading(false);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error("There was an error!", error);
         setLoading(false);
-      });
+      }
+    };
+    fetchData();
   }, []);
 
   const groupProductsIntoPairs = (products) => {
@@ -71,5 +76,3 @@ function ShowProducts() {
     </div>
   );
 }
-
-export default ShowProducts;

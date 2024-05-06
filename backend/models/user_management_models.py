@@ -1,6 +1,10 @@
 from utils.db_module import db
 
-class Account(db.Model):
+class UserModel(db.Model):
+    __abstract__ = True
+    __bind_key__ = 'user_management'
+
+class Account(UserModel):
     __tablename__ = 'account'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -16,7 +20,7 @@ class Account(db.Model):
     # one-to-one relationship between account and user tables (1 user per account, 1 account per user)
     user = db.relationship('User', uselist=False, backref='account', cascade='all, delete-orphan')
 
-class User(db.Model):
+class User(UserModel):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, db.ForeignKey('account.id'), primary_key=True)
@@ -36,7 +40,7 @@ class User(db.Model):
     appointments = db.relationship('Appointment', backref='user', cascade='all, delete-orphan')
     notifications = db.relationship('Notification', backref='user', cascade='all, delete-orphan')
     
-class GlucoseLog(db.Model):
+class GlucoseLog(UserModel):
     __tablename__ = 'glucose_log'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -45,7 +49,7 @@ class GlucoseLog(db.Model):
     glucose_level = db.Column(db.Integer, nullable=False)
     creation_date = db.Column(db.String, default=db.func.current_timestamp(), nullable=False)
 
-class Appointment(db.Model):
+class Appointment(UserModel):
     __tablename__ = 'appointment'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -56,7 +60,7 @@ class Appointment(db.Model):
     appointment_notes = db.Column(db.String, nullable=True)
     creation_date = db.Column(db.String, default=db.func.current_timestamp(), nullable=False)
 
-class Notification(db.Model):
+class Notification(UserModel):
     __tablename__ = 'notification'
 
     id = db.Column(db.Integer, primary_key=True)

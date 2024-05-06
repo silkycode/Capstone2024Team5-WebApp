@@ -1,16 +1,16 @@
 # Dashboard and data routes
 # Endpoints for retrieving user data for front end display + misc. non-auth tasks
+import base64
 import re
 from datetime import datetime
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from utils.email import send_email
 from utils.db_module import db
-from datetime import datetime, timedelta
-from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime
 from utils.utils import handle_request_errors, handle_sqlalchemy_errors, query_database
 from models.user_management_models import User, Appointment, GlucoseLog, Notification
+from models.product_models import Product
 
 # Register dashboard_routes as a blueprint for importing into app.py + set up CORS
 dashboard_routes = Blueprint('dashboard_routes', __name__)
@@ -348,3 +348,31 @@ def notifications():
         db.session.delete(notification)
         db.session.commit()
         return jsonify(message='Notification deleted.'), 200
+    
+"""
+    /dashboard/products API endpoint:
+        GET:
+            - Expected fields: {none}
+            - Purpose: Retrieve product info to populate page
+            - Query database to retrieve all products
+            - Response:
+                - 200: Notifications information retrieved
+                - 500: Database/backend issues
+"""
+@dashboard_routes.route('/products', methods=['GET'])
+@handle_sqlalchemy_errors
+def products():
+    products = Product.query.all()
+    products_list = []
+
+    for product in products:
+        product_info = {
+            'id': product.id,
+            'product_type': product.product_type,
+            'model_name': product.model_name,
+            'description': product.description,
+            'image': base64.b64encode(product.image).decode('utf-8') if product.image else None
+        }
+        products_list.append(product_info)
+
+    return jsonify(products_list), 200

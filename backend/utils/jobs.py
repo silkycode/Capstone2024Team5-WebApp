@@ -73,6 +73,5 @@ def remind_appointment():
         send_email("Appointment Reminder", user.email, f"Reminder: You have an appointment with {appointment.doctor_name} on {appointment.appointment_date}.")
 
 
-
 job_scheduler.add_job(remind_glucose_log, 'cron', hour=0)  # Runs daily at midnight
 job_scheduler.add_job(remind_appointment, 'cron', hour=12)  # Runs daily at noon
