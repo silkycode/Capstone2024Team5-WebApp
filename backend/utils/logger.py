@@ -1,21 +1,24 @@
 import logging
 from logging.handlers import RotatingFileHandler
-from config import Config
 
-# API logs
-route_logger = logging.getLogger('route_logger')
-route_logger.setLevel(logging.DEBUG)
+ROUTE_LOG_FILE = 'api.log'
+JOB_LOG_FILE = 'jobs.log'
 
-formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
+def init_logging():
+    # API logs
+    route_logger = logging.getLogger('route_logger')
+    route_logger.setLevel(logging.INFO)
 
-route_handler = RotatingFileHandler(Config.ROUTE_LOG_FILE, maxBytes=1024 * 1024 * 100, backupCount=10)
-route_handler.setFormatter(formatter)
-route_logger.addHandler(route_handler)
+    formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
 
-# Job logs
-job_logger = logging.getLogger('job_logger')
-job_logger.setLevel(logging.DEBUG)
+    route_handler = RotatingFileHandler(ROUTE_LOG_FILE, maxBytes=1024 * 1024 * 100, backupCount=10)
+    route_handler.setFormatter(formatter)
+    route_logger.addHandler(route_handler)
 
-job_handler = RotatingFileHandler(Config.JOB_LOG_FILE, maxBytes=1024 * 1024 * 100, backupCount=10)
-job_handler.setFormatter(formatter)
-job_logger.addHandler(job_handler)
+    # Job logs
+    job_logger = logging.getLogger('job_logger')
+    job_logger.setLevel(logging.INFO)
+
+    job_handler = RotatingFileHandler(JOB_LOG_FILE, maxBytes=1024 * 1024 * 100, backupCount=10)
+    job_handler.setFormatter(formatter)
+    job_logger.addHandler(job_handler)
