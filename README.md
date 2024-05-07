@@ -32,7 +32,6 @@ Time format for DB: YYYY:MM:DD HH:SS
 
 Current tasks:
 
-    - Further backend robustness
-    - Filling out user profile options
-    - Data analytics, reminders, graphs, etc.
+    - Notification System
+    - Automated jobs
     - Admin page
