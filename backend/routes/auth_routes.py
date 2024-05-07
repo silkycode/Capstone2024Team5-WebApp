@@ -7,7 +7,8 @@ import time
 import hashlib
 from sqlalchemy.exc import SQLAlchemyError
 from utils.db_module import db
-from utils.utils import handle_sqlalchemy_errors, handle_request_errors, query_database
+from utils.logger import logger
+from utils.utils import handle_sqlalchemy_errors, handle_request_errors, log_http_requests
 from models.user_management_models import Account, User
 
 # Register auth_routes as a blueprint for importing into app.py + set up CORS
@@ -28,7 +29,9 @@ CORS(auth_routes)
 """
 @auth_routes.route('/login', methods=['POST'])
 @handle_sqlalchemy_errors
+@log_http_requests
 def login():
+    
     expected_fields = ['email', 'password']
     data, error = handle_request_errors(request, expected_fields)
     if error:
@@ -53,10 +56,12 @@ def login():
         response_data = {
             'access_token': access_token,
         }
+        logger.info(f"User '{account.username}' logged in successfully.")
         return jsonify(response_data), 200
     else:
         account.failed_logins += 1
         db.session.commit()
+        logger.info(f"User '{account.username}' failed to log in successfully.")
         time.sleep(0.1)
         return jsonify(message = 'Could not log in with provided credentials. Please try again.'), 401
 
@@ -68,6 +73,7 @@ def login():
         - Return 400 on badly formatted email messages
 """
 @auth_routes.route('/forgot-password', methods=['POST'])    
+@log_http_requests
 def forgot_password():
     data = request.get_json()
     email = data.get('email', '').strip()
@@ -95,6 +101,7 @@ def forgot_password():
             - 500: Database issues
 """
 @auth_routes.route('/register', methods=['POST'])
+@log_http_requests
 def register():
     data = request.get_json()
 

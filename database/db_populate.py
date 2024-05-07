@@ -2,7 +2,6 @@ import hashlib
 import sqlite3
 import random
 from faker import Faker
-from hashlib import sha3_256
 
 fake = Faker()
 conn = sqlite3.connect('user_management.db')

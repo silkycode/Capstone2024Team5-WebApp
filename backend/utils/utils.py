@@ -1,9 +1,11 @@
 # Functions for improving routing/modeling, probably other stuff will go here too related to backend services
 # Don't need to use these functions for every route, just remember they exist for helping
 from functools import wraps
-from flask import jsonify
+import json
+from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
 from utils.db_module import db
+from utils.logger import logger
 
 # Decorator pattern to handle SQLAlchemy errors and rollback the db session
 def handle_sqlalchemy_errors(func):
@@ -14,6 +16,19 @@ def handle_sqlalchemy_errors(func):
         except SQLAlchemyError:
             db.session.rollback()
             return jsonify(message = 'Server error occurred'), 500
+    return decorated_func
+
+# Decorator pattern to log HTTP requests for backend tracking
+def log_http_requests(func):
+    @wraps(func)
+    def decorated_func(*args, **kwargs):
+        data = json.loads(request.data.decode('utf-8'))
+        if 'password' in data:
+            data['password'] = '*****'
+
+        masked_data = json.dumps(data)
+        logger.info(f"Source: {request.remote_addr} - Request: {request.method} {request.path} - Data: {masked_data}")
+        return func(*args, **kwargs)
     return decorated_func
 
 # Error handling and database querying generic helper for user ID related queries

@@ -4,6 +4,7 @@ from flask import Blueprint, jsonify, request
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from utils.db_module import db
+from utils.utils import log_http_requests
 from models.user_management_models import GlucoseLog, Appointment, Account
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -13,6 +14,7 @@ CORS(admin_routes)
 
 # Respond 200 if Flask server is running
 @admin_routes.route('/debug', methods=['GET'])
+@log_http_requests
 def debug():
     return jsonify({'message': 'Debug check, server is running'}), 200
 
@@ -49,6 +51,7 @@ def debug():
 """
 @admin_routes.route('/admin/glucose', methods=['GET', 'POST', 'PUT', 'DELETE'])
 @jwt_required()
+@log_http_requests
 def admin_glucose():
     # Get JWT identity and verify if user is admin
     token = get_jwt_identity()
@@ -147,6 +150,7 @@ def admin_glucose():
 """
 @admin_routes.route('/admin/appointments', methods=['GET', 'POST', 'PUT', 'DELETE'])
 @jwt_required()
+@log_http_requests
 def admin_appointments():
     # Get JWT identity and verify if user is admin
     token = get_jwt_identity()

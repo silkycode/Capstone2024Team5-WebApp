@@ -184,11 +184,10 @@ export default function GlucoseLogs() {
                                     <TableRow>
                                         <TableCell>Date & Time</TableCell>
                                         <TableCell>Glucose Level (mg/dL)</TableCell>
-                                        <TableCell>Action</TableCell>
                                     </TableRow>
                                     {logs
                                         .slice()
-                                        .reverse()
+                                        .sort((a, b) => new Date(b.creation_date) - new Date(a.creation_date))
                                         .map((log) => {
                                             const logDate = new Date(log.creation_date);
                                             const formattedDate = logDate.toLocaleDateString(undefined, {

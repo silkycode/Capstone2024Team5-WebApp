@@ -155,7 +155,7 @@ export default function GlucoseLogs() {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     {appointments
-                        .sort((a, b) => new Date(a.date) - new Date(b.date)) // Sort appointments by date in ascending order
+                        .sort((a, b) => new Date(a.date) - new Date(b.date))
                         .map((appointment) => {
                             const appointmentDate = new Date(appointment.date);
                             const formattedDate = appointmentDate.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });

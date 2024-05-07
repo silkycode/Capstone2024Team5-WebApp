@@ -8,7 +8,7 @@ from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from utils.db_module import db
 from datetime import datetime
-from utils.utils import handle_request_errors, handle_sqlalchemy_errors, query_database
+from utils.utils import handle_request_errors, handle_sqlalchemy_errors, query_database, log_http_requests
 from models.user_management_models import User, Appointment, GlucoseLog, Notification
 from models.product_models import Product
 
@@ -18,6 +18,7 @@ CORS(dashboard_routes)
 
 # Respond 200 if Flask server is running
 @dashboard_routes.route('/debug', methods=['GET'])
+@log_http_requests
 def debug():
     return jsonify({'message': 'Debug check, server is running'}), 200
 
@@ -31,6 +32,7 @@ def debug():
             - 500 for backend errors (message storage)
 """
 @dashboard_routes.route('/contact', methods=['POST'])
+@log_http_requests
 def contact():
     data = request.get_json()
     name = data.get('name', '').strip()
@@ -76,6 +78,7 @@ def contact():
 @dashboard_routes.route('/profile', methods=['GET', 'POST'])
 @jwt_required()
 @handle_sqlalchemy_errors
+@log_http_requests
 def profile():
     token = get_jwt_identity()
     user_id = token['user_id']
@@ -141,6 +144,7 @@ def profile():
 @dashboard_routes.route('/appointments', methods=['GET', 'POST', 'DELETE'])
 @jwt_required()
 @handle_sqlalchemy_errors
+@log_http_requests
 def appointments():
     token = get_jwt_identity()
     user_id = token['user_id']
@@ -221,6 +225,7 @@ def appointments():
 @dashboard_routes.route('/glucose', methods=['GET', 'POST', 'DELETE'])
 @jwt_required()
 @handle_sqlalchemy_errors
+@log_http_requests
 def glucose():
     token = get_jwt_identity()
     user_id = token['user_id']
@@ -299,6 +304,7 @@ def glucose():
 @dashboard_routes.route('/notifications', methods=['GET'])
 @jwt_required()
 @handle_sqlalchemy_errors
+@log_http_requests
 def notifications():
     token = get_jwt_identity()
     user_id = token['user_id']
@@ -361,6 +367,7 @@ def notifications():
 """
 @dashboard_routes.route('/products', methods=['GET'])
 @handle_sqlalchemy_errors
+@log_http_requests
 def products():
     products = Product.query.all()
     products_list = []
