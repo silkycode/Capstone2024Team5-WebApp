@@ -5,7 +5,7 @@ import json
 from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
 from utils.db_module import db
-from utils.logger import logger
+from utils.logger import job_logger, route_logger
 
 # Decorator pattern to handle SQLAlchemy errors and rollback the db session
 def handle_sqlalchemy_errors(func):
@@ -23,11 +23,13 @@ def log_http_requests(func):
     @wraps(func)
     def decorated_func(*args, **kwargs):
         data = json.loads(request.data.decode('utf-8'))
+
+        # Don't post plaintext passwords in the app logs!
         if 'password' in data:
-            data['password'] = '*****'
+            data['password'] = '******'
 
         masked_data = json.dumps(data)
-        logger.info(f"Source: {request.remote_addr} - Request: {request.method} {request.path} - Data: {masked_data}")
+        route_logger.info(f"Source: {request.remote_addr} - Request: {request.method} {request.path} - Data: {masked_data}")
         return func(*args, **kwargs)
     return decorated_func
 

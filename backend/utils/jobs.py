@@ -9,12 +9,12 @@ from utils.scheduler import scheduler as job_scheduler
 # Simple debug job, prints to terminal to ensure scheduler is functioning
 def print_message_job():
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    message = f"{timestamp} - Debug: this message repeats every 2 minutes. Job scheduler online."
+    message = f"{timestamp} - Debug: this message repeats every minute. Searching for tasks..."
     print(message)
 
 job_scheduler.add_job(
     print_message_job,
-    trigger=IntervalTrigger(seconds=120),
+    trigger=IntervalTrigger(seconds=60),
     id='print_message_job',
     name='Print Message Job',
     replace_existing=True

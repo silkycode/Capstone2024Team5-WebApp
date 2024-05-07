@@ -7,7 +7,7 @@ import time
 import hashlib
 from sqlalchemy.exc import SQLAlchemyError
 from utils.db_module import db
-from utils.logger import logger
+from utils.logger import route_logger
 from utils.utils import handle_sqlalchemy_errors, handle_request_errors, log_http_requests
 from models.user_management_models import Account, User
 
@@ -56,12 +56,12 @@ def login():
         response_data = {
             'access_token': access_token,
         }
-        logger.info(f"User '{account.username}' logged in successfully.")
+        route_logger.info(f"User '{account.username}' logged in successfully.")
         return jsonify(response_data), 200
     else:
         account.failed_logins += 1
         db.session.commit()
-        logger.info(f"User '{account.username}' failed to log in successfully.")
+        route_logger.info(f"User '{account.username}' failed to log in successfully.")
         time.sleep(0.1)
         return jsonify(message = 'Could not log in with provided credentials. Please try again.'), 401
 
@@ -153,6 +153,7 @@ def register():
         response_data = {
             'message': 'Registration successful! Check your email for verification.',
         }
+        route_logger.info(f"User '{new_account.username}' with id {new_account.id} registered and was added to database.")
         return jsonify(response_data), 200
 
     except SQLAlchemyError:

@@ -10,7 +10,7 @@ from config import Config
 from utils.utils import log_http_requests
 from utils.db_module import db
 from utils.email import mail
-from utils.logger import logger
+from utils.logger import route_logger
 from utils.scheduler import scheduler as job_scheduler
 
 app = Flask(__name__)
@@ -27,7 +27,7 @@ mail.init_app(app)
 job_scheduler.start()
 
 # Initialize route logger
-log_http_decorator = log_http_requests(logger)
+log_http_decorator = log_http_requests(route_logger)
 
 # Add routes
 app.register_blueprint(auth_routes, url_prefix='/auth')
@@ -36,4 +36,4 @@ app.register_blueprint(admin_routes, url_prefix='/admin')
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)
