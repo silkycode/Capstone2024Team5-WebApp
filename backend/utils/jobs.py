@@ -2,11 +2,9 @@
 
 from datetime import datetime, time, timedelta
 from time import sleep
-from functools import wraps
 from utils.db_module import db
 from utils.logger import job_logger
 from sqlalchemy.exc import SQLAlchemyError
-from threading import Lock
 from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.triggers.cron import CronTrigger
 from models.user_management_models import User, Appointment, GlucoseLog, Notification
