@@ -75,7 +75,7 @@ const Notifications = () => {
       </Grid>
       {notifications.map((notification) => (
         <Grid item xs={12} key={notification.id}>
-          <Paper elevation={3} sx={{ padding: 2, marginBottom: 2, backgroundColor: getBackgroundColor(notification.importance), borderLeft: `6px solid ${getBackgroundColor(notification.importance)}` }}>
+          <Paper elevation={3} sx={{ padding: 2, backgroundColor: getBackgroundColor(notification.importance), borderLeft: `6px solid ${getBackgroundColor(notification.importance)}` }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 1 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#333' }}>
                 {formatDate(notification.creation_date)}
