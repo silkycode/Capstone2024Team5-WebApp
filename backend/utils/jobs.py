@@ -4,11 +4,11 @@ from datetime import datetime, time, timedelta
 from time import sleep
 from utils.db_module import db
 from utils.logger import job_logger
+from utils.aiosmtpd_config import send_email
 from sqlalchemy.exc import SQLAlchemyError
 from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.triggers.cron import CronTrigger
-from models.user_management_models import User, Appointment, GlucoseLog, Notification
-from utils.email import send_email
+from models.user_management_models import Account, User, Appointment, GlucoseLog, Notification
 
 # Simple debug job, prints to terminal to ensure scheduler is functioning
 def heartbeat(app):
@@ -109,14 +109,20 @@ generate_appointment_notifs():
 def generate_appointment_notifs(app):
     with app.app_context():
         def query_appointments():
-            past_appointments = db.session.query(Appointment).filter(
-                Appointment.appointment_date < datetime.now()
-            ).all()
+            past_appointments = []
+            all_appointments = Appointment.query.all()
+            for appointment in all_appointments:
+                try:
+                    appointment_date = datetime.strptime(appointment.appointment_date, '%Y-%m-%d %H:%M:%S')
+                except ValueError:
+                    appointment_date = datetime.strptime(appointment.appointment_date, '%Y-%m-%d %H:%M')
+                if appointment_date < datetime.now():
+                    past_appointments.append(appointment)
 
             return past_appointments
         
         def appointment_notif_msg_generator(appointment):
-            msg = f"Past appointment at {appointment.appointment_date} with {appointment.doctor_name}"
+            msg = f"Now past appointment on {appointment.appointment_date} with {appointment.doctor_name}"
             return msg
         
         try:
@@ -145,7 +151,6 @@ Auto Email Reminder System:
             - Response:
                 - Success: Reminder email sent successfully.
                 - Failure: Issues in querying the database or sending email.
-
         - Task: remind_appointment
             - Schedule: Daily at Midnight
             - Purpose: Sends an email reminder to users about their appointments scheduled for the next day.
@@ -156,33 +161,40 @@ Auto Email Reminder System:
             - Response:
                 - Success: Reminder email sent successfully.
                 - Failure: Issues in querying the database or sending email.
-
-    Technical Configuration:
-        - Flask-Mail Configuration:
-            - MAIL_SERVER: 'smtp.gmail.com'
-            - MAIL_PORT: 465
-            - MAIL_USE_SSL: True
-            - Credentials are securely configured using environment variables.
 """    
-def send_glucose_reminder_email():
-    today = datetime.now().date()
-    ninety_days_ago = today - timedelta(days=90)
-    users = User.query.all()  # Assuming User model has an email attribute
+def send_glucose_reminder_email(app):
+    with app.app_context():
+        try:
+            overdue_notifications = Notification.query.filter(Notification.type == 1).all()
 
-    for user in users:
-        last_glucose_entry = GlucoseLog.query.filter_by(user_id=user.id).order_by(GlucoseLog.creation_date.desc()).first()
-        if last_glucose_entry:
-            last_entry_date = datetime.strptime(last_glucose_entry.creation_date, '%Y-%m-%d').date()
-            if last_entry_date < today and last_entry_date >= ninety_days_ago:
-                send_email("Reminder to log your glucose", user.email, "Please remember to log your daily glucose level.")
+            for notification in overdue_notifications:
+                user = User.query.get(notification.user_id)
+                account = Account.query.get(notification.user_id)
+                body = f"Hello {user.first_name}, this email is a friendly reminder of the following notification regarding your health: {notification.notification}\n\nThank you!"
+                subject = "Reminder to log your glucose"
+                sender = "sender@example.com"
+                recipient = account.email
+                send_email(body, subject, sender, recipient)
 
-def send_appointment_reminder_email():
-    tomorrow = datetime.now().date() + timedelta(days=1)
-    appointments = Appointment.query.filter_by(appointment_date=tomorrow.strftime('%Y-%m-%d')).all()
+        except Exception as e:
+            job_logger.error(f"Error sending glucose reminder emails: {str(e)}")
 
-    for appointment in appointments:
-        user = User.query.get(appointment.user_id)
-        send_email("Appointment Reminder", user.email, f"Reminder: You have an appointment with {appointment.doctor_name} on {appointment.appointment_date}.")
+def send_appointment_reminder_email(app):
+    with app.app_context():
+        try:
+            upcoming_notifications = Notification.query.filter(Notification.type == 2).all()
+
+            for notification in upcoming_notifications:
+                user = User.query.get(notification.user_id)
+                account = Account.query.get(notification.user_id)
+                body = f"Hello {user.first_name}, this email is a friendly reminder of the following notification regarding your health: {notification.notification}\n\nThank you!"
+                subject = "Appointment Reminder"
+                sender = "sender@example.com"
+                recipient = account.email
+                send_email(body, subject, sender, recipient)
+
+        except Exception as e:
+            job_logger.error(f"Error sending appointment reminder emails: {str(e)}")
 
 
 def schedule_background_jobs(app, scheduler):
@@ -211,6 +223,22 @@ def schedule_background_jobs(app, scheduler):
     )
 
     scheduler.add_job(
+        generate_appointment_notifs,
+        trigger=CronTrigger(hour='0'),
+        id='generate_appointment_notifs_midnight',
+        name='Generate missed appointment notifications (Midnight)',
+        args=[app]
+    )
+
+    scheduler.add_job(
+        generate_appointment_notifs,
+        trigger=CronTrigger(hour='12'),
+        id='generate_appointment_notifs_noon',
+        name='Generate missed appointment notifications (Noon)',
+        args=[app]
+    )
+
+    scheduler.add_job(
         send_appointment_reminder_email,
         trigger=CronTrigger(hour='0'),
         id='send_appointment_reminder_email',
@@ -223,5 +251,21 @@ def schedule_background_jobs(app, scheduler):
         trigger=CronTrigger(hour='0'),
         id='send_glucose_reminder_email',
         name='Sent out glucose logging reminder email (Midnight)',
+        args=[app]
+    )
+
+    scheduler.add_job(
+        send_glucose_reminder_email,
+        trigger=IntervalTrigger(seconds=60),
+        id='send_glucose_reminder_email_fast',
+        name='Sent out glucose logging reminder email (Midnight)',
+        args=[app]
+    )
+
+    scheduler.add_job(
+        send_appointment_reminder_email,
+        trigger=IntervalTrigger(seconds=60),
+        id='send_appointment_reminder_email_fast',
+        name='Sent out appointment reminder email (Midnight)',
         args=[app]
     )

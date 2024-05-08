@@ -5,12 +5,11 @@ class Config:
     DEBUG = True
 
     # Mail configs
-    MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_PORT = 587
-    MAIL_USE_TLS = False
-    MAIL_USE_SSL = True
-    MAIL_USERNAME = 'aimplusportal@gmail.com'
-    MAIL_PASSWORD = 'cwyb czoj koub aikm'
+    # MAIL_SERVER = 'smtp.gmail.com'
+    # MAIL_PORT = 587
+    # MAIL_USE_TLS = True
+    # MAIL_USERNAME = ''
+    # MAIL_PASSWORD = ''
 
     # Database configs
     # Cloud service URIs go here when implemented

@@ -68,4 +68,5 @@ class Notification(UserModel):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     notification = db.Column(db.String, nullable=False)
     importance = db.Column(db.Integer, nullable=False)
+    type = db.Column(db.Integer, nullable=False)
     creation_date = db.Column(db.String, default=db.func.current_timestamp(), nullable=False)    

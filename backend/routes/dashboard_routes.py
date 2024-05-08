@@ -7,6 +7,8 @@ from flask import request, jsonify, Blueprint
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from utils.db_module import db
+from utils.logger import route_logger
+from utils.aiosmtpd_config import send_email
 from datetime import datetime
 from utils.utils import handle_request_errors, handle_sqlalchemy_errors, query_database, log_http_requests
 from models.user_management_models import User, Appointment, GlucoseLog, Notification
@@ -16,11 +18,15 @@ from models.product_models import Product
 dashboard_routes = Blueprint('dashboard_routes', __name__)
 CORS(dashboard_routes)
 
-# Respond 200 if Flask server is running
+# Respond 200 if Flask server is running, also send out a test email to verify email capability
 @dashboard_routes.route('/debug', methods=['GET'])
-@log_http_requests
-def debug():
-    return jsonify({'message': 'Debug check, server is running'}), 200
+async def debug():
+    try:
+        await send_email(body='test email body', subject='test subject', sender='flaskapp@example.com', recipient='patient@example.com')
+        return '', 200
+    except Exception as e:
+        route_logger.error(f"Error occurred while sending test email: {str(e)}")
+        return jsonify({'error': 'An error occurred while sending the test email.'}), 500
 
 """
     /dashboard/contact API endpoint:
