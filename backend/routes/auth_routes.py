@@ -31,7 +31,6 @@ CORS(auth_routes)
 @handle_sqlalchemy_errors
 @log_http_requests
 def login():
-    
     expected_fields = ['email', 'password']
     data, error = handle_request_errors(request, expected_fields)
     if error:
@@ -43,7 +42,8 @@ def login():
     account = Account.query.filter_by(email=email).first()
     
     if not account:
-        time.sleep(0.)
+        time.sleep(0.1)
+        route_logger.info(f"Attempt by email: '{email}' to log in, no matching account.")
         return jsonify(message = 'Could not log in with provided credentials. Please try again.'), 401
     
     if hashed_password == account.password_hash:
@@ -61,7 +61,7 @@ def login():
     else:
         account.failed_logins += 1
         db.session.commit()
-        route_logger.info(f"User '{account.username}' failed to log in successfully.")
+        route_logger.info(f"User '{account.username}' failed to log in successfully: bad credentials")
         time.sleep(0.1)
         return jsonify(message = 'Could not log in with provided credentials. Please try again.'), 401
 

@@ -22,7 +22,14 @@ def handle_sqlalchemy_errors(func):
 def log_http_requests(func):
     @wraps(func)
     def decorated_func(*args, **kwargs):
-        data = json.loads(request.data.decode('utf-8'))
+        # Handle HTTP requests that may have empty payloads (like GET)
+        if request.method in ['POST', 'DELETE']:
+            try:
+                data = json.loads(request.data.decode('utf-8'))
+            except json.JSONDecodeError:
+                data = {}
+        else:
+            data = {}
 
         # Don't post plaintext passwords in the app logs!
         if 'password' in data:
