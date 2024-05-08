@@ -5,7 +5,7 @@ import json
 from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
 from utils.db_module import db
-from utils.logger import job_logger, route_logger
+from utils.logger import route_logger
 
 # Decorator pattern to handle SQLAlchemy errors and rollback the db session
 def handle_sqlalchemy_errors(func):

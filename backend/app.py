@@ -15,7 +15,6 @@ from utils.scheduler import scheduler as job_scheduler
 
 app = Flask(__name__)
 app.config.from_object(Config)
-Config.init_app(app)
 jwt = JWTManager(app)
 CORS(app)
 
