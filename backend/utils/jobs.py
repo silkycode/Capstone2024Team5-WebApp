@@ -253,19 +253,3 @@ def schedule_background_jobs(app, scheduler):
         name='Sent out glucose logging reminder email (Midnight)',
         args=[app]
     )
-
-    scheduler.add_job(
-        send_glucose_reminder_email,
-        trigger=IntervalTrigger(seconds=60),
-        id='send_glucose_reminder_email_fast',
-        name='Sent out glucose logging reminder email (Midnight)',
-        args=[app]
-    )
-
-    scheduler.add_job(
-        send_appointment_reminder_email,
-        trigger=IntervalTrigger(seconds=60),
-        id='send_appointment_reminder_email_fast',
-        name='Sent out appointment reminder email (Midnight)',
-        args=[app]
-    )

@@ -66,7 +66,7 @@ def insert_user():
     return user_id
 
 def insert_glucose_logs(user_id):
-    for _ in range(random.randint(1, 80)):
+    for _ in range(random.randint(1, 100)):
         glucose_level = generate_glucose_level()
         creation_date = fake.date_time_this_year(before_now=True, after_now=False).strftime('%Y-%m-%d %H:%M:%S')
 
@@ -74,18 +74,28 @@ def insert_glucose_logs(user_id):
                        (user_id, glucose_level, creation_date))
 
 def insert_appointments(user_id):
-    for _ in range(random.randint(1, 8)):
+    for _ in range(random.randint(1, 9)):
         appointment_date = generate_appointment_date()
         doctor_name = fake.name()
         appointment_notes = fake.sentence()
 
         cursor.execute("INSERT INTO appointment (user_id, appointment_date, doctor_name, appointment_notes) VALUES (?, ?, ?, ?)",
                        (user_id, appointment_date, doctor_name, appointment_notes))
+        
+def insert_notifications(user_id):
+    for _ in range(random.randint(1, 7)): 
+        notification = generate_notification()
+        importance = random.randint(1, 3)
+        type = random.randint(0,3)
+
+        cursor.execute("INSERT INTO notification (user_id, notification, importance, type) VALUES (?, ?, ?, ?)",
+                       (user_id, notification, importance, type))
 
 for _ in range(1000):
     user_id = insert_user()
     insert_glucose_logs(user_id)
     insert_appointments(user_id)
+    insert_notifications(user_id)
 
 conn.commit()
 conn.close()

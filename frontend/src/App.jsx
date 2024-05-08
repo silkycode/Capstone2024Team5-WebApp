@@ -14,6 +14,7 @@ import Profile from './components/Profile';
 import Appointment from './components/Appointment';
 import MedicalForms from './components/MedicalForms';
 import Products from './components/Products';
+import Notifications from './components/Notifications';
 
 export default function AimPlusMedicalSupplies() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -29,6 +30,7 @@ export default function AimPlusMedicalSupplies() {
             <Route path="profile" element={<Profile />} />
             <Route path="glucose-logs" element={<GlucoseLogs />} />
             <Route path="appointments" element={<Appointment />} />
+            <Route path="notifications" element={<Notifications />} />
             <Route path="medical-forms" element={<MedicalForms />} />
             <Route path="products" element={<Products />} />
           </Route>

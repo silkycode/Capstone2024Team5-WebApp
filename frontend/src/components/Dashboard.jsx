@@ -19,6 +19,7 @@ import {
     EditCalendar as EditCalendarIcon,
     MedicalServices as MedicalServicesIcon,
     Print as PrintIcon,
+    Notifications as NotificationsIcon,
     EditNote as EditNoteIcon,
     People as PeopleIcon,
     Assignment as AssignmentIcon,
@@ -118,6 +119,18 @@ export default function Dashboard() {
                         }
                     />
                     </ListItemButton>
+                    <ListItemButton component={Link} to="/dashboard/notifications">
+                    <ListItemIcon sx={{color: "white"}}>
+                        <NotificationsIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        primary={
+                        <Typography variant="h6" color="white" sx={{fontWeight: 'bold'}} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
+                            Notifications
+                        </Typography>
+                        }
+                    />
+                    </ListItemButton>
                 </React.Fragment>
             </List>
         </Drawer>
@@ -133,9 +146,10 @@ export default function Dashboard() {
         >
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                 {location.pathname === "/dashboard" && (
-                    <Box sx={{ display: 'flex', alignContent: 'vertical', gap: '45px', flexWrap: 'wrap' }}>
+                    <Box sx={{ display: 'flex', alignContent: 'vertical', gap: '30px', flexWrap: 'wrap' }}>
                         <ClickableBox title="Log Your Glucose" path="/dashboard/glucose-logs" icon={EditNoteIcon} />
-                        <ClickableBox title="Appointments"path="/dashboard/appointments" icon={EditCalendarIcon} />
+                        <ClickableBox title="Appointments" path="/dashboard/appointments" icon={EditCalendarIcon} />
+                        <ClickableBox title="Notifications" path="/dashboard/notifications" icon={NotificationsIcon} />
                         {/* <ClickableBox title="Profile" path="/dashboard/profile" icon={AccountBoxIcon}/> */}
                         <ClickableBox title="Product Info" path="/dashboard/products" icon={MedicalServicesIcon} />
                         <ClickableBox title="Blank Medical Forms" path="/dashboard/medical-forms" icon={PrintIcon} />
