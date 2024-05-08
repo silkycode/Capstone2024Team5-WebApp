@@ -50,11 +50,13 @@ CREATE TABLE IF NOT EXISTS appointment (
 );
 
 -- 'notification' table for various notifications and frontpage displays
+-- 0: generic notification, 1: log reminder notification, 2: appointment reminder notification
 CREATE TABLE IF NOT EXISTS notification (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     notification TEXT NOT NULL,
     importance INTEGER NOT NULL,
+    type INTEGER NOT NULL,
     creation_date DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
 );
