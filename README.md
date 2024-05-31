@@ -18,13 +18,15 @@ For node:
 For database things:
 
     `sqlite3` to open sqlite CLI
+
+    in database/src:
     `.read create_user_managementDB.sql` to generate user data DB
     `.read create_productDB.sql` to generate products DB
-
     `python dataInsertionHelper.py` to generate product DB
     `python db_populate.py` to fill user DB
 
-    Run these inside ./database to generate a dummy users database that you can use for testing
+    in database/src/food:
+    `python create_db.py usdafood.db`
 
 Have two separate terminals running the Flask server and the vite dev server -- they both need to be running in order to interact (VS code can open multiple terminals)
 
