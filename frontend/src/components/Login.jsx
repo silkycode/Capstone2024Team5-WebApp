@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import {
   Avatar,
   Button,
@@ -11,7 +12,7 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
-export default function Login({ setIsLoggedIn }) {
+export default function Login({ setIsLoggedIn, setUsername, setRole }) {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
@@ -40,8 +41,11 @@ export default function Login({ setIsLoggedIn }) {
             if (response.ok) {
                 setErrorMessage('');
                 const data = await response.json();
+                const decodedToken = jwtDecode(data.access_token);
                 localStorage.setItem('jwtToken', data.access_token);
                 setIsLoggedIn(true);
+                setUsername(decodedToken.username);
+                setRole(decodedToken.is_admin == 1 ? 'admin' : user);
             } else if (response.status !== 200) {
                 const data = await response.json();
                 setErrorMessage(data.message);

@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 
-const ClickableBox = ({ title, path, icon: Icon }) => {
+export default function ClickableBox({ title, path, icon: Icon }) {
     return (
         <Link to={path} style={{ textDecoration: 'none' }}>
             <Box
@@ -37,5 +37,3 @@ const ClickableBox = ({ title, path, icon: Icon }) => {
         </Link>
     );
 };
-
-export default ClickableBox;

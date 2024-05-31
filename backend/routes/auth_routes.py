@@ -56,12 +56,13 @@ def login():
         response_data = {
             'access_token': access_token,
         }
-        route_logger.info(f"User '{account.username}' logged in successfully.")
+        userType = "admin" if account.is_admin == 1 else "user"
+        route_logger.info(f"{userType} '{account.username}' logged in successfully.")
         return jsonify(response_data), 200
     else:
         account.failed_logins += 1
         db.session.commit()
-        route_logger.info(f"User '{account.username}' failed to log in successfully: bad credentials")
+        route_logger.info(f"{userType} '{account.username}' failed to log in successfully: bad credentials")
         time.sleep(0.1)
         return jsonify(message = 'Could not log in with provided credentials. Please try again.'), 401
 
