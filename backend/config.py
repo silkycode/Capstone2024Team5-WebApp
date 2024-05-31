@@ -15,7 +15,8 @@ class Config:
     # Cloud service URIs go here when implemented
     SQLALCHEMY_BINDS = {
         'user_management': 'sqlite:///' + os.path.abspath('../database/user_management.db'),
-        'products': 'sqlite:///' + os.path.abspath('../database/products.db')
+        'products': 'sqlite:///' + os.path.abspath('../database/products.db'),
+        'food_info': 'sqlite:///' + os.path.abspath('../database/src/food/usdafood.db')
     }
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
