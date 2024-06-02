@@ -15,7 +15,7 @@ from models.user_management_models import Account, User, RefreshToken
 
 # Register auth_routes as a blueprint for importing into app.py + set up CORS
 auth_routes = Blueprint('auth_routes', __name__)
-CORS(auth_routes)
+CORS(auth_routes, supports_credentials=True)
 
 """
     /auth/login API endpoint:
@@ -80,7 +80,7 @@ def login():
     else:
         account.failed_logins += 1
         db.session.commit()
-        route_logger.info(f"{userType} '{account.username}' failed to log in successfully: bad credentials")
+        route_logger.info(f"{account.username}' failed to log in successfully: bad credentials")
         time.sleep(0.1)
         return jsonify(message = 'Could not log in with provided credentials. Please try again.'), 401
 
@@ -101,11 +101,10 @@ def login():
 def logout():
     access_token = get_jwt_identity()
     user_id = access_token['user_id']
-    session_id = request.json.get('session_id')
-
-    print(request.json)
+    session_id = request.cookies.get('session_id')
 
     refresh_token = RefreshToken.query.filter_by(user_id=user_id, session_id=session_id).first()
+
 
     if refresh_token:
         db.session.delete(refresh_token)
@@ -125,12 +124,9 @@ def logout():
 @handle_sqlalchemy_errors
 @log_http_requests
 def refresh():
-    data, error = handle_request_errors(request, ['refresh_token', 'session_id'])
-    if error:
-        return error, 400
-    
-    refresh_token = data['refresh_token']
-    session_id = data['session_id']
+    refresh_token = request.cookies.get('refresh_token')
+    session_id = request.cookies.get('session_id')
+
     user_id = decode_token(refresh_token)
 
     stored_token = RefreshToken.query.filter_by(user_id=user_id, session_id=session_id, refresh_token=refresh_token).first()

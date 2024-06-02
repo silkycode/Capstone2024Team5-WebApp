@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Cookies from 'js-cookie'
 
 export default function Login({ setIsLoggedIn, setUsername, setRole }) {
     const navigate = useNavigate();
@@ -42,8 +43,13 @@ export default function Login({ setIsLoggedIn, setUsername, setRole }) {
                 setErrorMessage('');
                 const data = await response.json();
                 const decodedToken = jwtDecode(data.access_token);
+    
                 localStorage.setItem('jwtToken', data.access_token);
-                localStorage.setItem('sessionID', data.session_id)
+
+                // TODO: Need to make HTTPS only in deployment build
+                Cookies.set('session_id', data.session_id, { expires: 7});
+                Cookies.set('refresh_token', data.refresh_token, { expires: 7});
+    
                 setIsLoggedIn(true);
                 setUsername(decodedToken.username);
                 setRole(decodedToken.is_admin == 1 ? 'admin' : user);

@@ -13,7 +13,9 @@ export default function GlucoseLogs({ username }) {
     const [logs, setLogs] = useState([]);
     const token = localStorage.getItem('jwtToken');
 
-    useEffect(() => { fetchLogs(); });
+    useEffect(() => { 
+        fetchLogs(); 
+    }, []);
 
     const formatDateTime = (dateTimeString) => {
         const date = new Date(dateTimeString);
@@ -112,7 +114,7 @@ export default function GlucoseLogs({ username }) {
             theme: 'grid',
             styles: {
                 overflow: 'linebreak',
-                columnWidth: 'wrap',
+                cellWidth: 'wrap',
                 cellPadding: 2,
             },
             columnStyles: {
@@ -121,7 +123,7 @@ export default function GlucoseLogs({ username }) {
             },
             margin: { top: 20 },
             tableWidth: 'auto',
-            tableHeight: tableHeight,
+            tableHeight: 'auto',
         });
 
         doc.save(fileName);

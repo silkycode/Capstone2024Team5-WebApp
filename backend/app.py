@@ -20,7 +20,7 @@ from routes.admin_routes import admin_routes
 # Init app, config, and enable CORS for resource sharing
 app = Flask(__name__)
 app.config.from_object(Config)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 # Set up db, mail, JWT connections
 db.init_app(app)
