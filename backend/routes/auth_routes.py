@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import uuid
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
-from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required
+from flask_jwt_extended import create_access_token, create_refresh_token, decode_token, get_jwt_identity, jwt_required
 import re
 import time
 import hashlib
@@ -67,9 +67,9 @@ def login():
         db.session.add(new_refresh_token)
         db.session.commit()
 
-        # Don't need to send refresh token to frontend
         response_data = {
             'access_token': access_token,
+            'refresh_token': refresh_token,
             'session_id': session_id
         }
         
@@ -116,12 +116,41 @@ def logout():
 
 """
     /auth/refresh API endpoint:
-        - Expected format: {access_token, session_id}
+        - Expected format: {refresh_token, session_id}
         - Purpose: Send back a fresh JWT to a user with a non-expired refresh token
         - Return 200 if JWT generation is okay
-        - Return 401 with expired refresh tokens
+        - Return 401 with expired or missing refresh token
 """
+@auth_routes.route('/refresh', methods=['POST'])
+@handle_sqlalchemy_errors
+@log_http_requests
+def refresh():
+    data, error = handle_request_errors(request, ['refresh_token', 'session_id'])
+    if error:
+        return error, 400
+    
+    refresh_token = data['refresh_token']
+    session_id = data['session_id']
+    user_id = decode_token(refresh_token)
 
+    stored_token = RefreshToken.query.filter_by(user_id=user_id, session_id=session_id, refresh_token=refresh_token).first()
+    if not stored_token:
+        return jsonify(message="Invalid session credentials."), 401
+    
+    refresh_token_expiration = datetime.strptime(stored_token.expiration_time, '%Y-%m-%d %H:%M:%S.%f')
+    current_time = datetime.now() 
+    if current_time > refresh_token_expiration:
+        return jsonify(message="Expired refresh privilege credentials. Log in again."), 401
+    
+    account = Account.query.get(user_id)
+    access_token_payload = {
+        'user_id': account.id,
+        'username': account.username,
+        'is_admin': account.is_admin
+    }
+    
+    new_access_token = create_access_token(identity=access_token_payload)
+    return jsonify(access_token=new_access_token), 200
 
 """
     /auth/forgot-password API endpoint:
