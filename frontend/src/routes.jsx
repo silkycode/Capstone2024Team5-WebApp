@@ -4,8 +4,12 @@ import Appointment from './components/Appointment';
 import MedicalForms from './components/MedicalForms';
 import Products from './components/Products';
 import Notifications from './components/Notifications';
-import AdminGlucose from './components/AdminGlucose';
-import AdminAppointment from './components/AdminAppointment';
+import Tasks from './components/Tasks';
+import GlucoseManagement from './components/GlucoseManagement';
+import AppointmentManagement from './components/AppointmentManagement';
+import Status from './components/Status';
+import Logs from './components/Logs';
+import AccountManagement from './components/AccountManagement';
 
 export const userRoutes = [
     { path: 'glucose-logs', element: <GlucoseLogs /> },
@@ -16,6 +20,10 @@ export const userRoutes = [
 ];
 
 export const adminRoutes = [
-    { path: 'admin-glucose', element: <AdminGlucose /> },
-    { path: 'admin-appointments', element: <AdminAppointment />},
+    { path: 'glucose-management', element: <GlucoseManagement /> },
+    { path: 'appointment-management', element: <AppointmentManagement />},
+    { path: 'account-management', element: <AccountManagement />},
+    { path: 'status', element: <Status />},
+    { path: 'logs', element: <Logs />},
+    { path: 'tasks', element: <Tasks />},
 ];

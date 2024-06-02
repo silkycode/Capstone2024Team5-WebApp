@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, CssBaseline, TextField, Container, Box, Typography, Paper, Grid } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 
-export default function AppointmentsManagement() {
+export default function AppointmentManagement() {
     const navigate = useNavigate();
     const [dateTime, setDateTime] = useState('');
     const [doctorName, setDoctorName] = useState('');

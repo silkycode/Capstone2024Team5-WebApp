@@ -1,5 +1,3 @@
-.open user_management.db
-
 -- 'account' table, relevant for authentication
 -- 1, admin, 0 not admin
 CREATE TABLE IF NOT EXISTS account (
@@ -11,6 +9,16 @@ CREATE TABLE IF NOT EXISTS account (
     failed_logins INTEGER DEFAULT 0,
     date_created TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
     is_admin INTEGER DEFAULT 0
+);
+
+-- refresh token management for logged in users and their JWTs
+CREATE TABLE IF NOT EXISTS refresh_token (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    refresh_token TEXT UNIQUE NOT NULL,
+    expiration_time TEXT NOT NULL,
+    session_id TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
 );
 
 -- 'user' table for server and client-side dynamic data display

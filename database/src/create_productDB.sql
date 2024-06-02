@@ -1,5 +1,3 @@
-.open products.db
-
 -- 'product' table to store information about a single product
 CREATE TABLE IF NOT EXISTS product (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

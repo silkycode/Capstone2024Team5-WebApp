@@ -9,8 +9,12 @@ def read_image_as_blob(image_path):
 conn = sqlite3.connect('products.db')
 cursor = conn.cursor()
 
+with open('create_productDB.sql', 'r') as sql_file:
+    sql_script = sql_file.read()
+    cursor.executescript(sql_script)
+
 # Construct the relative path to the images directory
-images_base_path = os.path.join('images')
+images_base_path = os.path.join('..', 'images')
 
 # List of tuples representing products to insert
 # Each tuple contains: (product_type, model_name, description)
@@ -70,4 +74,4 @@ for product in products_to_insert:
 conn.commit()
 conn.close()
 
-print("Products inserted successfully.")
+print("-- product db created and populated -- ")

@@ -17,8 +17,19 @@ class Account(UserModel):
     date_created = db.Column(db.String, default=db.func.current_timestamp(), nullable=False)
     is_admin = db.Column(db.Integer, default=0, nullable=False)
     
-    # one-to-one relationship between account and user tables (1 user per account, 1 account per user)
+    # one-to-one relationship w/ user, one-to-many w/ refresh_token
     user = db.relationship('User', uselist=False, backref='account', cascade='all, delete-orphan')
+    refresh_token = db.relationship('RefreshToken', backref='account', cascade='all, delete-orphan')
+
+class RefreshToken(UserModel):
+    __tablename__ = 'refresh_token'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
+    refresh_token = db.Column(db.String, unique=True, nullable=False)
+    expiration_time = db.Column(db.String, unique=True, nullable=False)
+    session_id = db.Column(db.String, unique=True, nullable=False)
 
 class User(UserModel):
     __tablename__ = 'user'

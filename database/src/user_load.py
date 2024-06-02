@@ -7,6 +7,12 @@ fake = Faker()
 conn = sqlite3.connect('user_management.db')
 cursor = conn.cursor()
 
+with open('create_user_managementDB.sql', 'r') as sql_file:
+    sql_script = sql_file.read()
+    cursor.executescript(sql_script)
+
+sqlite3.register_adapter(str, lambda val: val) 
+
 def generate_dob():
     return fake.date_of_birth(minimum_age=18, maximum_age=90)
 
@@ -57,7 +63,7 @@ def insert_user():
     password_hash = hashlib.sha3_256(password).digest()
 
     cursor.execute("INSERT INTO user (first_name, last_name, dob, primary_phone, secondary_phone, address, primary_insurance, medical_id, contact_person) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                   (first_name, last_name, dob, primary_phone, secondary_phone, address, primary_insurance, medical_id, contact_person))
+                   (first_name, last_name, str(dob), primary_phone, secondary_phone, address, primary_insurance, medical_id, contact_person))
     user_id = cursor.lastrowid
 
     cursor.execute("INSERT INTO account (id, username, email, password_hash, is_admin) VALUES (?, ?, ?, ?, ?)",
@@ -98,4 +104,5 @@ for _ in range(1000):
     insert_notifications(user_id)
 
 conn.commit()
+print("-- user db created and populated --")
 conn.close()

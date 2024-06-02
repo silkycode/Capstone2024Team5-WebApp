@@ -56,7 +56,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function Dashboard({ role }) {
+export default function Dashboard({ role, username }) {
     const [open, setOpen] = React.useState(false);
     const location = useLocation();
 
@@ -83,6 +83,42 @@ export default function Dashboard({ role }) {
                     <React.Fragment>
                         {role === 'admin' ? (
                             <>
+                                <ListItemButton component={Link} to="/dashboard/glucose-logs">
+                                    <ListItemIcon sx={{color: "white"}}>
+                                        <AssignmentIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={
+                                            <Typography variant="h6" color="white" sx={{fontWeight: 'bold'}} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
+                                                Glucose Logs
+                                            </Typography>
+                                        }
+                                    />
+                                </ListItemButton>
+                                <ListItemButton component={Link} to="/dashboard/appointments">
+                                    <ListItemIcon sx={{color: "white"}}>
+                                        <PeopleIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={
+                                            <Typography variant="h6" color="white" sx={{fontWeight: 'bold'}} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
+                                                Appointments
+                                            </Typography>
+                                        }
+                                    />
+                                </ListItemButton>
+                                <ListItemButton component={Link} to="/dashboard/notifications">
+                                    <ListItemIcon sx={{color: "white"}}>
+                                        <NotificationsIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={
+                                            <Typography variant="h6" color="white" sx={{fontWeight: 'bold'}} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
+                                                Notifications
+                                            </Typography>
+                                        }
+                                    />
+                                </ListItemButton>
                             </>
                         ) : (
                             <>
@@ -142,6 +178,10 @@ export default function Dashboard({ role }) {
                         <Box sx={{ display: 'flex', alignContent: 'vertical', gap: '30px', flexWrap: 'wrap' }}>
                         {role === 'admin' ? (
                             <>
+                                <ClickableBox title="Manage Accounts" path="/dashboard/glucose-logs" icon={AssignmentIcon} />
+                                <ClickableBox title="View Tasks" path="/dashboard/glucose-logs" icon={AssignmentIcon} />
+                                <ClickableBox title="App Logs" path="/dashboard/glucose-logs" icon={AssignmentIcon} />
+                                <ClickableBox title="App Status" path="/dashboard/glucose-logs" icon={AssignmentIcon} />
                             </>
                         ) : (
                             <>

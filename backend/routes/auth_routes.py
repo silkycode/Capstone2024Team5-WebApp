@@ -1,7 +1,9 @@
 # Endpoints for authentication, authorization, and interacting with user account details
+from datetime import datetime, timedelta
+import uuid
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required
 import re
 import time
 import hashlib
@@ -9,7 +11,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from utils.db_module import db
 from utils.logger import route_logger
 from utils.utils import handle_sqlalchemy_errors, handle_request_errors, log_http_requests
-from models.user_management_models import Account, User
+from models.user_management_models import Account, User, RefreshToken
 
 # Register auth_routes as a blueprint for importing into app.py + set up CORS
 auth_routes = Blueprint('auth_routes', __name__)
@@ -18,7 +20,7 @@ CORS(auth_routes)
 """
     /auth/login API endpoint:
         - Expected format: {email: email, password: password}
-        - Purpose: Validates and authenticates submitted credentials, to return an auth token
+        - Purpose: Validates and authenticates submitted credentials, to return an auth and session token
         - Compare hashed password with the stored hash for the given email if exists.
         - Return 400 on missing fields
         - If match:
@@ -47,24 +49,79 @@ def login():
         return jsonify(message = 'Could not log in with provided credentials. Please try again.'), 401
     
     if hashed_password == account.password_hash:
-        jwt_payload = {
-                'user_id': account.id,
-                'username': account.username,
-                'is_admin': account.is_admin
+        access_token_payload = {
+            'user_id': account.id,
+            'username': account.username,
+            'is_admin': account.is_admin
         }
-        access_token = create_access_token(identity=jwt_payload)
+        refresh_token_payload = {
+            'user_id': account.id
+        }
+
+        access_token = create_access_token(identity=access_token_payload)
+        refresh_token = create_refresh_token(identity=refresh_token_payload)
+        
+        expiration_time = datetime.now() + timedelta(days=7)
+        session_id = str(uuid.uuid4())
+        new_refresh_token = RefreshToken(user_id=account.id, refresh_token=refresh_token, expiration_time=expiration_time, session_id=session_id)
+        db.session.add(new_refresh_token)
+        db.session.commit()
+
+        # Don't need to send refresh token to frontend
         response_data = {
             'access_token': access_token,
+            'session_id': session_id
         }
+        
         userType = "admin" if account.is_admin == 1 else "user"
         route_logger.info(f"{userType} '{account.username}' logged in successfully.")
         return jsonify(response_data), 200
+    
     else:
         account.failed_logins += 1
         db.session.commit()
         route_logger.info(f"{userType} '{account.username}' failed to log in successfully: bad credentials")
         time.sleep(0.1)
         return jsonify(message = 'Could not log in with provided credentials. Please try again.'), 401
+
+"""
+    /auth/logout API endpoint:
+        - Expected fields: {access_token, session_id}
+        - Purpose: Log user or admin out of an application session
+        - Remove session data from db corresponding to user session
+        - Return 400 on missing fields
+        - Respond 200 indicating db removal was successful
+        - Respond with 401 indicating bad tokens.
+        - Return 500 on backend errors
+"""
+@auth_routes.route('/logout', methods=['POST'])
+@jwt_required()
+@handle_sqlalchemy_errors
+@log_http_requests
+def logout():
+    access_token = get_jwt_identity()
+    user_id = access_token['user_id']
+    session_id = request.json.get('session_id')
+
+    print(request.json)
+
+    refresh_token = RefreshToken.query.filter_by(user_id=user_id, session_id=session_id).first()
+
+    if refresh_token:
+        db.session.delete(refresh_token)
+        db.session.commit()
+        return jsonify(message = "Logout successful"), 200
+    else:
+        return jsonify(message="Invalid authentication"), 401
+
+"""
+    /auth/refresh API endpoint:
+        - Expected format: {access_token, session_id}
+        - Purpose: Send back a fresh JWT to a user with a non-expired refresh token
+        - Return 200 if JWT generation is okay
+        - Return 401 with expired refresh tokens
+"""
+
 
 """
     /auth/forgot-password API endpoint:

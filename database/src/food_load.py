@@ -1,8 +1,10 @@
 # pythonified version of create_db.sh included in usda-sqlite
-# https://github.com/alyssaq/usda-sqlite
+# credit: https://github.com/alyssaq/usda-sqlite
 # 2015 data
 
 # original code
+# --------------
+
 # #!/bin/bash
 
 # if [ $# -ne 1 ]
@@ -65,7 +67,7 @@ def load_data(sqlite_file):
     subprocess.run(["sqlite3", sqlite_file], input=open("load_common_nutrient.sql", "r").read(), text=True, check=True)
     subprocess.run(["sqlite3", sqlite_file], input=open("load_nutrition.sql", "r").read(), text=True, check=True)
     subprocess.run(["sqlite3", sqlite_file], input=open("load_weight.sql", "r").read(), text=True, check=True)
-    print("Done.")
+    print("-- food db created and populated --")
 
 def create_database(sqlite_file):
     if not os.path.exists(sqlite_file):

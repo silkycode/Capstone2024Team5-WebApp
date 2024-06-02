@@ -3,15 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { Button, CssBaseline, TextField, Container, Box, Typography, Paper, Grid, Table, TableRow, TableCell, TableBody } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { VictoryChart, VictoryLine, VictoryTooltip } from 'victory';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
-export default function GlucoseLogs() {
+export default function GlucoseLogs({ username }) {
     const navigate = useNavigate();
     const [dateTime, setDateTime] = useState('');
     const [glucoseLevel, setGlucoseLevel] = useState('');
     const [logs, setLogs] = useState([]);
     const token = localStorage.getItem('jwtToken');
 
-    useEffect(() => { fetchLogs(); }, []);
+    useEffect(() => { fetchLogs(); });
 
     const formatDateTime = (dateTimeString) => {
         const date = new Date(dateTimeString);
@@ -77,6 +79,52 @@ export default function GlucoseLogs() {
         } catch (error) {
             console.error('Error deleting log:', error);
         }
+    };
+
+    const exportToPDF = () => {
+        const doc = new jsPDF();
+        const tableColumn = ["Date & Time", "Glucose Level (mg/dL)"];
+        let sortedLogs = [...logs];
+        sortedLogs.sort((a, b) => new Date(a.creation_date) - new Date(b.creation_date));
+        const tableRows = [];
+    
+        sortedLogs.forEach(log => {
+            const formattedDateTime = formatDateTime(log.creation_date);
+            const logData = [
+                formattedDateTime,
+                log.glucose_level
+            ];
+            tableRows.push(logData);
+        });
+    
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '_');
+        const fileName = `glucose_logs_${formattedDate}.pdf`;
+    
+        // Add title to the PDF
+        const title = `Your Glucose Logs\nGenerated: ${currentDate.toLocaleString()}`;
+        doc.text(title, 14, 20);
+    
+        doc.autoTable({
+            head: [tableColumn],
+            body: tableRows,
+            startY: 35,
+            theme: 'grid',
+            styles: {
+                overflow: 'linebreak',
+                columnWidth: 'wrap',
+                cellPadding: 2,
+            },
+            columnStyles: {
+                0: { cellWidth: 'auto' },
+                1: { cellWidth: 'auto' },
+            },
+            margin: { top: 20 },
+            tableWidth: 'auto',
+            tableHeight: tableHeight,
+        });
+
+        doc.save(fileName);
     };
 
     const GlucoseChart = ({ logs }) => {
@@ -179,6 +227,14 @@ export default function GlucoseLogs() {
                             <Typography variant="h6" gutterBottom>
                                 Previous Glucose Logs:
                             </Typography>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={exportToPDF}
+                                sx={{ mb: 2}}
+                            >
+                                Export to PDF
+                            </Button>
                             <Table>
                                 <TableBody>
                                     <TableRow>

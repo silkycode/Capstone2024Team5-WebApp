@@ -13,12 +13,16 @@ def setup_logger(logger_name, log_file):
 
 ROUTE_LOG_FILE = 'api.log'
 JOB_LOG_FILE = 'jobs.log'
-EMAIL_LOG_FILE ='emails.log'
+EMAIL_LOG_FILE = 'emails.log'
+ERROR_LOG_FILE = 'errors.log'
 
 formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
 
 # API logs
 route_logger = setup_logger('route_logger', ROUTE_LOG_FILE)
+
+# Error logs
+error_logger = setup_logger('error_logger', ERROR_LOG_FILE)
 
 # Job logs
 job_logger = setup_logger('job_logger', JOB_LOG_FILE)

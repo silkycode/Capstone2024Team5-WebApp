@@ -43,6 +43,7 @@ export default function Login({ setIsLoggedIn, setUsername, setRole }) {
                 const data = await response.json();
                 const decodedToken = jwtDecode(data.access_token);
                 localStorage.setItem('jwtToken', data.access_token);
+                localStorage.setItem('sessionID', data.session_id)
                 setIsLoggedIn(true);
                 setUsername(decodedToken.username);
                 setRole(decodedToken.is_admin == 1 ? 'admin' : user);
