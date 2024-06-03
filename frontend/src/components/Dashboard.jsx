@@ -83,38 +83,50 @@ export default function Dashboard({ role, username }) {
                     <React.Fragment>
                         {role === 'admin' ? (
                             <>
-                                <ListItemButton component={Link} to="/dashboard/glucose-logs">
+                                <ListItemButton component={Link} to="/dashboard/account-management">
                                     <ListItemIcon sx={{color: "white"}}>
                                         <AssignmentIcon />
                                     </ListItemIcon>
                                     <ListItemText
                                         primary={
                                             <Typography variant="h6" color="white" sx={{fontWeight: 'bold'}} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
-                                                Glucose Logs
+                                                Accounts
                                             </Typography>
                                         }
                                     />
                                 </ListItemButton>
-                                <ListItemButton component={Link} to="/dashboard/appointments">
+                                <ListItemButton component={Link} to="/dashboard/tasks">
                                     <ListItemIcon sx={{color: "white"}}>
                                         <PeopleIcon />
                                     </ListItemIcon>
                                     <ListItemText
                                         primary={
                                             <Typography variant="h6" color="white" sx={{fontWeight: 'bold'}} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
-                                                Appointments
+                                                Tasks
                                             </Typography>
                                         }
                                     />
                                 </ListItemButton>
-                                <ListItemButton component={Link} to="/dashboard/notifications">
+                                <ListItemButton component={Link} to="/dashboard/logs">
                                     <ListItemIcon sx={{color: "white"}}>
                                         <NotificationsIcon />
                                     </ListItemIcon>
                                     <ListItemText
                                         primary={
                                             <Typography variant="h6" color="white" sx={{fontWeight: 'bold'}} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
-                                                Notifications
+                                                Logs
+                                            </Typography>
+                                        }
+                                    />
+                                </ListItemButton>
+                                <ListItemButton component={Link} to="/dashboard/tasks">
+                                    <ListItemIcon sx={{color: "white"}}>
+                                        <NotificationsIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={
+                                            <Typography variant="h6" color="white" sx={{fontWeight: 'bold'}} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
+                                                Status
                                             </Typography>
                                         }
                                     />

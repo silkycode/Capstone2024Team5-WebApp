@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, Paper, IconButton, Box, Typography, TablePagination, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
-import { SettingsApplications as SettingsApplicationsIcon, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
+import { SettingsApplications as SettingsApplicationsIcon, Delete as DeleteIcon, Edit as EditIcon, Undo as UndoIcon } from '@mui/icons-material';
 
 export default function AccountManagement() {
     const [searchString, setSearchString] = useState('');
@@ -61,6 +61,12 @@ export default function AccountManagement() {
     };
 
     const confirmDeleteUser = async () => {
+
+        if (usernameToDelete !== users.find(user => user.account_id === deleteUserId)?.username) {
+            setErrorMessage('Entered username does not match.');
+            return;
+        }
+
         try {
             const response = await fetch(`http://127.0.0.1:5000/admin/manage-accounts?user_id=${deleteUserId}`, {
                 method: 'DELETE',
@@ -74,6 +80,8 @@ export default function AccountManagement() {
                 setOpenConfirmationDialog(false);
                 setUsernameToDelete('');
                 setErrorMessage('');
+            } else {
+                setErrorMessage(response.message);
             }
         } catch (error) {
             console.log(error);
@@ -88,6 +96,25 @@ export default function AccountManagement() {
     const handleDeleteUser = async (userId) => {
         setDeleteUserId(userId);
         setOpenConfirmationDialog(true);
+    };
+
+    const handleUndeleteUser = async (userId) => {
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/admin/undelete?user_id=${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            if (response.ok) {
+                fetchUsers();
+                setErrorMessage('');
+            }
+        } catch (error) {
+            console.log(error);
+            setErrorMessage(error);
+        }
     };
 
     const handleEditUser = async (userId) => {
@@ -196,6 +223,8 @@ export default function AccountManagement() {
                                     <TableCell>Email</TableCell>
                                     <TableCell>Last Login Date</TableCell>
                                     <TableCell>Date Created</TableCell>
+                                    <TableCell>To Be Deleted</TableCell>
+                                    <TableCell>Deletion Date</TableCell>
                                     <TableCell>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -209,13 +238,23 @@ export default function AccountManagement() {
                                         <TableCell>{user.email}</TableCell>
                                         <TableCell>{user.last_login_date}</TableCell>
                                         <TableCell>{user.date_created}</TableCell>
-                                        <TableCell>
-                                            <IconButton color="primary" onClick={() => handleEditUser(user.account_id)}>
-                                                <EditIcon />
-                                            </IconButton>
-                                            <IconButton color="error" onClick={() => handleDeleteUser(user.account_id)}>
-                                                <DeleteIcon />
-                                            </IconButton>
+                                        <TableCell>{user.deleted}</TableCell>
+                                        <TableCell>{user.delete_time}</TableCell>
+                                        <TableCell style={{ display: 'flex', justifyContent: 'center' }}>
+                                            {user.deleted ? (
+                                                <IconButton color="primary" onClick={() => handleUndeleteUser(user.account_id)}>
+                                                    <UndoIcon />
+                                                </IconButton>
+                                            ) : (
+                                                <>
+                                                    <IconButton color="primary" onClick={() => handleEditUser(user.account_id)}>
+                                                        <EditIcon />
+                                                    </IconButton>
+                                                    <IconButton color="error" onClick={() => handleDeleteUser(user.account_id, user.username)}>
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -233,24 +272,25 @@ export default function AccountManagement() {
                     />
                 </>
             )}
-            <Dialog open={openConfirmationDialog} onClose={() => setOpenConfirmationDialog(false)}>
-                <DialogTitle>Confirm Delete</DialogTitle>
-                <DialogContent>
-                    <p>Are you sure you want to delete this user?</p>
-                    <TextField
-                        label="Enter Username"
-                        variant="outlined"
-                        value={usernameToDelete}
-                        onChange={(e) => setUsernameToDelete(e.target.value)}
-                        fullWidth
-                        sx={{ mb: 2 }}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenConfirmationDialog(false)}>Cancel</Button>
-                    <Button onClick={confirmDeleteUser} color="error">Delete</Button>
-                </DialogActions>
-            </Dialog>
+                <Dialog open={openConfirmationDialog} onClose={() => setOpenConfirmationDialog(false)}>
+                    <DialogTitle>Confirm Delete</DialogTitle>
+                    <DialogContent>
+                        <p>Are you sure you want to delete this user?</p>
+                        <TextField
+                            label="Enter Username"
+                            variant="outlined"
+                            value={usernameToDelete}
+                            onChange={(e) => setUsernameToDelete(e.target.value)}
+                            fullWidth
+                            sx={{ mb: 2 }}
+                        />
+                        {errorMessage && <Typography variant="body2" color="error">{errorMessage}</Typography>}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setOpenConfirmationDialog(false)}>Cancel</Button>
+                        <Button onClick={confirmDeleteUser} color="error">Delete</Button>
+                    </DialogActions>
+                </Dialog>
             <Dialog open={Boolean(editUserId)} onClose={() => setEditUserId(null)}>
                 <DialogTitle>Edit User</DialogTitle>
                 <DialogContent>

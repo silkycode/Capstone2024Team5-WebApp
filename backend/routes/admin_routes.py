@@ -48,6 +48,8 @@ def manage_accounts():
             'email': account.email,
             'last_login_date': account.last_login_date,
             'date_created': account.date_created,
+            'deleted': account.deleted,
+            'delete_time': account.delete_time
         } for account in accounts]
 
         return jsonify(account_data), 200
@@ -78,13 +80,38 @@ def manage_accounts():
         if not account:
             return jsonify(message="Account not found"), 400
         
-        db.session.delete(account)
+        if account.deleted == 1:
+            return jsonify(message="Account already marked for deletion"), 400
+        
+        account.soft_delete()
         db.session.commit()
 
         return jsonify(message="Account deleted successfully"), 200
 
+# Undelete soft deleted accounts
+@admin_routes.route('/undelete', methods=['POST'])
+@jwt_required()
+@handle_sqlalchemy_errors
+@log_http_requests
+def undelete():
+    access_token = get_jwt_identity()
+    if access_token['is_admin'] != 1:
+        return jsonify(message="Invalid authentication"), 401
+    
+    user_id = request.args.get('user_id')
 
+    account = Account.query.get(user_id)
+    if not account:
+        return jsonify(message="Account not found"), 400
+    
+    if account.deleted == 0:
+        return jsonify(message="Account is not marked for deletion"), 400
+    
+    account.recover()
+    db.session.commit()
 
+    return jsonify(message="Account recovered successfully"), 200
+    
 """
     /admin/glucose API endpoint:
         GET:

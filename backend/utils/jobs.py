@@ -196,16 +196,22 @@ def send_appointment_reminder_email(app):
         except Exception as e:
             error_logger.error(f"Error sending appointment reminder emails: {str(e)}")
 
-# Delete expired refresh tokens if any exist
+# Delete expired refresh tokens if any exist, as well as accounts marked for deletion
 def db_cleanup(app):
     with app.app_context():
         try:
             current_time = datetime.now()
             expired_refresh_tokens = RefreshToken.query.filter(RefreshToken.expiration_time < current_time).all()
+            to_be_deleted_accounts = Account.query.filter(Account.delete_time < current_time).all()
 
             for token in expired_refresh_tokens:
                 db.session.delete(token)
+            for account in to_be_deleted_accounts:
+                db.session.delete(account)
+
             db.session.commit()
+
+            job_logger.info(f"Deleted {len(to_be_deleted_accounts)} accounts marked for deletion.")
             job_logger.info(f"Deleted {len(expired_refresh_tokens)} expired tokens.")
         except Exception as e:
             db.session.rollback()

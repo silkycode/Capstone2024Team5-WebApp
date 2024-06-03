@@ -66,8 +66,12 @@ def insert_user():
                    (first_name, last_name, str(dob), primary_phone, secondary_phone, address, primary_insurance, medical_id, contact_person))
     user_id = cursor.lastrowid
 
+    is_admin = 0
+    if user_id <= 5:
+        is_admin = 1
+
     cursor.execute("INSERT INTO account (id, username, email, password_hash, is_admin) VALUES (?, ?, ?, ?, ?)",
-                   (user_id, username, email, password_hash, 0))
+                   (user_id, username, email, password_hash, is_admin))
 
     return user_id
 

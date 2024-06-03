@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from utils.db_module import db
 
 class UserModel(db.Model):
@@ -16,11 +17,23 @@ class Account(UserModel):
     failed_logins = db.Column(db.Integer, default=0)
     date_created = db.Column(db.String, default=db.func.current_timestamp(), nullable=False)
     is_admin = db.Column(db.Integer, default=0, nullable=False)
+    deleted = db.Column(db.Integer, default=0, nullable=False)
+    delete_time = db.Column(db.String, default=None)
     
     # one-to-one relationship w/ user, one-to-many w/ refresh_token
     user = db.relationship('User', uselist=False, backref='account', cascade='all, delete-orphan')
     refresh_token = db.relationship('RefreshToken', backref='account', cascade='all, delete-orphan')
 
+    def soft_delete(self):
+        if not self.deleted:
+            self.deleted = 1
+            delete_time = datetime.now() + timedelta(hours=48)
+            self.delete_time = delete_time.strftime('%Y:%m:%d %H:%M:%S')
+
+    def recover(self):
+        if self.deleted:
+            self.deleted = 0
+            self.delete_time = None
 
 class RefreshToken(UserModel):
     __tablename__ = 'refresh_token'

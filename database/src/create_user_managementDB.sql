@@ -8,7 +8,9 @@ CREATE TABLE IF NOT EXISTS account (
     last_login_date TEXT DEFAULT NULL,
     failed_logins INTEGER DEFAULT 0,
     date_created TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    is_admin INTEGER DEFAULT 0
+    is_admin INTEGER DEFAULT 0,
+    deleted INTEGER DEFAULT 0,
+    delete_time TEXT DEFAULT NULL
 );
 
 -- refresh token management for logged in users and their JWTs

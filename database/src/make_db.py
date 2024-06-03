@@ -19,7 +19,7 @@ if __name__ == "__main__":
     print(f"Running {product_path}...")
     run_script(product_path)
 
-    print(f"Running {food_path}...")
-    run_script(food_path, ["usdafood.db"])
+    # print(f"Running {food_path}...")
+    # run_script(food_path, ["usdafood.db"])
 
     print("All scripts have finished running.")
