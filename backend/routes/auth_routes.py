@@ -7,7 +7,6 @@ from flask_jwt_extended import create_access_token, create_refresh_token, decode
 import re
 import time
 import hashlib
-from sqlalchemy.exc import SQLAlchemyError
 from utils.db_module import db
 from utils.logger import route_logger, error_logger
 from utils.utils import handle_sqlalchemy_errors, handle_request_errors
@@ -153,20 +152,18 @@ def refresh():
         session_id = data['session_id']
 
         if not refresh_token or not session_id:
-            route_logger.info(f"Request {request_id}: Missing refresh_token or session_id in cookies")
-            return jsonify(message="Missing required cookies"), 401
+            route_logger.info(f"Request {request_id}: Missing refresh_token or session_id tokens")
+            return jsonify(message="Missing required tokens"), 401
 
-        user_id = decode_token(refresh_token).get('identity')
-        if not user_id:
-            route_logger.info(f"Request {request_id}: Invalid refresh token")
-            return jsonify(message="Invalid refresh token"), 401
+        stored_token = RefreshToken.query.filter_by(session_id=session_id, refresh_token=refresh_token).first()
 
-        route_logger.info(f"Request {request_id}: Refresh request for user ID: {user_id} with session ID: {session_id}")
-
-        stored_token = RefreshToken.query.filter_by(user_id=user_id, session_id=session_id, refresh_token=refresh_token).first()
         if not stored_token:
-            route_logger.info(f"Request {request_id}: Invalid session credentials for user ID: {user_id}")
-            return jsonify(message="Invalid session credentials."), 401
+            route_logger.info(f"Request {request_id}: No token found for transmitted refresh token: {refresh_token}")
+            return jsonify(message="Invalid tokens"), 401
+        
+        user_id = stored_token.user_id
+        
+        route_logger.info(f"Request {request_id}: Refresh request for user ID: {user_id} with session ID: {session_id}")
 
         refresh_token_expiration = datetime.strptime(stored_token.expiration_time, '%Y-%m-%d %H:%M:%S.%f')
         current_time = datetime.now()

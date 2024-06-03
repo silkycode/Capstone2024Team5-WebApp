@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { fetchWithRetry } from '../authUtils';
 import { TextField, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, Paper, IconButton, Box, Typography, TablePagination, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { SettingsApplications as SettingsApplicationsIcon, Delete as DeleteIcon, Edit as EditIcon, Undo as UndoIcon } from '@mui/icons-material';
 
@@ -42,7 +43,7 @@ export default function AccountManagement() {
 
     const fetchUsers = async() => {
         try {
-            const response = await fetch(`http://127.0.0.1:5000/admin/manage-accounts?search_string=${debouncedSearchString}`, {
+            const response = await fetchWithRetry(`http://127.0.0.1:5000/admin/manage-accounts?search_string=${debouncedSearchString}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -68,7 +69,7 @@ export default function AccountManagement() {
         }
 
         try {
-            const response = await fetch(`http://127.0.0.1:5000/admin/manage-accounts?user_id=${deleteUserId}`, {
+            const response = await fetchWithRetry(`http://127.0.0.1:5000/admin/manage-accounts?user_id=${deleteUserId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -100,7 +101,7 @@ export default function AccountManagement() {
 
     const handleUndeleteUser = async (userId) => {
         try {
-            const response = await fetch(`http://127.0.0.1:5000/admin/undelete?user_id=${userId}`, {
+            const response = await fetchWithRetry(`http://127.0.0.1:5000/admin/undelete?user_id=${userId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -150,7 +151,7 @@ export default function AccountManagement() {
         }
 
         try {
-            const response = await fetch(`http://127.0.0.1:5000/admin/manage-accounts`, {
+            const response = await fetchWithRetry(`http://127.0.0.1:5000/admin/manage-accounts`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

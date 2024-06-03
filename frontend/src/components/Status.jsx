@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { fetchWithRetry } from '../authUtils';
 import { Typography, Grid, Paper } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import StorageIcon from '@mui/icons-material/Storage';
@@ -11,7 +12,7 @@ export default function Status() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`http://127.0.0.1:5000/admin/server-status`, {
+                const response = await fetchWithRetry(`http://127.0.0.1:5000/admin/server-status`, {
                     method: 'GET',
                     headers: {
                       'Content-Type': 'application/json',
