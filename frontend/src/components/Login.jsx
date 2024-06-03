@@ -46,9 +46,9 @@ export default function Login({ setIsLoggedIn, setUsername, setRole }) {
     
                 localStorage.setItem('jwtToken', data.access_token);
 
-                // TODO: Need to make HTTPS only in deployment build
-                Cookies.set('session_id', data.session_id, { expires: 7});
-                Cookies.set('refresh_token', data.refresh_token, { expires: 7});
+                // TODO: Need to make HTTPS only cookies in deployment build
+                localStorage.setItem('session_id', data.session_id);
+                localStorage.setItem('refresh_token', data.refresh_token);
     
                 setIsLoggedIn(true);
                 setUsername(decodedToken.username);

@@ -3,7 +3,6 @@ import { Link, useNavigate} from 'react-router-dom';
 import { AppBar, Toolbar, Button, IconButton } from '@mui/material';
 import { Help as HelpIcon, ContactMail as ContactIcon, AccountCircle as AccountCircleIcon, Logout as LogoutIcon } from '@mui/icons-material';
 import TitleLogo from '../assets/images/svgs/title-removebg-preview.png';
-import Cookies from 'js-cookie'
 
 const buttonStyles = {
   fontSize: '1.3rem',
@@ -16,6 +15,11 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
     const handleLogout = async (e) => {
         e.preventDefault();
 		const jwtToken = localStorage.getItem('jwtToken')
+		const sessionID = localStorage.getItem('session_id')
+
+		const creds = {
+			session_id: sessionID,
+		};
 
 		const response = await fetch('http://127.0.0.1:5000/auth/logout', {
 			method: 'POST',
@@ -24,11 +28,12 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
 				'Content-Type': 'application/json',
 				'Authorization': `Bearer ${jwtToken}`,
 			},
+			body: JSON.stringify(creds)
 		});
 
 		localStorage.removeItem('jwtToken');
-		Cookies.remove('session_id');
-		Cookies.remove('refresh_token');
+		localStorage.removeItem('session_id');
+		localStorage.removeItem('refresh_token');
 		setIsLoggedIn(false);
 		navigate('/');
     };

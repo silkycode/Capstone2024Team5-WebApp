@@ -101,8 +101,8 @@ def login():
 def logout():
     access_token = get_jwt_identity()
     user_id = access_token['user_id']
-    session_id = request.cookies.get('session_id')
-
+    data = request.get_json()
+    session_id = data['session_id']
     refresh_token = RefreshToken.query.filter_by(user_id=user_id, session_id=session_id).first()
 
 
