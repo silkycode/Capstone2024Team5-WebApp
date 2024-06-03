@@ -23,5 +23,5 @@ class Config:
 
     # JWT configs
     JWT_SECRET_KEY = secrets.token_hex(32)
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=1)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=7)

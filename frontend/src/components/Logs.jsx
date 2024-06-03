@@ -66,7 +66,7 @@ export default function Logs() {
                         <AccordionDetails>
                             <Paper variant="outlined" style={{ width: '100%', overflowX: 'auto' }}>
                                 {logs.server.map((line, index) => (
-                                    <Typography key={index} style={{ fontSize: '0.8rem', padding: '4px', backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#ffffff', fontFamily: 'Roboto Mono, Courier New, monospace' }}>
+                                    <Typography key={index} style={{ fontSize: '0.75rem', padding: '4px', backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#ffffff', fontFamily: 'Roboto Mono, Courier New, monospace' }}>
                                         {line}
                                     </Typography>
                                 ))}
@@ -85,7 +85,7 @@ export default function Logs() {
                         <AccordionDetails>
                             <Paper variant="outlined" style={{ width: '100%', overflowX: 'auto' }}>
                                 {logs.route.map((line, index) => (
-                                    <Typography key={index} style={{ fontSize: '0.8rem', padding: '4px', backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#ffffff', fontFamily: 'Roboto Mono, Courier New, monospace' }}>
+                                    <Typography key={index} style={{ fontSize: '0.75rem', padding: '4px', backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#ffffff', fontFamily: 'Roboto Mono, Courier New, monospace' }}>
                                         {line}
                                     </Typography>
                                 ))}
@@ -104,7 +104,7 @@ export default function Logs() {
                         <AccordionDetails>
                             <Paper variant="outlined" style={{ width: '100%', overflowX: 'auto' }}>
                                 {logs.error.map((line, index) => (
-                                    <Typography key={index} style={{ fontSize: '0.8rem', padding: '4px', backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#ffffff', fontFamily: 'Roboto Mono, Courier New, monospace' }}>
+                                    <Typography key={index} style={{ fontSize: '0.75rem', padding: '4px', backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#ffffff', fontFamily: 'Roboto Mono, Courier New, monospace' }}>
                                         {line}
                                     </Typography>
                                 ))}
@@ -123,7 +123,7 @@ export default function Logs() {
                         <AccordionDetails>
                             <Paper variant="outlined" style={{ width: '100%', overflowX: 'auto' }}>
                                 {logs.job.map((line, index) => (
-                                    <Typography key={index} style={{ fontSize: '0.8rem', padding: '4px', backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#ffffff', fontFamily: 'Roboto Mono, Courier New, monospace' }}>
+                                    <Typography key={index} style={{ fontSize: '0.75rem', padding: '4px', backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#ffffff', fontFamily: 'Roboto Mono, Courier New, monospace' }}>
                                         {line}
                                     </Typography>
                                 ))}
@@ -142,7 +142,7 @@ export default function Logs() {
                         <AccordionDetails>
                             <Paper variant="outlined" style={{ width: '100%', overflowX: 'auto' }}>
                                 {logs.email.map((line, index) => (
-                                    <Typography key={index} style={{ fontSize: '0.8rem', padding: '4px', backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#ffffff', fontFamily: 'Roboto Mono, Courier New, monospace' }}>
+                                    <Typography key={index} style={{ fontSize: '0.75rem', padding: '4px', backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#ffffff', fontFamily: 'Roboto Mono, Courier New, monospace' }}>
                                         {line}
                                     </Typography>
                                 ))}
