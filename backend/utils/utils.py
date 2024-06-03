@@ -75,3 +75,21 @@ def human_readable_size(size):
         size /= 1024
         index += 1
     return f"{size:.2f} {units[index]}"
+
+def get_logs_for_category(category):
+    log_file_path = get_log_file_path_for_category(category)
+    with open(log_file_path, 'r') as file:
+        logs = file.readlines()
+    return logs
+
+def get_log_file_path_for_category(category):
+    if category == 'server':
+        return 'server.log'
+    elif category == 'route':
+        return 'api.log'
+    elif category == 'error':
+        return 'errors.log'
+    elif category == 'job':
+        return 'jobs.log'
+    elif category == 'email':
+        return 'emails.log'

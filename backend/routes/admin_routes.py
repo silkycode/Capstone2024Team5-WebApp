@@ -7,7 +7,7 @@ from flask import Blueprint, jsonify, request
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from utils.db_module import db
-from utils.utils import handle_sqlalchemy_errors, human_readable_size
+from utils.utils import handle_sqlalchemy_errors, human_readable_size, get_logs_for_category
 from utils.logger import route_logger, error_logger
 from models.user_management_models import GlucoseLog, Appointment, Account
 from sqlalchemy.exc import SQLAlchemyError
@@ -211,6 +211,38 @@ def server_status():
         error_message = f"Request {request_id}: An unexpected error occurred: {str(e)}"
         error_logger.error(error_message)
         return jsonify(message="An unexpected error occurred"), 500
+
+
+# Get logs for admin viewing on the frontend
+@admin_routes.route('/logs', methods=['GET'])
+@jwt_required()
+def logs():
+    request_id = str(uuid.uuid4())
+    try:
+        access_token = get_jwt_identity()
+        if access_token['is_admin'] != 1:
+            error_message = f"Request {request_id}: Invalid authentication"
+            error_logger.error(error_message)
+            return jsonify(message="Invalid authentication"), 401
+        
+        route_logger.info(f"Request {request_id}: Received log retrieval request")
+
+        logs = {}
+        logs['server'] = get_logs_for_category('server')
+        logs['route'] = get_logs_for_category('route')
+        logs['error'] = get_logs_for_category('error')
+        logs['job'] = get_logs_for_category('job')
+        logs['email'] = get_logs_for_category('email')
+
+        route_logger.info(f"Request {request_id}: Log retrieval request completed successfully")
+        return jsonify(logs), 200
+        
+
+    except Exception as e:
+        error_message = f"Request {request_id}: An unexpected error occurred: {str(e)}"
+        error_logger.error(error_message)
+        return jsonify(message="An unexpected error occurred"), 500
+
 
 """
     /admin/glucose API endpoint:

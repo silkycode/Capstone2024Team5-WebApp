@@ -27,7 +27,7 @@ export default function AppointmentManagement() {
 
     const fetchAppointments = async () => {
         try {
-            const response = await fetchWithRetry('http://127.0.0.1:5000/appointments', {
+            const response = await fetchWithRetry('http://127.0.0.1:5000/admin/appointments', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ export default function AppointmentManagement() {
     const recordAppointment = async () => {
         const appointment = { date: dateTime, doctor_name: doctorName, notes: notes };
         try {
-            const response = await fetchWithRetry('http://127.0.0.1:5000/appointments', {
+            const response = await fetchWithRetry('http://127.0.0.1:5000/admin/appointments', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ export default function AppointmentManagement() {
 
     const deleteAppointment = async (appointmentID) => {
         try {
-            const response = await fetchWithRetry(`http://127.0.0.1:5000/appointments/${appointmentID}`, {
+            const response = await fetchWithRetry(`http://127.0.0.1:5000/admin/appointments/${appointmentID}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
