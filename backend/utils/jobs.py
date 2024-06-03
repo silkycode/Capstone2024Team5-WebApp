@@ -1,14 +1,14 @@
 # Functions and methods for backend jobs, data manipulation, db population, cleanup, etc.
 
-from datetime import datetime, time, timedelta
+from datetime import datetime
 from time import sleep
 from utils.db_module import db
-from utils.logger import job_logger
+from utils.logger import job_logger, error_logger
 from utils.aiosmtpd_config import send_email
 from sqlalchemy.exc import SQLAlchemyError
 from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.triggers.cron import CronTrigger
-from models.user_management_models import Account, User, Appointment, GlucoseLog, Notification
+from models.user_management_models import Account, User, Appointment, GlucoseLog, Notification, RefreshToken
 
 # Simple debug job, prints to terminal to ensure scheduler is functioning
 def heartbeat(app):
@@ -194,7 +194,22 @@ def send_appointment_reminder_email(app):
                 send_email(body, subject, sender, recipient)
 
         except Exception as e:
-            job_logger.error(f"Error sending appointment reminder emails: {str(e)}")
+            error_logger.error(f"Error sending appointment reminder emails: {str(e)}")
+
+# Delete expired refresh tokens if any exist
+def db_cleanup(app):
+    with app.app_context():
+        try:
+            current_time = datetime.now()
+            expired_refresh_tokens = RefreshToken.query.filter(RefreshToken.expiration_time < current_time).all()
+
+            for token in expired_refresh_tokens:
+                db.session.delete(token)
+            db.session.commit()
+            job_logger.info(f"Deleted {len(expired_refresh_tokens)} expired tokens.")
+        except Exception as e:
+            db.session.rollback()
+            error_logger.error(f"Error during refresh token cleanup: {e}")
 
 
 def schedule_background_jobs(app, scheduler):
@@ -203,6 +218,14 @@ def schedule_background_jobs(app, scheduler):
         trigger=IntervalTrigger(seconds=60),
         id='heartbeat',
         name='Scheduler is Alive',
+        args=[app]
+    )
+    
+    scheduler.add_job(
+        db_cleanup,
+        trigger=CronTrigger(hour='0'),
+        id='db_cleanup',
+        name='Database cleanup (midnight)',
         args=[app]
     )
 
