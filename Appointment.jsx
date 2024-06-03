@@ -1,176 +1,237 @@
-import React, { useState, useEffect } from 'react';  // Importing necessary modules from React
-import { useNavigate } from 'react-router-dom';  // Importing useNavigate hook from react-router-dom
-import { Avatar, Button, CssBaseline, TextField, Container, Box, Typography, Paper } from '@mui/material';  // Importing specific components from Material-UI
-import { ArrowBack as ArrowBackIcon} from '@mui/icons-material';  // Importing ArrowBackIcon from Material-UI icons
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, CssBaseline, TextField, Container, Box, Typography, Paper, Grid } from '@mui/material';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
-// Functional component Appointment
-const Appointment = () => {
-  // State variables to manage appointments, doctor name, date & time, and notes
-  const [appointments, setAppointments] = useState([]);  // State variable to store appointments
-  const [doctor, setDoctor] = useState('');  // State variable to store doctor's name
-  const [dateTime, setDateTime] = useState('');  // State variable to store date & time
-  const [notes, setNotes] = useState('');  // State variable to store notes
-  
-  const token = localStorage.getItem('jwtToken');  // Retrieving JWT token from localStorage
-  const navigate = useNavigate();  // Initializing useNavigate hook for navigation
+export default function Appointment() {
+    const navigate = useNavigate();
+    const [dateTime, setDateTime] = useState('');
+    const [doctorName, setDoctorName] = useState('');
+    const [notes, setNotes] = useState('');
+    const [appointments, setAppointments] = useState([]);
+    const token = localStorage.getItem('jwtToken');
 
-  // Fetch appointments from the backend on component mount
-  useEffect(() => {
-    fetchAppointments();
-  }, []);
+    useEffect(() => { fetchAppointments(); }, []);
 
-  // Function to format date
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const options = { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' };
-    return date.toLocaleDateString('en-US', options);
-  };
+    const formatDateTime = (dateTimeString) => {
+        const date = new Date(dateTimeString);
+        return date.toISOString().slice(0, 16);
+    };
 
-  // Function to fetch appointments from the backend
-  const fetchAppointments = async () => {
-    const response = await fetch('http://127.0.0.1:5000/dashboard/appointments', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      }
-    });
-    if (response.ok) {
-      const responseData = await response.json();
-      const { appointments } = responseData.data;
-      setAppointments(appointments);
-    }
-  };
+    const fetchAppointments = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/dashboard/appointments', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
+            if (response.ok) {
+                const responseData = await response.json();
+                setAppointments(responseData.appointments);
+            }
+        } catch (error) {
+            console.error('Error fetching appointments:', error);
+        }
+    };
 
-  // Function to record a new appointment
-  const recordAppointment = async () => {
-    const appointment = { doctor, dateTime, notes };
-    const response = await fetch('http://127.0.0.1:5000/dashboard/appointments', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(appointment),
-    });
-    if (response.ok) {
-      console.log('Appointment recorded successfully');
-      fetchAppointments();  // Fetch appointments after recording
-    }
-  };
+    const recordAppointment = async () => {
+        const appointment = { date: dateTime, doctor_name: doctorName, notes: notes };
+        try {
+            const response = await fetch('http://127.0.0.1:5000/dashboard/appointments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(appointment),
+            });
+            if (response.ok) {
+                console.log('Appointment recorded successfully');
+                fetchAppointments();
+            }
+        } catch (error) {
+            console.error('Error recording appointment:', error);
+        }
+    };
 
-  // Function to delete an appointment
-  const deleteAppointment = async (appointmentId) => {
-    const response = await fetch('http://127.0.0.1:5000/dashboard/appointments', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ appointment_id: appointmentId }),
-    });
-    if (response.ok) {
-      console.log('Appointment deleted successfully');
-      fetchAppointments();  // Fetch appointments after deletion
-    }
-  };
+    const deleteAppointment = async (appointmentID) => {
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/dashboard/appointments?appointment_id=${appointmentID}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            if (response.ok) {
+                console.log('Appointment deleted successfully');
+                fetchAppointments();
+            }
+        } catch (error) {
+            console.error('Error deleting appointment:', error);
+        }
+    };
 
-  // JSX to render the component
-  return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      {/* Button to navigate back to previous page */}
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<ArrowBackIcon />}
-        onClick={() => navigate('/')}
-        sx={{ mb: 2, width: '150px', height: '40px' }}
-        >
-        Go Back
-      </Button>
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Typography component="h1" variant="h5">
-          Appointment Scheduler
-        </Typography>
-        {/* Form to schedule a new appointment */}
-        <Box component="form" noValidate sx={{ mt: 1 }}>
-          <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          name="dateTime"
-          label="Date & Time"
-          type="datetime-local"
-          InputLabelProps={{ shrink: true }}
-          value={dateTime}
-          onChange={(e) => setDateTime(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="doctor_name"
-            label="Doctor Name"
-            type="text"
-            InputLabelProps={{ shrink: true }}
-            value={doctor}
-            onChange={(e) => setDoctor(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="notes"
-            label="Notes/Description"
-            type="text"
-            InputLabelProps={{ shrink: true }}
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-          />
-          {/* Button to schedule the appointment */}
-          <Button
-            type="button"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-            onClick={recordAppointment}
-          >
-            Schedule Appointment
-          </Button>
-        </Box>
-      </Box>
-      {/* Displaying scheduled appointments */}
-      {appointments && (
-        <Paper elevation={6} sx={{ marginTop: 4, padding: 2 }}>
-          <Typography variant="6" gutterBottom>
-            Scheduled Appointments
-          </Typography>
-          {appointments.map((appointment) => (
-            <Box key={appointment.appointment_id} sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-              <Typography>
-                {appointment.doctor_name} - {appointment.appointment_notes} at {formatDate(appointment.appointment_date)}
-              </Typography>
-              {/* Button to delete the appointment */}
-              <Button variant="outlined" color="error" onClick={() => deleteAppointment(appointment.appointment_id)}>
-                Delete
-              </Button>
-            </Box>
-          ))}
-        </Paper>
-      )}
-    </Container>
-  );
-};
+    const exportToPDF = () => {
+        const doc = new jsPDF();
+        const tableColumn = ["Date & Time", "Doctor Name", "Notes"];
+        let sortedAppointments = [...appointments];
+        sortedAppointments.sort((a, b) => new Date(a.date) - new Date(b.date));
+        const tableRows = [];
+    
+        sortedAppointments.forEach(appointment => {
+            const formattedDateTime = new Date(appointment.date).toLocaleString();
+            const appointmentData = [
+                formattedDateTime,
+                appointment.doctor_name,
+                appointment.notes
+            ];
+            tableRows.push(appointmentData);
+        });
+    
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '_');
+        const fileName = `appointments_${formattedDate}.pdf`;
+    
+        const title = `Your Appointments\nGenerated: ${currentDate.toLocaleString()}`;
+        doc.text(title, 14, 20);
+    
+        doc.autoTable({
+            head: [tableColumn],
+            body: tableRows,
+            startY: 35,
+            theme: 'grid',
+            styles: {
+                overflow: 'linebreak',
+                cellWidth: 'wrap',
+                cellPadding: 2,
+            },
+            columnStyles: {
+                0: { cellWidth: 'auto' },
+                1: { cellWidth: 'auto' },
+                2: { cellWidth: 'auto' },
+            },
+            margin: { top: 20 },
+            tableWidth: 'auto',
+            tableHeight: 'auto',
+        });
 
-export default Appointment;  // Exporting the component
+        doc.save(fileName);
+    };
+
+    return (
+        <Container component="main" maxWidth="md">
+            <CssBaseline />
+            <Button
+                variant="contained"
+                color="primary"
+                startIcon={<ArrowBackIcon />}
+                onClick={() => navigate('/')}
+                sx={{ mb: 2 }}
+            >
+                Go Back
+            </Button>
+            <Grid container spacing={3}>
+                <Grid item xs={12} sm={6}>
+                    <Paper elevation={6} sx={{ padding: 2 }}>
+                        <Typography component="h1" variant="h5" gutterBottom>
+                            Appointment Scheduler
+                        </Typography>
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="dateTime"
+                            label="Date & Time"
+                            type="datetime-local"
+                            InputLabelProps={{ shrink: true }}
+                            value={dateTime}
+                            onChange={(e) => setDateTime(e.target.value)}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            fullWidth
+                            required
+                            name="doctorName"
+                            label="Doctor Name"
+                            type="text"
+                            value={doctorName}
+                            onChange={(e) => setDoctorName(e.target.value)}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            fullWidth
+                            multiline
+                            rows={4}
+                            name="notes"
+                            label="Appointment Notes"
+                            type="text"
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                        />
+                        <Button
+                            type="button"
+                            fullWidth
+                            variant="contained"
+                            onClick={recordAppointment}
+                            sx={{ mt: 3 }}
+                        >
+                            Schedule Appointment
+                        </Button>
+                    </Paper>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <Paper elevation={6} sx={{ padding: 2 }}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={exportToPDF}
+                            sx={{ mb: 2}}
+                        >
+                            Export to PDF
+                        </Button>
+                        <Typography variant="h6" gutterBottom>
+                            Scheduled Appointments:
+                        </Typography>
+                        {appointments
+                            .sort((a, b) => new Date(a.date) - new Date(b.date))
+                            .map((appointment) =>
+
+                            {
+                                const appointmentDate = new Date(appointment.date);
+                                const formattedDate = appointmentDate.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+                                const formattedTime = appointmentDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+
+                                return (
+                                    <Paper key={appointment.id} elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #ccc', paddingBottom: 1 }}>
+                                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                                {formattedDate} at {formattedTime}
+                                            </Typography>
+                                            <Button variant="outlined" color="error" onClick={() => deleteAppointment(appointment.id)}>
+                                                Delete
+                                            </Button>
+                                        </Box>
+                                        <Box sx={{ marginTop: 1 }}>
+                                            <Typography variant="body1" sx={{ textAlign: 'right', paddingBottom: 1 }}>
+                                                Dr. {appointment.doctor_name}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ fontSize: 16 }}>
+                                                {appointment.notes}
+                                            </Typography>
+                                        </Box>
+                                    </Paper>
+                                );
+                            })}
+                    </Paper>
+                </Grid>
+            </Grid>
+        </Container>
+    );
+}
