@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useNavigate} from 'react-router-dom';
+import { fetchWithRetry } from "../authUtils";
 import { AppBar, Toolbar, Button, IconButton } from '@mui/material';
 import { Help as HelpIcon, ContactMail as ContactIcon, AccountCircle as AccountCircleIcon, Logout as LogoutIcon } from '@mui/icons-material';
 import TitleLogo from '../assets/images/svgs/title-removebg-preview.png';
@@ -21,7 +22,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
 			session_id: sessionID,
 		};
 
-		const response = await fetch('http://127.0.0.1:5000/auth/logout', {
+		const response = await fetchWithRetry('http://127.0.0.1:5000/auth/logout', {
 			method: 'POST',
 			credentials: 'include',
 			headers: {

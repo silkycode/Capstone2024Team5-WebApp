@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchWithRetry } from '../authUtils';
 import { Button, CssBaseline, TextField, Container, Box, Typography, Paper, Grid } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import jsPDF from 'jspdf'
@@ -29,7 +30,7 @@ export default function Appointment() {
 
     const fetchAppointments = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/dashboard/appointments', {
+            const response = await fetchWithRetry('http://127.0.0.1:5000/dashboard/appointments', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -48,7 +49,7 @@ export default function Appointment() {
     const recordAppointment = async () => {
         const appointment = { date: dateTime, doctor_name: doctorName, notes: notes };
         try {
-            const response = await fetch('http://127.0.0.1:5000/dashboard/appointments', {
+            const response = await fetchWithRetry('http://127.0.0.1:5000/dashboard/appointments', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -67,7 +68,7 @@ export default function Appointment() {
 
     const deleteAppointment = async (appointmentID) => {
         try {
-            const response = await fetch(`http://127.0.0.1:5000/dashboard/appointments?appointment_id=${appointmentID}`, {
+            const response = await fetchWithRetry(`http://127.0.0.1:5000/dashboard/appointments?appointment_id=${appointmentID}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,

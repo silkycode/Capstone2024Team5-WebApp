@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchWithRetry } from '../authUtils';
 import { Button, CssBaseline, TextField, Container, Box, Typography, Paper, Grid, Table, TableRow, TableCell, TableBody } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { VictoryChart, VictoryLine, VictoryTooltip } from 'victory';
@@ -30,7 +31,7 @@ export default function GlucoseLogs({ username }) {
 
     const fetchLogs = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/dashboard/glucose', {
+            const response = await fetchWithRetry('http://127.0.0.1:5000/dashboard/glucose', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,7 +54,7 @@ export default function GlucoseLogs({ username }) {
         }
         const log = { glucose_level: glucoseLevel, creation_date: dateTime };
         try {
-            const response = await fetch('http://127.0.0.1:5000/dashboard/glucose', {
+            const response = await fetchWithRetry('http://127.0.0.1:5000/dashboard/glucose', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -72,7 +73,7 @@ export default function GlucoseLogs({ username }) {
 
     const deleteLog = async (logID) => {
         try {
-            const response = await fetch(`http://127.0.0.1:5000/dashboard/glucose?glucose_log_id=${logID}`, {
+            const response = await fetchWithRetry(`http://127.0.0.1:5000/dashboard/glucose?glucose_log_id=${logID}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,

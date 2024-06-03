@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchWithRetry } from '../authUtils';
 import { Button, CssBaseline, TextField, Container, Box, Typography, Paper, Grid } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 
@@ -26,7 +27,7 @@ export default function AppointmentManagement() {
 
     const fetchAppointments = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/appointments', {
+            const response = await fetchWithRetry('http://127.0.0.1:5000/appointments', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -45,7 +46,7 @@ export default function AppointmentManagement() {
     const recordAppointment = async () => {
         const appointment = { date: dateTime, doctor_name: doctorName, notes: notes };
         try {
-            const response = await fetch('http://127.0.0.1:5000/appointments', {
+            const response = await fetchWithRetry('http://127.0.0.1:5000/appointments', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -64,7 +65,7 @@ export default function AppointmentManagement() {
 
     const deleteAppointment = async (appointmentID) => {
         try {
-            const response = await fetch(`http://127.0.0.1:5000/appointments/${appointmentID}`, {
+            const response = await fetchWithRetry(`http://127.0.0.1:5000/appointments/${appointmentID}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,

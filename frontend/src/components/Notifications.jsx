@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchWithRetry } from '../authUtils';
 import { Button, Typography, Paper, Box, Grid } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 
@@ -19,7 +20,7 @@ const Notifications = () => {
 
   const fetchNotifications = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/dashboard/notifications', {
+      const response = await fetchWithRetry('http://127.0.0.1:5000/dashboard/notifications', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

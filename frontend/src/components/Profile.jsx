@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { fetchWithRetry } from '../authUtils';
 import { TextField, Button, Typography, Box, CssBaseline, Paper, Container } from '@mui/material';
 import { ArrowBack as ArrowBackIcon} from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -40,7 +41,7 @@ const ProfilePage = () => {
 
   const fetchProfile = async () => {
     try {
-        const response = await fetch('http://127.0.0.1:5000/dashboard/profile', {
+        const response = await fetchWithRetry('http://127.0.0.1:5000/dashboard/profile', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
