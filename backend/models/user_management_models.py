@@ -21,6 +21,7 @@ class Account(UserModel):
     user = db.relationship('User', uselist=False, backref='account', cascade='all, delete-orphan')
     refresh_token = db.relationship('RefreshToken', backref='account', cascade='all, delete-orphan')
 
+
 class RefreshToken(UserModel):
     __tablename__ = 'refresh_token'
 

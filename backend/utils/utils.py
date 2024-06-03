@@ -9,7 +9,7 @@ from utils.db_module import db
 from utils.logger import route_logger
 from models.user_management_models import RefreshToken
 
-# Decorator pattern to handle SQLAlchemy errors and rollback the db session
+# Handle SQLAlchemy errors and rollback the db session
 def handle_sqlalchemy_errors(func):
     @wraps(func)
     def decorated_func(*args, **kwargs):
@@ -20,7 +20,7 @@ def handle_sqlalchemy_errors(func):
             return jsonify(message = 'Server error occurred'), 500
     return decorated_func
 
-# Decorator pattern to log HTTP requests for backend tracking
+# Add logging HTTP requests for backend tracking
 def log_http_requests(func):
     @wraps(func)
     def decorated_func(*args, **kwargs):
@@ -41,24 +41,6 @@ def log_http_requests(func):
         route_logger.info(f"Source: {request.remote_addr} - Request: {request.method} {request.path} - Data: {masked_data}")
         return func(*args, **kwargs)
     return decorated_func
-
-# Error handling and database querying generic helper for user ID related queries
-def query_database(model, user_id, filters=None):
-    try:
-        query = model.query.filter_by(user_id=user_id)
-        if filters:
-            query = query.filter(filters)
-        return query.all(), None
-    
-    except SQLAlchemyError:
-        return None, 'Server error occurred'
-    
-# Handle request errors and missing fields
-def handle_request_errors(request, expected_fields):
-    data = request.get_json()
-    if not data or not all(field in data for field in expected_fields):
-        return jsonify(message=f'Missing fields: {", ".join(expected_fields)}'), 400
-    return data, None
 
 # Add session requirement to protected routes, along with JWTs
 def refresh_token_required(func):
@@ -83,3 +65,21 @@ def refresh_token_required(func):
 
         return func(*args, **kwargs)
     return decorated_function
+
+# Error handling and database querying generic helper for user ID related queries
+def query_database(model, user_id, filters=None):
+    try:
+        query = model.query.filter_by(user_id=user_id)
+        if filters:
+            query = query.filter(filters)
+        return query.all(), None
+    
+    except SQLAlchemyError:
+        return None, 'Server error occurred'
+    
+# Handle request errors and missing fields
+def handle_request_errors(request, expected_fields):
+    data = request.get_json()
+    if not data or not all(field in data for field in expected_fields):
+        return jsonify(message=f'Missing fields: {", ".join(expected_fields)}'), 400
+    return data, None

@@ -178,10 +178,10 @@ export default function Dashboard({ role, username }) {
                         <Box sx={{ display: 'flex', alignContent: 'vertical', gap: '30px', flexWrap: 'wrap' }}>
                         {role === 'admin' ? (
                             <>
-                                <ClickableBox title="Manage Accounts" path="/dashboard/glucose-logs" icon={AssignmentIcon} />
-                                <ClickableBox title="View Tasks" path="/dashboard/glucose-logs" icon={AssignmentIcon} />
-                                <ClickableBox title="App Logs" path="/dashboard/glucose-logs" icon={AssignmentIcon} />
-                                <ClickableBox title="App Status" path="/dashboard/glucose-logs" icon={AssignmentIcon} />
+                                <ClickableBox title="Manage Accounts" path="/dashboard/account-management" icon={AssignmentIcon} />
+                                <ClickableBox title="View Tasks" path="/dashboard/tasks" icon={AssignmentIcon} />
+                                <ClickableBox title="App Logs" path="/dashboard/logs" icon={AssignmentIcon} />
+                                <ClickableBox title="App Status" path="/dashboard/status" icon={AssignmentIcon} />
                             </>
                         ) : (
                             <>

@@ -213,6 +213,7 @@ def db_cleanup(app):
 
 
 def schedule_background_jobs(app, scheduler):
+    job_logger.info("Job scheduler starting up...")
     scheduler.add_job(
         heartbeat,
         trigger=IntervalTrigger(seconds=60),
@@ -276,3 +277,4 @@ def schedule_background_jobs(app, scheduler):
         name='Sent out glucose logging reminder email (Midnight)',
         args=[app]
     )
+    job_logger.info("Job scheduler finished initializing, jobs added.")

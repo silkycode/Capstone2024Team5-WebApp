@@ -49,6 +49,7 @@ def login():
         return jsonify(message = 'Could not log in with provided credentials. Please try again.'), 401
     
     if hashed_password == account.password_hash:
+        account.last_login_date = datetime.now().strftime("%Y:%m:%d %H:%M:%S")
         access_token_payload = {
             'user_id': account.id,
             'username': account.username,

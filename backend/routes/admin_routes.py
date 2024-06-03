@@ -1,10 +1,11 @@
 # Admin routes
 # Endpoints for user management, app management, admin tasks
+import re
 from flask import Blueprint, jsonify, request
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from utils.db_module import db
-from utils.utils import log_http_requests
+from utils.utils import log_http_requests, handle_sqlalchemy_errors
 from models.user_management_models import GlucoseLog, Appointment, Account
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -12,11 +13,77 @@ from sqlalchemy.exc import SQLAlchemyError
 admin_routes = Blueprint('admin_routes', __name__)
 CORS(admin_routes)
 
-# Respond 200 if Flask server is running
+# Respond 200 if admin routes are ok
 @admin_routes.route('/debug', methods=['GET'])
 @log_http_requests
 def debug():
     return jsonify({'message': 'Debug check, server is running'}), 200
+
+# User management tools for admins
+# GET to retrieve usernames, ids, emails -- {search_string}
+# POST to update usernames, passwords, emails -- {email, username, password}
+# DELETE to remove an account {id}
+@admin_routes.route('/manage-accounts', methods=['GET', 'POST', 'DELETE'])
+@jwt_required()
+@handle_sqlalchemy_errors
+@log_http_requests
+def manage_accounts():
+    access_token = get_jwt_identity()
+    if access_token['is_admin'] != 1:
+        return jsonify(message="Invalid authentication"), 401
+
+    if request.method == 'GET':
+        search_string = request.args.get('search_string', '')
+
+        accounts_query = Account.query.filter(
+            (Account.username.ilike(f'%{search_string}%')) | 
+            (Account.email.ilike(f'%{search_string}%')),
+            Account.is_admin == 0
+        )
+        accounts = accounts_query.all()
+
+        account_data = [{
+            'account_id': account.id,
+            'username': account.username,
+            'email': account.email,
+            'last_login_date': account.last_login_date,
+            'date_created': account.date_created,
+        } for account in accounts]
+
+        return jsonify(account_data), 200
+    
+    if request.method == 'POST':
+        data = request.get_json()
+        user_id = data.get('account_id')
+
+        if not user_id:
+            return jsonify(message="Account ID not provided"), 400
+        
+        account = Account.query.get(user_id)
+
+        if 'email' in data and data.get('email') != "":
+            if not re.match(r"[^@]+@[^@]+\.[^@]+", data.get('email')):
+                return jsonify(message="Incorrectly formatted email field"), 400
+            account.email = data['email']
+        if 'username' in data:
+            account.username = data['username']
+        if 'password' in data:
+            account.password = data['password']
+        db.session.commit()
+        return jsonify(message = "Account details updated successfully."), 200
+    
+    if request.method == 'DELETE':
+        user_id = request.args.get('user_id')
+        account = Account.query.get(user_id)
+        if not account:
+            return jsonify(message="Account not found"), 400
+        
+        db.session.delete(account)
+        db.session.commit()
+
+        return jsonify(message="Account deleted successfully"), 200
+
+
 
 """
     /admin/glucose API endpoint:

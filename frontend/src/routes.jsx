@@ -12,18 +12,18 @@ import Logs from './components/Logs';
 import AccountManagement from './components/AccountManagement';
 
 export const userRoutes = [
-    { path: 'glucose-logs', element: <GlucoseLogs /> },
-    { path: 'appointments', element: <Appointment /> },
-    { path: 'notifications', element: <Notifications /> },
-    { path: 'products', element: <Products /> },
-    { path: 'medical-forms', element: <MedicalForms /> }
+    { path: '/dashboard/glucose-logs', element: <GlucoseLogs /> },
+    { path: '/dashboard/appointments', element: <Appointment /> },
+    { path: '/dashboard/notifications', element: <Notifications /> },
+    { path: '/dashboard/products', element: <Products /> },
+    { path: '/dashboard/medical-forms', element: <MedicalForms /> }
 ];
 
 export const adminRoutes = [
-    { path: 'glucose-management', element: <GlucoseManagement /> },
-    { path: 'appointment-management', element: <AppointmentManagement />},
-    { path: 'account-management', element: <AccountManagement />},
-    { path: 'status', element: <Status />},
-    { path: 'logs', element: <Logs />},
-    { path: 'tasks', element: <Tasks />},
+    { path: '/dashboard/glucose-management', element: <GlucoseManagement /> },
+    { path: '/dashboard/appointment-management', element: <AppointmentManagement />},
+    { path: '/dashboard/account-management', element: <AccountManagement />},
+    { path: '/dashboard/status', element: <Status />},
+    { path: '/dashboard/logs', element: <Logs />},
+    { path: '/dashboard/tasks', element: <Tasks />},
 ];
