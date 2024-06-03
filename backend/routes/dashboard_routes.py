@@ -3,14 +3,15 @@
 import base64
 import re
 from datetime import datetime
+import uuid
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from utils.db_module import db
-from utils.logger import route_logger
+from utils.logger import route_logger, error_logger
 from utils.aiosmtpd_config import send_email
 from datetime import datetime
-from utils.utils import handle_request_errors, handle_sqlalchemy_errors, query_database, log_http_requests
+from utils.utils import handle_request_errors, handle_sqlalchemy_errors, query_database
 from models.user_management_models import User, Appointment, GlucoseLog, Notification
 from models.product_models import Product
 
@@ -25,7 +26,7 @@ async def debug():
         await send_email(body='test email body', subject='test subject', sender='flaskapp@example.com', recipient='patient@example.com')
         return '', 200
     except Exception as e:
-        route_logger.error(f"Error occurred while sending test email: {str(e)}")
+        error_logger.error(f"Error occurred while sending test email: {str(e)}")
         return jsonify({'error': 'An error occurred while sending the test email.'}), 500
 
 """
@@ -38,27 +39,35 @@ async def debug():
             - 500 for backend errors (message storage)
 """
 @dashboard_routes.route('/contact', methods=['POST'])
-@log_http_requests
 def contact():
+    request_id = str(uuid.uuid4())
+    route_logger.info(f"[{request_id}] Received contact form submission.")
+    
     data = request.get_json()
     name = data.get('name', '').strip()
     email = data.get('email', '').strip()
     message = data.get('message', '').strip()
-    
+
+    route_logger.info(f"[{request_id}] Processing contact form with email: '{email}' and name: '{name}'.")
+
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-        return jsonify({'message': 'Please enter a valid email.',}), 400    
-    
+        route_logger.warning(f"[{request_id}] Invalid email format received: '{email}'")
+        return jsonify({'message': 'Please enter a valid email.'}), 400
+
     if not message:
-        return jsonify({'message': 'Please provide a feedback message.',}), 400
-    
-    #TODO: Add these to a DB or a queue or some other similar processing structure for reading messages. Just writes to textfile for now.
+        route_logger.warning(f"[{request_id}] Empty message received from email: '{email}'")
+        return jsonify({'message': 'Please provide a feedback message.'}), 400
+
     try:
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         with open('feedback.txt', 'a') as file:
             file.write(f"[{timestamp}] Email: {email}, Message: {message}, Author: {name}\n")
-    except Exception:
+        route_logger.info(f"[{request_id}] Feedback from '{email}' successfully written to file.")
+    except Exception as e:
+        route_logger.error(f"[{request_id}] Error handling feedback message from '{email}': {e}")
         return jsonify({'message': 'Error handling feedback message. Try again.'}), 500
 
+    route_logger.info(f"[{request_id}] Contact form processed successfully for email: '{email}'.")
     return jsonify({'message': 'Thank you for the message! We will get back to you shortly.'}), 200
 
 """
@@ -84,7 +93,6 @@ def contact():
 @dashboard_routes.route('/profile', methods=['GET', 'POST'])
 @jwt_required()
 @handle_sqlalchemy_errors
-@log_http_requests
 def profile():
     token = get_jwt_identity()
     user_id = token['user_id']
@@ -150,56 +158,73 @@ def profile():
 @dashboard_routes.route('/appointments', methods=['GET', 'POST', 'DELETE'])
 @jwt_required()
 @handle_sqlalchemy_errors
-@log_http_requests
 def appointments():
-    token = get_jwt_identity()
-    user_id = token['user_id']
-    
-    if request.method == 'GET':
-        appointment_list = []
-        appointments, error = query_database(Appointment, user_id)
-        if error:
-            return jsonify(message = error), 500
+    request_id = str(uuid.uuid4())
+    try:
+        token = get_jwt_identity()
+        user_id = token['user_id']
+        route_logger.info(f"Request {request_id}: Received appointments request for user ID: {user_id}")
 
-        for appointment in appointments:
-            appointment_info = {
-                'id': appointment.id,
-                'date': appointment.appointment_date,
-                'doctor_name': appointment.doctor_name,
-                'notes': appointment.appointment_notes
-            }
-            appointment_list.append(appointment_info)
-        return jsonify(appointments = appointment_list), 200
+        if request.method == 'GET':
+            appointment_list = []
+            appointments, error = query_database(Appointment, user_id)
+            if error:
+                error_message = f"Request {request_id}: Error retrieving appointments: {error}"
+                error_logger.error(error_message)
+                return jsonify(message=error), 500
+
+            for appointment in appointments:
+                appointment_info = {
+                    'id': appointment.id,
+                    'date': appointment.appointment_date,
+                    'doctor_name': appointment.doctor_name,
+                    'notes': appointment.appointment_notes
+                }
+                appointment_list.append(appointment_info)
+            return jsonify(appointments=appointment_list), 200
            
-    if request.method == 'POST':
-        data, error = handle_request_errors(request, ['date', 'doctor_name', 'notes'])
-        if error:
-            return error, 400
-        
-        new_appointment = Appointment(
-            user_id=user_id,
-            appointment_date=data['date'],
-            doctor_name=data['doctor_name'],
-            appointment_notes=data['notes']
-        )
+        if request.method == 'POST':
+            data, error = handle_request_errors(request, ['date', 'doctor_name', 'notes'])
+            if error:
+                error_message = f"Request {request_id}: Error processing appointment request: {error}"
+                error_logger.error(error_message)
+                return jsonify(message=error), 400
+            
+            new_appointment = Appointment(
+                user_id=user_id,
+                appointment_date=data['date'],
+                doctor_name=data['doctor_name'],
+                appointment_notes=data['notes']
+            )
 
-        db.session.add(new_appointment)
-        db.session.commit()
-        return jsonify(message = 'New appointment created.'), 200
+            db.session.add(new_appointment)
+            db.session.commit()
+            route_logger.info(f"Request {request_id}: New appointment created for user ID: {user_id}")
+            return jsonify(message='New appointment created.'), 200
 
-    if request.method == 'DELETE':
-        appointment_id = request.args.get('appointment_id') 
-        
-        if not appointment_id:
-            return jsonify(message='appointment_id parameter is required'), 400
-        
-        appointment = Appointment.query.filter_by(id=appointment_id, user_id=user_id).first() 
-        if not appointment:
-            return jsonify(message='Appointment not found'), 404
-        
-        db.session.delete(appointment)
-        db.session.commit()
-        return jsonify(message='Appointment deleted.'), 200
+        if request.method == 'DELETE':
+            appointment_id = request.args.get('appointment_id') 
+            
+            if not appointment_id:
+                error_message = f"Request {request_id}: Missing appointment_id parameter"
+                error_logger.error(error_message)
+                return jsonify(message=error_message), 400
+            
+            appointment = Appointment.query.filter_by(id=appointment_id, user_id=user_id).first() 
+            if not appointment:
+                error_message = f"Request {request_id}: Appointment not found for user ID: {user_id}, appointment ID: {appointment_id}"
+                error_logger.error(error_message)
+                return jsonify(message="Appointment not found"), 404
+            
+            db.session.delete(appointment)
+            db.session.commit()
+            route_logger.info(f"Request {request_id}: Appointment deleted for user ID: {user_id}, appointment ID: {appointment_id}")
+            return jsonify(message='Appointment deleted.'), 200
+
+    except Exception as e:
+        error_message = f"Request {request_id}: An unexpected error occurred: {str(e)}"
+        error_logger.error(error_message)
+        return jsonify(message="An unexpected error occurred"), 500
     
 """
     /dashboard/glucose API endpoint:
@@ -231,54 +256,72 @@ def appointments():
 @dashboard_routes.route('/glucose', methods=['GET', 'POST', 'DELETE'])
 @jwt_required()
 @handle_sqlalchemy_errors
-@log_http_requests
 def glucose():
-    token = get_jwt_identity()
-    user_id = token['user_id']
-    
-    if request.method == 'GET':
-        glucose_logs, error = query_database(GlucoseLog, user_id)
-        if error:
-            return jsonify(message=error), 500
+    request_id = str(uuid.uuid4())
+    try:
+        token = get_jwt_identity()
+        user_id = token['user_id']
+        route_logger.info(f"Request {request_id}: Received glucose request for user ID: {user_id}")
 
-        glucose_log_list = []
-        for glucose_log in glucose_logs:
-            glucose_log_info = {
-                'id': glucose_log.id,
-                'glucose_level': glucose_log.glucose_level,
-                'creation_date': glucose_log.creation_date
-            }
-            glucose_log_list.append(glucose_log_info)
-        return jsonify(glucose_logs = glucose_log_list), 200
+        if request.method == 'GET':
+            glucose_logs, error = query_database(GlucoseLog, user_id)
+            if error:
+                error_message = f"Request {request_id}: Error retrieving glucose logs: {error}"
+                error_logger.error(error_message)
+                return jsonify(message=error), 500
+
+            glucose_log_list = []
+            for glucose_log in glucose_logs:
+                glucose_log_info = {
+                    'id': glucose_log.id,
+                    'glucose_level': glucose_log.glucose_level,
+                    'creation_date': glucose_log.creation_date
+                }
+                glucose_log_list.append(glucose_log_info)
+            route_logger.info(f"Request {request_id}: Glucose logs information retrieved")
+            return jsonify(glucose_logs=glucose_log_list), 200
            
-    if request.method == 'POST':
-        data, error = handle_request_errors(request, ['glucose_level', 'creation_date'])
-        if error:
-            return error, 400
-        
-        new_glucose_log = GlucoseLog(
-            user_id=user_id,
-            glucose_level=data['glucose_level'],
-            creation_date=data['creation_date']
-        )
+        elif request.method == 'POST':
+            data, error = handle_request_errors(request, ['glucose_level', 'creation_date'])
+            if error:
+                error_message = f"Request {request_id}: Error processing glucose log request: {error}"
+                error_logger.error(error_message)
+                return jsonify(message=error), 400
+            
+            new_glucose_log = GlucoseLog(
+                user_id=user_id,
+                glucose_level=data['glucose_level'],
+                creation_date=data['creation_date']
+            )
 
-        db.session.add(new_glucose_log)
-        db.session.commit()
-        return jsonify(message='New glucose log created.'), 200
+            db.session.add(new_glucose_log)
+            db.session.commit()
+            route_logger.info(f"Request {request_id}: New glucose log created for user ID: {user_id}")
+            return jsonify(message='New glucose log created.'), 200
 
-    if request.method == 'DELETE':
-        glucose_log_id = request.args.get('glucose_log_id') 
-        
-        if not glucose_log_id:
-            return jsonify(message='glucose_log_id parameter is required'), 400
-        
-        glucose_log = GlucoseLog.query.filter_by(id=glucose_log_id, user_id=user_id).first() 
-        if not glucose_log:
-            return jsonify(message='Glucose log not found'), 404
-        
-        db.session.delete(glucose_log)
-        db.session.commit()
-        return jsonify(message='Glucose log deleted.'), 200
+        elif request.method == 'DELETE':
+            glucose_log_id = request.args.get('glucose_log_id') 
+            
+            if not glucose_log_id:
+                error_message = f"Request {request_id}: glucose_log_id parameter is required"
+                error_logger.error(error_message)
+                return jsonify(message=error_message), 400
+            
+            glucose_log = GlucoseLog.query.filter_by(id=glucose_log_id, user_id=user_id).first() 
+            if not glucose_log:
+                error_message = f"Request {request_id}: Glucose log not found for user ID: {user_id}, glucose log ID: {glucose_log_id}"
+                error_logger.error(error_message)
+                return jsonify(message='Glucose log not found'), 404
+            
+            db.session.delete(glucose_log)
+            db.session.commit()
+            route_logger.info(f"Request {request_id}: Glucose log deleted for user ID: {user_id}, glucose log ID: {glucose_log_id}")
+            return jsonify(message='Glucose log deleted.'), 200
+
+    except Exception as e:
+        error_message = f"Request {request_id}: An unexpected error occurred: {str(e)}"
+        error_logger.error(error_message)
+        return jsonify(message="An unexpected error occurred"), 500
 
 """
     /dashboard/notifications API endpoint:
@@ -310,56 +353,74 @@ def glucose():
 @dashboard_routes.route('/notifications', methods=['GET'])
 @jwt_required()
 @handle_sqlalchemy_errors
-@log_http_requests
 def notifications():
-    token = get_jwt_identity()
-    user_id = token['user_id']
-    
-    if request.method == 'GET':
-        notifications, error = query_database(Notification, user_id)
-        if error:
-            return jsonify(message=error), 500
+    request_id = str(uuid.uuid4())
+    try:
+        token = get_jwt_identity()
+        user_id = token['user_id']
+        route_logger.info(f"Request {request_id}: Received notifications request for user ID: {user_id}")
 
-        notification_list = []
-        for notification in notifications:
-            notification_info = {
-                'id': notification.id,
-                'notification': notification.notification,
-                'importance': notification.importance,
-                'creation_date': notification.creation_date
-            }
-            notification_list.append(notification_info)
-        return jsonify(notifications=notification_list), 200
+        if request.method == 'GET':
+            notifications, error = query_database(Notification, user_id)
+            if error:
+                error_message = f"Request {request_id}: Error retrieving notifications: {error}"
+                error_logger.error(error_message)
+                return jsonify(message=error), 500
+
+            notification_list = []
+            for notification in notifications:
+                notification_info = {
+                    'id': notification.id,
+                    'notification': notification.notification,
+                    'importance': notification.importance,
+                    'creation_date': notification.creation_date
+                }
+                notification_list.append(notification_info)
+            route_logger.info(f"Request {request_id}: Notifications information retrieved")
+            return jsonify(notifications=notification_list), 200
            
-    if request.method == 'POST':
-        data, error = handle_request_errors(request, ['notification', 'importance'])
-        if error:
-            return error, 400
-        
-        new_notification = Notification(
-            user_id=user_id,
-            notification=data['notification'],
-            importance=data['importance']
-        )
+        elif request.method == 'POST':
+            data, error = handle_request_errors(request, ['notification', 'importance'])
+            if error:
+                error_message = f"Request {request_id}: Error processing notification request: {error}"
+                error_logger.error(error_message)
+                return jsonify(message=error), 400
+            
+            new_notification = Notification(
+                user_id=user_id,
+                notification=data['notification'],
+                importance=data['importance']
+            )
 
-        db.session.add(new_notification)
-        db.session.commit()
-        return jsonify(message='New notification created.'), 200
+            db.session.add(new_notification)
+            db.session.commit()
+            route_logger.info(f"Request {request_id}: New notification created for user ID: {user_id}")
+            return jsonify(message='New notification created.'), 200
 
-    if request.method == 'DELETE':
-        data, error = handle_request_errors(request, ['notification_id'])
-        if error:
-            return error, 400
-        
-        notification_id = data['notification_id']
+        elif request.method == 'DELETE':
+            data, error = handle_request_errors(request, ['notification_id'])
+            if error:
+                error_message = f"Request {request_id}: Error processing delete notification request: {error}"
+                error_logger.error(error_message)
+                return jsonify(message=error), 400
+            
+            notification_id = data['notification_id']
 
-        notification = Notification.query.filter_by(id=notification_id, user_id=user_id).first() 
-        if not notification:
-            return jsonify(message='Notification not found'), 404
-        
-        db.session.delete(notification)
-        db.session.commit()
-        return jsonify(message='Notification deleted.'), 200
+            notification = Notification.query.filter_by(id=notification_id, user_id=user_id).first() 
+            if not notification:
+                error_message = f"Request {request_id}: Notification not found for user ID: {user_id}, notification ID: {notification_id}"
+                error_logger.error(error_message)
+                return jsonify(message='Notification not found'), 404
+            
+            db.session.delete(notification)
+            db.session.commit()
+            route_logger.info(f"Request {request_id}: Notification deleted for user ID: {user_id}, notification ID: {notification_id}")
+            return jsonify(message='Notification deleted.'), 200
+
+    except Exception as e:
+        error_message = f"Request {request_id}: An unexpected error occurred: {str(e)}"
+        error_logger.error(error_message)
+        return jsonify(message="An unexpected error occurred"), 500
     
 """
     /dashboard/products API endpoint:
@@ -373,19 +434,28 @@ def notifications():
 """
 @dashboard_routes.route('/products', methods=['GET'])
 @handle_sqlalchemy_errors
-@log_http_requests
 def products():
-    products = Product.query.all()
-    products_list = []
+    request_id = str(uuid.uuid4())
+    try:
+        route_logger.info(f"Request {request_id}: Received products request")
 
-    for product in products:
-        product_info = {
-            'id': product.id,
-            'product_type': product.product_type,
-            'model_name': product.model_name,
-            'description': product.description,
-            'image': base64.b64encode(product.image).decode('utf-8') if product.image else None
-        }
-        products_list.append(product_info)
+        products = Product.query.all()
+        products_list = []
 
-    return jsonify(products_list), 200
+        for product in products:
+            product_info = {
+                'id': product.id,
+                'product_type': product.product_type,
+                'model_name': product.model_name,
+                'description': product.description,
+                'image': base64.b64encode(product.image).decode('utf-8') if product.image else None
+            }
+            products_list.append(product_info)
+
+        route_logger.info(f"Request {request_id}: Products information retrieved")
+        return jsonify(products_list), 200
+
+    except Exception as e:
+        error_message = f"Request {request_id}: An unexpected error occurred: {str(e)}"
+        error_logger.error(error_message)
+        return jsonify(message="An unexpected error occurred"), 500

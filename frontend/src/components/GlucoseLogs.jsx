@@ -47,6 +47,10 @@ export default function GlucoseLogs({ username }) {
     };
 
     const recordLog = async () => {
+        if (!glucoseLevel.trim() || !dateTime.trim()) {
+            console.error('Glucose level and Date & Time must not be empty');
+            return;
+        }
         const log = { glucose_level: glucoseLevel, creation_date: dateTime };
         try {
             const response = await fetch('http://127.0.0.1:5000/dashboard/glucose', {

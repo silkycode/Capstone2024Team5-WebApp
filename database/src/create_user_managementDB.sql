@@ -70,3 +70,15 @@ CREATE TABLE IF NOT EXISTS notification (
     creation_date DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS task (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    creation_date DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    title TEXT NOT NULL,
+    task_notes TEXT,
+    deadline TEXT NOT NULL,
+    created_by TEXT NOT NULL,
+    importance INTEGER DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
+);

@@ -26,8 +26,11 @@ import {
     ChevronLeft as ChevronLeftIcon,
     ChevronRight as ChevronRightIcon,
   } from '@mui/icons-material';
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import TaskIcon from '@mui/icons-material/Task';
+import NotesIcon from '@mui/icons-material/Notes';
+import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
 import ClickableBox from './ClickableBox';
-
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -85,7 +88,7 @@ export default function Dashboard({ role, username }) {
                             <>
                                 <ListItemButton component={Link} to="/dashboard/account-management">
                                     <ListItemIcon sx={{color: "white"}}>
-                                        <AssignmentIcon />
+                                        <SupervisorAccountIcon />
                                     </ListItemIcon>
                                     <ListItemText
                                         primary={
@@ -97,7 +100,7 @@ export default function Dashboard({ role, username }) {
                                 </ListItemButton>
                                 <ListItemButton component={Link} to="/dashboard/tasks">
                                     <ListItemIcon sx={{color: "white"}}>
-                                        <PeopleIcon />
+                                        <TaskIcon />
                                     </ListItemIcon>
                                     <ListItemText
                                         primary={
@@ -109,7 +112,7 @@ export default function Dashboard({ role, username }) {
                                 </ListItemButton>
                                 <ListItemButton component={Link} to="/dashboard/logs">
                                     <ListItemIcon sx={{color: "white"}}>
-                                        <NotificationsIcon />
+                                        <NotesIcon />
                                     </ListItemIcon>
                                     <ListItemText
                                         primary={
@@ -119,9 +122,9 @@ export default function Dashboard({ role, username }) {
                                         }
                                     />
                                 </ListItemButton>
-                                <ListItemButton component={Link} to="/dashboard/tasks">
+                                <ListItemButton component={Link} to="/dashboard/status">
                                     <ListItemIcon sx={{color: "white"}}>
-                                        <NotificationsIcon />
+                                        <HealthAndSafetyIcon />
                                     </ListItemIcon>
                                     <ListItemText
                                         primary={

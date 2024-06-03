@@ -64,6 +64,20 @@ class User(UserModel):
     glucose_logs = db.relationship('GlucoseLog', backref='user', cascade='all, delete-orphan')
     appointments = db.relationship('Appointment', backref='user', cascade='all, delete-orphan')
     notifications = db.relationship('Notification', backref='user', cascade='all, delete-orphan')
+    tasks = db.relationship('Task', backref='user', cascade='all, delete-orphan')
+
+class Task(UserModel):
+    __tablename__ = 'task'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    creation_date = db.Column(db.String, default=db.func.current_timestamp(), nullable=False)
+    title = db.Column(db.String, nullable=False)
+    task_notes = db.Column(db.String, nullable=False)
+    deadline = db.Column(db.String, nullable=False)
+    created_by = db.Column(db.String, nullable=False)
+    importance = db.Column(db.Integer, nullable=False)
     
 class GlucoseLog(UserModel):
     __tablename__ = 'glucose_log'

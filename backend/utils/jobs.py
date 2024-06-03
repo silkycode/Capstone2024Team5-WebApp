@@ -1,5 +1,6 @@
 # Functions and methods for backend jobs, data manipulation, db population, cleanup, etc.
 
+import uuid
 from datetime import datetime
 from time import sleep
 from utils.db_module import db
@@ -29,6 +30,8 @@ notification_generator():
 def notification_generator(query_func, msg_generator, importance, type):
     total_notifications = 0
     start_time = datetime.now()
+
+    job_id = str(uuid.uuid4())
     
     try:
         notifs = query_func()
@@ -39,9 +42,11 @@ def notification_generator(query_func, msg_generator, importance, type):
             total_notifications += 1
 
         db.session.commit()
+        job_logger.info(f"Job {job_id}: Successfully generated {total_notifications} notifications.")
     except SQLAlchemyError as e:
         db.session.rollback()
-        job_logger.error(f"Error occurred while generating notifications: {str(e)}")
+        error_logger.error(f"Job {job_id}: Error occurred while generating notifications: {str(e)}")
+        total_notifications = -1
 
     end_time = datetime.now()
     time_taken = end_time - start_time
@@ -55,6 +60,8 @@ generate_glucose_notifs():
         - glucose_notif_msg_generator(): Populate notification message field for frontend things
 """
 def generate_glucose_notifs(app):
+    job_id = str(uuid.uuid4())
+
     with app.app_context():
         def query_glucose():
             overdue_logs = []
@@ -88,16 +95,16 @@ def generate_glucose_notifs(app):
 
         try:
             timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            print(f"{timestamp} - Executing glucose log notification generation...")
+            print(f"{timestamp} - Job {job_id}: Executing glucose log notification generation...")
             total_notifications, time_taken = notification_generator(
                 query_glucose, 
                 glucose_notif_msg_generator, 
                 importance=3,
                 type=1
             )
-            job_logger.info(f"Generated {total_notifications} glucose log notifications in {time_taken} seconds.")
+            job_logger.info(f"Job {job_id}: Generated {total_notifications} glucose log notifications in {time_taken} seconds.")
         except Exception as e:
-            job_logger.error(f"Error generating glucose log notifications: {str(e)}")
+            error_logger.error(f"Job {job_id}: Error generating glucose log notifications: {str(e)}")
 
 """
 generate_appointment_notifs():
@@ -107,6 +114,8 @@ generate_appointment_notifs():
         - glucose_notif_msg_generator(): Populate notification message field for frontend things
 """
 def generate_appointment_notifs(app):
+    job_id = str(uuid.uuid4())
+
     with app.app_context():
         def query_appointments():
             past_appointments = []
@@ -127,16 +136,16 @@ def generate_appointment_notifs(app):
         
         try:
             timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            print(f"{timestamp} - Executing appointment notification generation...")
+            print(f"{timestamp} - Job {job_id}: Executing appointment notification generation...")
             total_notifications, time_taken = notification_generator(
                 query_appointments, 
                 appointment_notif_msg_generator, 
                 importance=3,
                 type=2
             )
-            job_logger.info(f"Generated {total_notifications} appointment notifications in {time_taken} seconds.")
+            job_logger.info(f"Job {job_id}: Generated {total_notifications} appointment notifications in {time_taken} seconds.")
         except Exception as e:
-            job_logger.error(f"Error generating appointment notifications: {str(e)}")
+            error_logger.error(f"Job {job_id}: Error generating appointment notifications: {str(e)}")
 
 """
 Auto Email Reminder System:
@@ -180,6 +189,8 @@ def send_glucose_reminder_email(app):
             job_logger.error(f"Error sending glucose reminder emails: {str(e)}")
 
 def send_appointment_reminder_email(app):
+    job_id = str(uuid.uuid4())
+
     with app.app_context():
         try:
             upcoming_notifications = Notification.query.filter(Notification.type == 2).all()
@@ -193,11 +204,13 @@ def send_appointment_reminder_email(app):
                 recipient = account.email
                 send_email(body, subject, sender, recipient)
 
+            job_logger.info(f"Job {job_id}: Glucose reminder emails sent successfully.")
         except Exception as e:
-            error_logger.error(f"Error sending appointment reminder emails: {str(e)}")
+            error_logger.error(f"Job {job_id}: Error sending glucose reminder emails: {str(e)}")
 
 # Delete expired refresh tokens if any exist, as well as accounts marked for deletion
 def db_cleanup(app):
+    job_id = str(uuid.uuid4())
     with app.app_context():
         try:
             current_time = datetime.now()
@@ -211,76 +224,81 @@ def db_cleanup(app):
 
             db.session.commit()
 
-            job_logger.info(f"Deleted {len(to_be_deleted_accounts)} accounts marked for deletion.")
-            job_logger.info(f"Deleted {len(expired_refresh_tokens)} expired tokens.")
+            job_logger.info(f"Job {job_id}: Deleted {len(to_be_deleted_accounts)} accounts marked for deletion.")
+            job_logger.info(f"Job {job_id}: Deleted {len(expired_refresh_tokens)} expired tokens.")
         except Exception as e:
             db.session.rollback()
-            error_logger.error(f"Error during refresh token cleanup: {e}")
+            error_logger.error(f"Job {job_id}: Error during refresh token cleanup: {str(e)}")
 
 
 def schedule_background_jobs(app, scheduler):
-    job_logger.info("Job scheduler starting up...")
-    scheduler.add_job(
-        heartbeat,
-        trigger=IntervalTrigger(seconds=60),
-        id='heartbeat',
-        name='Scheduler is Alive',
-        args=[app]
-    )
-    
-    scheduler.add_job(
-        db_cleanup,
-        trigger=CronTrigger(hour='0'),
-        id='db_cleanup',
-        name='Database cleanup (midnight)',
-        args=[app]
-    )
+    try:
+        job_logger.info("Job scheduler starting up...")
 
-    scheduler.add_job(
-        generate_glucose_notifs,
-        trigger=CronTrigger(hour='0'),
-        id='generate_glucose_notifs_midnight',
-        name='Generate glucose log notifications (Midnight)',
-        args=[app]
-    )
+        scheduler.add_job(
+            heartbeat,
+            trigger=IntervalTrigger(seconds=60),
+            id='heartbeat',
+            name='Scheduler is Alive',
+            args=[app]
+        )
 
-    scheduler.add_job(
-        generate_glucose_notifs,
-        trigger=CronTrigger(hour='12'),
-        id='generate_glucose_notifs_noon',
-        name='Generate glucose log notifications (Noon)',
-        args=[app]
-    )
+        scheduler.add_job(
+            db_cleanup,
+            trigger=CronTrigger(hour='0'),
+            id='db_cleanup',
+            name='Database cleanup (midnight)',
+            args=[app]
+        )
 
-    scheduler.add_job(
-        generate_appointment_notifs,
-        trigger=CronTrigger(hour='0'),
-        id='generate_appointment_notifs_midnight',
-        name='Generate missed appointment notifications (Midnight)',
-        args=[app]
-    )
+        scheduler.add_job(
+            generate_glucose_notifs,
+            trigger=CronTrigger(hour='0'),
+            id='generate_glucose_notifs_midnight',
+            name='Generate glucose log notifications (Midnight)',
+            args=[app]
+        )
 
-    scheduler.add_job(
-        generate_appointment_notifs,
-        trigger=CronTrigger(hour='12'),
-        id='generate_appointment_notifs_noon',
-        name='Generate missed appointment notifications (Noon)',
-        args=[app]
-    )
+        scheduler.add_job(
+            generate_glucose_notifs,
+            trigger=CronTrigger(hour='12'),
+            id='generate_glucose_notifs_noon',
+            name='Generate glucose log notifications (Noon)',
+            args=[app]
+        )
 
-    scheduler.add_job(
-        send_appointment_reminder_email,
-        trigger=CronTrigger(hour='0'),
-        id='send_appointment_reminder_email',
-        name='Sent out appointment reminder email (Midnight)',
-        args=[app]
-    )
+        scheduler.add_job(
+            generate_appointment_notifs,
+            trigger=CronTrigger(hour='0'),
+            id='generate_appointment_notifs_midnight',
+            name='Generate missed appointment notifications (Midnight)',
+            args=[app]
+        )
 
-    scheduler.add_job(
-        send_glucose_reminder_email,
-        trigger=CronTrigger(hour='0'),
-        id='send_glucose_reminder_email',
-        name='Sent out glucose logging reminder email (Midnight)',
-        args=[app]
-    )
-    job_logger.info("Job scheduler finished initializing, jobs added.")
+        scheduler.add_job(
+            generate_appointment_notifs,
+            trigger=CronTrigger(hour='12'),
+            id='generate_appointment_notifs_noon',
+            name='Generate missed appointment notifications (Noon)',
+            args=[app]
+        )
+
+        scheduler.add_job(
+            send_appointment_reminder_email,
+            trigger=CronTrigger(hour='0'),
+            id='send_appointment_reminder_email',
+            name='Sent out appointment reminder email (Midnight)',
+            args=[app]
+        )
+
+        scheduler.add_job(
+            send_glucose_reminder_email,
+            trigger=CronTrigger(hour='0'),
+            id='send_glucose_reminder_email',
+            name='Sent out glucose logging reminder email (Midnight)',
+            args=[app]
+        )
+
+        job_logger.info("Job scheduler finished initializing, jobs added.")
+    except Exception as e:
+        error_logger.error(f"Error initializing background jobs: {str(e)}")
