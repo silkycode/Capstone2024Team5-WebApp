@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, CssBaseline, TextField, Container, Box, Typography, Paper, Grid } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
+
 
 export default function Appointment() {
     const navigate = useNavigate();
@@ -79,6 +82,53 @@ export default function Appointment() {
         }
     };
 
+    const exportToPDF = () => {
+        const doc = new jsPDF();
+        const tableColumn = ["Date & Time", "Doctor Name", "Notes"];
+        let sortedAppointments = [...appointments];
+        sortedAppointments.sort((a, b) => new Date(a.date) - new Date(b.date));
+        const tableRows = [];
+    
+        sortedAppointments.forEach(appointment => {
+            const formattedDateTime = formatDateTime(appointment.date);
+            const appointmentData = [
+                formattedDateTime,
+                appointment.doctor_name,
+                appointment.notes
+            ];
+            tableRows.push(appointmentData);
+        });
+    
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '_');
+        const fileName = `appointments_${formattedDate}.pdf`;
+    
+        const title = `Your Appointments\nGenerated: ${currentDate.toLocaleString()}`;
+        doc.text(title, 14, 20);
+    
+        doc.autoTable({
+            head: [tableColumn],
+            body: tableRows,
+            startY: 35,
+            theme: 'grid',
+            styles: {
+                overflow: 'linebreak',
+                cellWidth: 'wrap',
+                cellPadding: 2,
+            },
+            columnStyles: {
+                0: { cellWidth: 'auto' },
+                1: { cellWidth: 'auto' },
+                2: { cellWidth: 'auto' },
+            },
+            margin: { top: 20 },
+            tableWidth: 'auto',
+            tableHeight: 'auto',
+        });
+
+        doc.save(fileName);
+    };
+
     return (
         <Container component="main" maxWidth="md">
             <CssBaseline />
@@ -154,34 +204,49 @@ export default function Appointment() {
                     </Box>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    {appointments
-                        .sort((a, b) => new Date(a.date) - new Date(b.date))
-                        .map((appointment) => {
-                            const appointmentDate = new Date(appointment.date);
-                            const formattedDate = appointmentDate.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-                            const formattedTime = appointmentDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
-                            
-                            return (
-                                <Paper key={appointment.id} elevation={6} sx={{ padding: 2, marginBottom: 2 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #ccc', paddingBottom: 1 }}>
-                                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                            {formattedDate} at {formattedTime}
-                                        </Typography>
-                                        <Button variant="outlined" color="error" onClick={() => deleteAppointment(appointment.id)}>
-                                            Delete
-                                        </Button>
-                                    </Box>
-                                    <Box sx={{ marginTop: 1 }}>
-                                        <Typography variant="body1" sx={{ textAlign: 'right', paddingBottom: 1 }}>
-                                            Dr. {appointment.doctor_name}
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ fontSize: 16 }}>
-                                            {appointment.notes}
-                                        </Typography>
-                                    </Box>
-                                </Paper>
-                            );
-                        })}
+                    <Box sx={{ maxHeight: '400px', overflow: 'auto' }}>
+                        <Paper elevation={6} sx={{ padding: 2 }}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={exportToPDF}
+                                sx={{ mb: 2}}
+                            >
+                                Export to PDF
+                            </Button>
+                            <Typography variant="h6" gutterBottom>
+                                Scheduled Appointments:
+                            </Typography>
+                            {appointments
+                                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                                .map((appointment) => {
+                                    const appointmentDate = new Date(appointment.date);
+                                    const formattedDate = appointmentDate.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+                                    const formattedTime = appointmentDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+                                    
+                                    return (
+                                        <Paper key={appointment.id} elevation={6} sx={{ padding: 2, marginBottom: 2 }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #ccc', paddingBottom: 1 }}>
+                                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                                    {formattedDate} at {formattedTime}
+                                                </Typography>
+                                                <Button variant="outlined" color="error" onClick={() => deleteAppointment(appointment.id)}>
+                                                    Delete
+                                                </Button>
+                                            </Box>
+                                            <Box sx={{ marginTop: 1 }}>
+                                                <Typography variant="body1" sx={{ textAlign: 'right', paddingBottom: 1 }}>
+                                                    Dr. {appointment.doctor_name}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ fontSize: 16 }}>
+                                                    {appointment.notes}
+                                                </Typography>
+                                            </Box>
+                                        </Paper>
+                                    );
+                                })}
+                        </Paper>
+                    </Box>
                 </Grid>
             </Grid>
         </Container>

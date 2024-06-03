@@ -103,7 +103,6 @@ export default function GlucoseLogs({ username }) {
         const formattedDate = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '_');
         const fileName = `glucose_logs_${formattedDate}.pdf`;
     
-        // Add title to the PDF
         const title = `Your Glucose Logs\nGenerated: ${currentDate.toLocaleString()}`;
         doc.text(title, 14, 20);
     
