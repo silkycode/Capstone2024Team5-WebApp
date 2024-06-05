@@ -386,6 +386,7 @@ def notifications():
                     'id': message.id,
                     'sender': message.sender,
                     'send_date': message.send_date,
+                    'subject': message.subject,
                     'body': message.body
                 }
                 message_list.append(message_info)

@@ -109,14 +109,14 @@ const Notifications = () => {
                 </Typography>
               </Box>
               <Box sx={{ marginTop: 1 }}>
-                <Typography variant="body2" sx={{ fontSize: 16, color: '#333' }}>
-                  <strong>ID:</strong> {message.id}
+                <Typography variant="body2" sx={{ fontSize: 16, color: '#333', marginTop: 1 }}>
+                  <strong>From:</strong> {message.sender}
                 </Typography>
                 <Typography variant="body2" sx={{ fontSize: 16, color: '#333', marginTop: 1 }}>
-                  <strong>Sender:</strong> {message.sender}
+                  <strong>Subject:</strong> {message.subject}
                 </Typography>
-                <Typography variant="body2" sx={{ fontSize: 16, color: '#333', marginTop: 1 }}>
-                  <strong>Body:</strong> {message.body}
+                <Typography variant="body2" sx={{ fontSize: 14, color: '#333', marginTop: 1 }}>
+                  {message.body}
                 </Typography>
               </Box>
             </Paper>
