@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import uuid
 from flask import request, jsonify, Blueprint
 from flask_cors import CORS
-from flask_jwt_extended import create_access_token, create_refresh_token, decode_token, get_jwt_identity, jwt_required
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required
 import re
 import time
 import hashlib

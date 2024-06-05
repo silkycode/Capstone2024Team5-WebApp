@@ -71,6 +71,18 @@ CREATE TABLE IF NOT EXISTS notification (
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
 );
 
+-- user messaging object
+CREATE TABLE IF NOT EXISTS message (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    sender TEXT NOT NULL,
+    subject TEXT NOT NULL,
+    body TEXT,
+    send_date DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
+);
+
+-- admin tasks
 CREATE TABLE IF NOT EXISTS task (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,

@@ -8,11 +8,11 @@ from flask import request, jsonify, Blueprint
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from utils.db_module import db
-from utils.logger import route_logger, error_logger
+from utils.logger import route_logger, error_logger, feedback_logger
 from utils.aiosmtpd_config import send_email
 from datetime import datetime
 from utils.utils import handle_request_errors, handle_sqlalchemy_errors, query_database
-from models.user_management_models import User, Appointment, GlucoseLog, Notification
+from models.user_management_models import User, Appointment, GlucoseLog, Notification, Message
 from models.product_models import Product
 
 # Register dashboard_routes as a blueprint for importing into app.py + set up CORS
@@ -59,10 +59,7 @@ def contact():
         return jsonify({'message': 'Please provide a feedback message.'}), 400
 
     try:
-        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        with open('feedback.txt', 'a') as file:
-            file.write(f"[{timestamp}] Email: {email}, Message: {message}, Author: {name}\n")
-        route_logger.info(f"[{request_id}] Feedback from '{email}' successfully written to file.")
+        feedback_logger.info(f"[{request_id}] Feedback received from '{email}': " + message)
     except Exception as e:
         route_logger.error(f"[{request_id}] Error handling feedback message from '{email}': {e}")
         return jsonify({'message': 'Error handling feedback message. Try again.'}), 500
@@ -358,12 +355,18 @@ def notifications():
     try:
         token = get_jwt_identity()
         user_id = token['user_id']
-        route_logger.info(f"Request {request_id}: Received notifications request for user ID: {user_id}")
+        route_logger.info(f"Request {request_id}: Received notifications/message request for user ID: {user_id}")
 
         if request.method == 'GET':
             notifications, error = query_database(Notification, user_id)
             if error:
                 error_message = f"Request {request_id}: Error retrieving notifications: {error}"
+                error_logger.error(error_message)
+                return jsonify(message=error), 500
+            
+            messages, error = query_database(Message, user_id)
+            if error:
+                error_message = f"Request {request_id}: Error retrieving messages: {error}"
                 error_logger.error(error_message)
                 return jsonify(message=error), 500
 
@@ -376,8 +379,19 @@ def notifications():
                     'creation_date': notification.creation_date
                 }
                 notification_list.append(notification_info)
-            route_logger.info(f"Request {request_id}: Notifications information retrieved")
-            return jsonify(notifications=notification_list), 200
+
+            message_list = []
+            for message in messages:
+                message_info = {
+                    'id': message.id,
+                    'sender': message.sender,
+                    'send_date': message.send_date,
+                    'body': message.body
+                }
+                message_list.append(message_info)
+
+            route_logger.info(f"Request {request_id}: Notification and message information retrieved")
+            return jsonify(notifications=notification_list, messages=message_list), 200
            
         elif request.method == 'POST':
             data, error = handle_request_errors(request, ['notification', 'importance'])

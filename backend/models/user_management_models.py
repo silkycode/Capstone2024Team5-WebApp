@@ -65,6 +65,7 @@ class User(UserModel):
     appointments = db.relationship('Appointment', backref='user', cascade='all, delete-orphan')
     notifications = db.relationship('Notification', backref='user', cascade='all, delete-orphan')
     tasks = db.relationship('Task', backref='user', cascade='all, delete-orphan')
+    messages = db.relationship('Message', backref='user', cascade='all, delete-orphan')
 
 class Task(UserModel):
     __tablename__ = 'task'
@@ -109,3 +110,15 @@ class Notification(UserModel):
     importance = db.Column(db.Integer, nullable=False)
     type = db.Column(db.Integer, nullable=False)
     creation_date = db.Column(db.String, default=db.func.current_timestamp(), nullable=False)    
+
+class Message(UserModel):
+    __tablename__ = 'message'
+
+    id = db.Column(db.Integer, primary_key=True)
+    
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    sender = db.Column(db.String, nullable=False)
+    send_date = db.Column(db.String, default=db.func.current_timestamp(), nullable=False)
+    subject = db.Column(db.String, nullable=False)
+    body = db.Column(db.String)
+    

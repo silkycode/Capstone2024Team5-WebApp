@@ -30,6 +30,7 @@ import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import TaskIcon from '@mui/icons-material/Task';
 import NotesIcon from '@mui/icons-material/Notes';
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
+import EmailIcon from '@mui/icons-material/Email';
 import ClickableBox from './ClickableBox';
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -59,7 +60,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function Dashboard({ role, username }) {
+export default function Dashboard({ role }) {
     const [open, setOpen] = React.useState(false);
     const location = useLocation();
 
@@ -98,14 +99,14 @@ export default function Dashboard({ role, username }) {
                                         }
                                     />
                                 </ListItemButton>
-                                <ListItemButton component={Link} to="/dashboard/tasks">
+                                <ListItemButton component={Link} to="/dashboard/messages">
                                     <ListItemIcon sx={{color: "white"}}>
-                                        <TaskIcon />
+                                        <EmailIcon />
                                     </ListItemIcon>
                                     <ListItemText
                                         primary={
                                             <Typography variant="h6" color="white" sx={{fontWeight: 'bold'}} style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
-                                                Tasks
+                                                Messages
                                             </Typography>
                                         }
                                     />
@@ -193,16 +194,17 @@ export default function Dashboard({ role, username }) {
                         <Box sx={{ display: 'flex', alignContent: 'vertical', gap: '30px', flexWrap: 'wrap' }}>
                         {role === 'admin' ? (
                             <>
-                                <ClickableBox title="Manage Accounts" path="/dashboard/account-management" icon={AssignmentIcon} />
-                                <ClickableBox title="View Tasks" path="/dashboard/tasks" icon={AssignmentIcon} />
-                                <ClickableBox title="App Logs" path="/dashboard/logs" icon={AssignmentIcon} />
-                                <ClickableBox title="App Status" path="/dashboard/status" icon={AssignmentIcon} />
+                                <ClickableBox title="Manage Accounts" path="/dashboard/account-management" icon={SupervisorAccountIcon} />
+                                {/* <ClickableBox title="View Tasks" path="/dashboard/tasks" icon={AssignmentIcon} /> */}
+                                <ClickableBox title="App Logs" path="/dashboard/logs" icon={NotesIcon} />
+                                <ClickableBox title="App Status" path="/dashboard/status" icon={HealthAndSafetyIcon} />
+                                <ClickableBox title="Message User" path="/dashboard/messages" icon={EmailIcon} />
                             </>
                         ) : (
                             <>
                                 <ClickableBox title="Log Your Glucose" path="/dashboard/glucose-logs" icon={AssignmentIcon} />
                                 <ClickableBox title="Appointments" path="/dashboard/appointments" icon={EditCalendarIcon} />
-                                <ClickableBox title="Notifications" path="/dashboard/notifications" icon={NotificationsIcon} />
+                                <ClickableBox title="Notifications/Messages" path="/dashboard/notifications" icon={NotificationsIcon} />
                                 <ClickableBox title="Product Info" path="/dashboard/products" icon={MedicalServicesIcon} />
                                 <ClickableBox title="Blank Medical Forms" path="/dashboard/medical-forms" icon={PrintIcon} />
                             </>

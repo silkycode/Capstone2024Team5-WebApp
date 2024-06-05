@@ -16,11 +16,15 @@ JOB_LOG_FILE = 'jobs.log'
 EMAIL_LOG_FILE = 'emails.log'
 ERROR_LOG_FILE = 'errors.log'
 SERVER_LOG_FILE = 'server.log'
+FEEDBACK_LOG_FILE = 'feedback.log'
 
 formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
 
 # Server log
 server_logger = setup_logger('server_logger', SERVER_LOG_FILE)
+
+# Feedback logs
+feedback_logger = setup_logger('feedback_logger', FEEDBACK_LOG_FILE)
 
 # API logs
 route_logger = setup_logger('route_logger', ROUTE_LOG_FILE)

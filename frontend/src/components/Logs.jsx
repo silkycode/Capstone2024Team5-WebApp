@@ -57,7 +57,7 @@ export default function Logs() {
                     <Accordion>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                                <Typography variant="h5">Server Logs</Typography>
+                                <Typography variant="h5">Server</Typography>
                                 <Button onClick={() => downloadTXT(logs.server, 'Server Logs')} variant="contained" color="primary">
                                     Export to raw
                                 </Button>
@@ -76,7 +76,7 @@ export default function Logs() {
                     <Accordion>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                                <Typography variant="h5">API Logs</Typography>
+                                <Typography variant="h5">API</Typography>
                                 <Button onClick={() => downloadTXT(logs.route, 'API Logs')} variant="contained" color="primary">
                                     Export to raw
                                 </Button>
@@ -95,7 +95,7 @@ export default function Logs() {
                     <Accordion>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                                <Typography variant="h5">Error Logs</Typography>
+                                <Typography variant="h5">Error</Typography>
                                 <Button onClick={() => downloadTXT(logs.error, 'Error Logs')} variant="contained" color="primary">
                                     Export to raw
                                 </Button>
@@ -114,7 +114,7 @@ export default function Logs() {
                     <Accordion>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                                <Typography variant="h5">Job Logs</Typography>
+                                <Typography variant="h5">Job</Typography>
                                 <Button onClick={() => downloadTXT(logs.job, 'Job Logs')} variant="contained" color="primary">
                                     Export to raw
                                 </Button>
@@ -133,7 +133,7 @@ export default function Logs() {
                     <Accordion>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                                <Typography variant="h5">Email Logs</Typography>
+                                <Typography variant="h5">Email</Typography>
                                 <Button onClick={() => downloadTXT(logs.email, 'Email Logs')} variant="contained" color="primary">
                                     Export to raw
                                 </Button>
@@ -142,6 +142,25 @@ export default function Logs() {
                         <AccordionDetails>
                             <Paper variant="outlined" style={{ width: '100%', overflowX: 'auto' }}>
                                 {logs.email.map((line, index) => (
+                                    <Typography key={index} style={{ fontSize: '0.75rem', padding: '4px', backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#ffffff', fontFamily: 'Roboto Mono, Courier New, monospace' }}>
+                                        {line}
+                                    </Typography>
+                                ))}
+                            </Paper>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                                <Typography variant="h5">Feedback</Typography>
+                                <Button onClick={() => downloadTXT(logs.feedback, 'Feedback')} variant="contained" color="primary">
+                                    Export to raw
+                                </Button>
+                            </div>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Paper variant="outlined" style={{ width: '100%', overflowX: 'auto' }}>
+                                {logs.feedback.map((line, index) => (
                                     <Typography key={index} style={{ fontSize: '0.75rem', padding: '4px', backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#ffffff', fontFamily: 'Roboto Mono, Courier New, monospace' }}>
                                         {line}
                                     </Typography>

@@ -71,7 +71,7 @@ const ProfilePage = () => {
         <div sx={{
           display: 'flex',
           flexDirection: 'column',
-          maxWidth: '800px', // Increase maximum width
+          maxWidth: '800px',
           margin: 'auto',
           padding: '16px',
           backgroundColor: '#f9f9f9',

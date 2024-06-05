@@ -14,6 +14,7 @@ class Config:
 
     # Database configs
     # Cloud service URIs go here when implemented
+    # assume dbs stored on same server as Flask app
     SQLALCHEMY_BINDS = {
         'user_management': 'sqlite:///' + os.path.abspath('../database/src/user_management.db'),
         'products': 'sqlite:///' + os.path.abspath('../database/src/products.db'),

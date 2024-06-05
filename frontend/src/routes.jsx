@@ -10,6 +10,7 @@ import AppointmentManagement from './components/AppointmentManagement';
 import Status from './components/Status';
 import Logs from './components/Logs';
 import AccountManagement from './components/AccountManagement';
+import AdminMessages from './components/AdminMessages';
 
 export const userRoutes = [
     { path: '/dashboard/glucose-logs', element: <GlucoseLogs /> },
@@ -26,4 +27,5 @@ export const adminRoutes = [
     { path: '/dashboard/status', element: <Status />},
     { path: '/dashboard/logs', element: <Logs />},
     { path: '/dashboard/tasks', element: <Tasks />},
+    { path: '/dashboard/messages', element: <AdminMessages />},
 ];

@@ -7,9 +7,9 @@ from flask import Blueprint, jsonify, request
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from utils.db_module import db
-from utils.utils import handle_sqlalchemy_errors, human_readable_size, get_logs_for_category
+from utils.utils import handle_sqlalchemy_errors, human_readable_size, get_logs_for_category, handle_request_errors
 from utils.logger import route_logger, error_logger
-from models.user_management_models import GlucoseLog, Appointment, Account
+from models.user_management_models import GlucoseLog, Appointment, Account, Message
 from sqlalchemy.exc import SQLAlchemyError
 
 # Register admin_routes as a blueprint for importing into app.py + set up CORS
@@ -110,6 +110,44 @@ def manage_accounts():
         error_message = f"Request {request_id}: An unexpected error occurred: {str(e)}"
         error_logger.error(error_message)
         return jsonify(message="An unexpected error occurred"), 500
+
+# Send messages to normal users {user_id}
+@admin_routes.route('/send-message', methods=['POST'])
+@jwt_required()
+@handle_sqlalchemy_errors
+def send_message():
+    request_id = str(uuid.uuid4())
+    try:
+        data, error = handle_request_errors(request, ['user_id', 'subject'])
+        if error:
+            error_message = f"Request {request_id}: Error processing new message request: {error}"
+            error_logger.error(error_message)
+            return jsonify(message=error), 400
+        
+        access_token = get_jwt_identity()
+        if access_token['is_admin'] != 1:
+            error_message = f"Request {request_id}: Invalid authentication"
+            error_logger.error(error_message)
+            return jsonify(message="Invalid authentication"), 401
+        
+        data = request.get_json()
+        sender = access_token['username']
+        recipient = data.get('user_id')
+        subject = data.get('subject')
+        body = data.get('body')
+
+        new_message = Message(user_id=recipient, sender=sender, subject=subject, body=body)
+        db.session.add(new_message)
+        db.session.commit()
+
+        route_logger.info(f"Request {request_id}: '{sender}' sent a message to user {recipient} successfully.")
+        return jsonify(message='Message sent successfully'), 200
+        
+    except Exception as e:
+        error_message = f"Request {request_id}: An unexpected error occurred: {str(e)}"
+        error_logger.error(error_message)
+        return jsonify(message="An unexpected error occurred"), 500
+
 
 # Undelete soft deleted accounts
 @admin_routes.route('/undelete', methods=['POST'])
@@ -233,6 +271,7 @@ def logs():
         logs['error'] = get_logs_for_category('error')
         logs['job'] = get_logs_for_category('job')
         logs['email'] = get_logs_for_category('email')
+        logs['feedback'] = get_logs_for_category('feedback')
 
         route_logger.info(f"Request {request_id}: Log retrieval request completed successfully")
         return jsonify(logs), 200

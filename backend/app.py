@@ -1,5 +1,4 @@
 import json
-import logging
 import uuid
 from flask import Flask, request
 from flask_cors import CORS

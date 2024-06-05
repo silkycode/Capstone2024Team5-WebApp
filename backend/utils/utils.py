@@ -76,6 +76,7 @@ def human_readable_size(size):
         index += 1
     return f"{size:.2f} {units[index]}"
 
+# log retrieval helper functions
 def get_logs_for_category(category):
     log_file_path = get_log_file_path_for_category(category)
     with open(log_file_path, 'r') as file:
@@ -93,3 +94,5 @@ def get_log_file_path_for_category(category):
         return 'jobs.log'
     elif category == 'email':
         return 'emails.log'
+    elif category == 'feedback':
+        return 'feedback.log'

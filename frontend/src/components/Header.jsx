@@ -46,10 +46,10 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
 			<img src={TitleLogo} alt="Company Logo" height="100px" />
 		</IconButton>
 		<div>
-			<Button component={Link} to="/help" sx={buttonStyles}>
+			{/* <Button component={Link} to="/help" sx={buttonStyles}>
 			<HelpIcon />
 			<span style={{ marginLeft: '6px' }}>Help</span>
-			</Button>
+			</Button> */}
 			<Button component={Link} to="/contact" sx={buttonStyles}>
 			<ContactIcon />
 			<span style={{ marginLeft: '6px' }}>Contact Us</span>
